@@ -99,8 +99,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
 
       response += "#" + Hashes.gen_solo(level_data)
 
-      thing = [user_id, stars || 0, difficulty && difficulty.demon?, id, rated_coins, featured, password, 0].map! { |x| Format.fmt_value(x) }
-      puts thing.join(",")
+      thing = [user_id, stars || 0, (difficulty && difficulty.demon?) || 0, id, rated_coins, featured, password, 0].map! { |x| Format.fmt_value(x) }
       response += "#" + Hashes.gen_solo_2(thing.join(","))
     else
       response += "-1"
