@@ -1,0 +1,23 @@
+name: crystal-gauntlet
+version: 0.1.0
+
+authors:
+  - Jill "oatmealine" Monoids <oatmealine@disroot.org>
+  - winter <me@wint0r.zone>
+
+targets:
+  crystal-gauntlet:
+    main: src/crystal-gauntlet.cr
+
+dependencies:
+  sqlite3:
+    github: crystal-lang/crystal-sqlite3
+  migrate:
+    github: vladfaust/migrate.cr
+    version: ~> 0.5.0
+  dotenv:
+    github: gdotdesign/cr-dotenv
+
+crystal: 1.6.2
+
+license: MIT

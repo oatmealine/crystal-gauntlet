@@ -1,0 +1,5 @@
+http://www.boomlings.com/database ->
+http://localhost:8080/asdfasdfasd
+
+aHR0cDovL3d3dy5ib29tbGluZ3MuY29tL2RhdGFiYXNl -> base64 http://localhost:8080/asdfasdfasd
+aHR0cDovL2xvY2FsaG9zdDo4MDgwL2FzZGZhc2RmYXNk

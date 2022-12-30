@@ -1,0 +1,6 @@
+{
+  "crystal-lang.completion": true,
+  "crystal-lang.hover": true,
+  "crystal-lang.implementations": true,
+  "crystal-lang.mainFile": "${workspaceRoot}/src/crystal-gauntlet.cr"
+}
