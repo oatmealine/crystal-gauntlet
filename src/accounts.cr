@@ -1,4 +1,5 @@
 require "uri"
+require "crypto/bcrypt/password"
 
 include CrystalGauntlet
 
@@ -19,13 +20,18 @@ module CrystalGauntlet::Accounts
   end
 
   def get_user_id(username : String, ext_id : String) : Int32
-    return 1
     DATABASE.query("select id from users where udid = ? or account_id = ?", ext_id, ext_id) do |rs|
-      if rs.column_count > 0
+      if rs.move_next
         return rs.read(Int32)
       else
         raise "no user associated with account?!"
       end
     end
+  end
+
+  def verify_gjp(account_id : String, gjp : String) : Bool
+    hash = DATABASE.scalar("select password from accounts where id = ?", account_id).as(String)
+    bcrypt = Crypto::Bcrypt::Password.new(hash)
+    bcrypt.verify(GJP.decrypt(gjp))
   end
 end

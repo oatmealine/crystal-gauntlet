@@ -9,7 +9,7 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(body : String): String {
   puts params.inspect
 
   ext_id = Accounts.get_ext_id_from_params(params)
-  if ext_id == "-1"
+  if ext_id == "-1" || !Accounts.verify_gjp(ext_id, params["gjp"])
     return "-1"
   end
   user_id = Accounts.get_user_id(params["userName"], ext_id)
