@@ -17,6 +17,8 @@ CrystalGauntlet.endpoints["/accounts/registerGJAccount.php"] = ->(body : String)
     return "-2"
   end
 
+  # todo: email checks, conditionally?
+
   password_hash = Crypto::Bcrypt::Password.create(password, cost: 10).to_s
   gjp2 = CrystalGauntlet::GJP.hash(password)
   next_id = (DATABASE.scalar("select max(id) from accounts").as(Int64 | Nil) || 0) + 1

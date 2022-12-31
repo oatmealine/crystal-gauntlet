@@ -2,7 +2,7 @@
 CREATE TABLE accounts (
   id  SERIAL  PRIMARY KEY,
 
-  username  TEXT  NOT NULL  COLLATE NOCASE,
+  username  TEXT  NOT NULL  COLLATE NOCASE  UNIQUE,
   password  TEXT  NOT NULL, -- bcrypt hashed
   gjp2      TEXT  NOT NULL,
   email     TEXT  NOT NULL,
