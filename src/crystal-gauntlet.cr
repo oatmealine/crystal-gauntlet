@@ -62,8 +62,17 @@ module CrystalGauntlet
       end
     end
 
-    puts "Listening on http://127.0.0.1:8080"
-    server.listen(8080)
+    listen_on = URI.parse(ENV["LISTEN_ON"]? || "http://localhost:8080").normalize
+
+    case listen_on.scheme
+    when "http"
+      server.bind_tcp(listen_on.hostname.not_nil!, listen_on.port.not_nil!)
+    when "unix"
+      server.bind_unix(listen_on.to_s.sub("unix://",""))
+    end
+
+    puts "Listening on #{listen_on.to_s}"
+    server.listen
   end
 end
 
