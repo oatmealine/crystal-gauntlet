@@ -36,6 +36,27 @@ module CrystalGauntlet
     end
   end
 
+  def stars_to_difficulty(stars : Int32) : LevelDifficulty | Nil
+    case stars
+    when 1
+      LevelDifficulty::Auto
+    when 2
+      LevelDifficulty::Easy
+    when 3
+      LevelDifficulty::Normal
+    when 4, 5
+      LevelDifficulty::Hard
+    when 6, 7
+      LevelDifficulty::Harder
+    when 8, 9
+      LevelDifficulty::Insane
+    when 10
+      LevelDifficulty::Demon
+    else
+      nil
+    end
+  end
+
   enum DemonDifficulty
     Easy
     Medium
