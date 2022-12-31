@@ -13,9 +13,13 @@ CrystalGauntlet.endpoints["/updateGJUserScore22.php"] = ->(body : String): Strin
     return "-1"
   end
 
-  user_id = Accounts.get_user_id(params["userName"], account_id)
+  user_id = Accounts.get_user_id(account_id)
 
-  DATABASE.exec("update users set username=?, stars=?, demons=?, coins=?, user_coins=?, diamonds=?, icon_type=?, color1=?, color2=?, cube=?, ship=?, ball=?, ufo=?, wave=?, robot=?, spider=?, explosion=?, special=?, glow=?, last_played=? where id=?", params["userName"], params["stars"], params["demons"], params["coins"], params["userCoins"], params["diamonds"], params["iconType"], params["color1"], params["color2"], params["accIcon"], params["accShip"], params["accBall"], params["accBird"], params["accDart"], params["accRobot"], params["accSpider"], params["accExplosion"], params["special"], params["accGlow"], Time.utc.to_s("%Y-%m-%d %H:%M:%S"), user_id)
+  # todo: prevent username change unless it's a capitalization change
+  # todo: keep track of stat changes to look out for leaderboard cheating & whatnot
+  # todo: cap out demon count at the current amount of uploaded demons? same for stars & user coins. could be expensive though
+
+  DATABASE.exec("update users set username=?, stars=?, demons=?, coins=?, user_coins=?, diamonds=?, icon_type=?, color1=?, color2=?, cube=?, ship=?, ball=?, ufo=?, wave=?, robot=?, spider=?, explosion=?, special=?, glow=?, last_played=? where id=?", params["userName"], params["stars"].to_i32, params["demons"].to_i32, params["coins"].to_i32, params["userCoins"].to_i32, params["diamonds"].to_i32, params["iconType"].to_i32, params["color1"].to_i32, params["color2"].to_i32, params["accIcon"].to_i32, params["accShip"].to_i32, params["accBall"].to_i32, params["accBird"].to_i32, params["accDart"].to_i32, params["accRobot"].to_i32, params["accSpider"].to_i32, params["accExplosion"].to_i32, params["special"].to_i32, params["accGlow"].to_i32, Time.utc.to_s("%Y-%m-%d %H:%M:%S"), user_id)
 
   user_id.to_s
 }

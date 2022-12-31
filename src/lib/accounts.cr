@@ -19,7 +19,7 @@ module CrystalGauntlet::Accounts
     end
   end
 
-  def get_user_id(username : String, ext_id : String) : Int32
+  def get_user_id(ext_id : String) : Int32
     DATABASE.query("select id from users where udid = ? or account_id = ?", ext_id, ext_id) do |rs|
       if rs.move_next
         return rs.read(Int32)

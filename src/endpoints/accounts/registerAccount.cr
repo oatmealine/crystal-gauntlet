@@ -8,7 +8,7 @@ CrystalGauntlet.endpoints["/accounts/registerGJAccount.php"] = ->(body : String)
   params = URI::Params.parse(body)
   puts params.inspect
 
-  username = params["userName"]
+  username = Clean.clean_special(params["userName"])
   password = params["password"]
   email = params["email"]
 

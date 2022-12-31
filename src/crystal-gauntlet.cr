@@ -9,6 +9,7 @@ require "./lib/hash"
 require "./lib/format"
 require "./lib/accounts"
 require "./lib/gjp"
+require "./lib/clean"
 
 Dotenv.load
 
