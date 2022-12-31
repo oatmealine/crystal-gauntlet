@@ -16,9 +16,9 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(body : String): String {
 
   description = params["levelDesc"]
   if params["gameVersion"].to_i >= 20 # 2.0
-    description = Clean.clean_special_lenient(GDBase64.decode_string description)
+    description = Clean.clean_special(GDBase64.decode_string description)
   else
-    description = Clean.clean_special_lenient(description)
+    description = Clean.clean_special(description)
   end
   # todo: patch descriptions to prevent color bugs
 

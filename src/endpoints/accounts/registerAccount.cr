@@ -12,7 +12,7 @@ CrystalGauntlet.endpoints["/accounts/registerGJAccount.php"] = ->(body : String)
     return "-1"
   end
 
-  username = Clean.clean_special(params["userName"])
+  username = Clean.clean_basic(params["userName"])
   password = params["password"]
   email = params["email"]
 

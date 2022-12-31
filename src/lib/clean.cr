@@ -2,16 +2,8 @@
 module CrystalGauntlet::Clean
   extend self
 
-  # removes commonly used chars in response formatting
-  def clean_special(str)
-    # these are just the ones commonly used in response formatting
-    # i'm unsure if any other ones should be added, so for the time
-    # being i'll just keep it as is
-    str.gsub(/[:\|~#\(\)\0\n~]/, "")
-  end
-
   # for descriptions & similar
-  def clean_special_lenient(str)
+  def clean_special(str)
     str.gsub(/[\0]/, "")
   end
 
@@ -20,14 +12,14 @@ module CrystalGauntlet::Clean
     str.gsub(/[^A-Za-z0-9 ]/, "")
   end
 
+  # only allow "basic" characters (roughly printable ascii, excluding format-breaking chars)
+  def clean_basic(str)
+    str.gsub(/[^A-Za-z0-9\-_ ]/, "")
+  end
+
   # only allows numbers
   def clean_number(str)
     str.gsub(/[^0-9]/, "")
-  end
-
-  # only allows numbers and commas
-  def clean_number_list(str)
-    str.gsub(/[^0-9,]/, "")
   end
 
   # for b64 inputs; thoroughly cleans them

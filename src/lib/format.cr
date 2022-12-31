@@ -34,12 +34,10 @@ module CrystalGauntlet::Format
     s.to_s(colon_safe ? TIME_FORMAT_USER_FRIENDLY : TIME_FORMAT_GD_FRIENDLY)
   end
 
-  def fmt_value(v, colon_safe=false) : String
+  def fmt_value(v, colon_safe=false, tilda_safe=false, pipe_safe=false) : String
     case v
     when Bool
       v ? "1" : "0"
-    when String
-      v
     when Time::Span
       fmt_timespan(v)
     when Time
@@ -49,20 +47,31 @@ module CrystalGauntlet::Format
         fmt_time(v, colon_safe)
       end
     else
-      v.to_s
+      v = v.to_s
+      v = Clean.clean_special(v)
+      if !colon_safe
+        v = v.gsub(":", "")
+      end
+      if !tilda_safe
+        v = v.gsub("~", "")
+      end
+      if !pipe_safe
+        v = v.gsub("|", "")
+      end
+      v
     end
   end
 
   def fmt_hash(hash) : String
-    hash.map_with_index{ |(i, v)| "#{i}:#{fmt_value(v)}" }.join(":")
+    hash.map_with_index{ |(i, v)| "#{i}:#{fmt_value(v, false, true, false)}" }.join(":")
   end
 
   def fmt_song(hash) : String
-    hash.map_with_index{ |(i, v)| "#{i}~|~#{fmt_value(v, true)}" }.join("~|~")
+    hash.map_with_index{ |(i, v)| "#{i}~|~#{fmt_value(v, true, false, false)}" }.join("~|~")
   end
 
   def fmt_comment(hash) : String
-    hash.map_with_index{ |(i, v)| "#{i}~#{fmt_value(v, true)}" }.join("~")
+    hash.map_with_index{ |(i, v)| "#{i}~#{fmt_value(v, true, false, true)}" }.join("~")
   end
 end
 

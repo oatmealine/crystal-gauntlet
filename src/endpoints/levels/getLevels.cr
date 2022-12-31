@@ -15,7 +15,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   # order by [...]
   order = "levels.created_at desc"
 
-  page_offset = Clean.clean_number(params["page"]? || "0").to_i * levels_per_page
+  page_offset = (params["page"]? || "0").to_i * levels_per_page
 
   searchQuery = params["str"]? || ""
 
@@ -46,7 +46,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
     if params["customSong"]? && params["customSong"]? != ""
       # todo
     else
-      queryParams << "song_id = '#{Clean.clean_number(params["song"])}'"
+      queryParams << "song_id = '#{params["song"].to_i}'"
     end
   end
   if params["twoPlayer"]? == "1"
@@ -102,7 +102,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   when "3" # trending
     # todo
   when "5" # made by user
-    queryParams << "levels.user_id = #{Clean.clean_number(searchQuery)}" # (you can't sql inject with numbers)
+    queryParams << "levels.user_id = #{searchQuery.to_i}" # (you can't sql inject with numbers)
   when "6", "17" # featured (gdw is 17)
     # todo: order by feature date
     queryParams << "featured = 1"
@@ -113,7 +113,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
     # todo
   when "10", "19" # map packs
     order = "map_pack_links.idx asc"
-    queryParams << "levels.id in (#{Clean.clean_number_list(searchQuery)})"
+    queryParams << "levels.id in (#{searchQuery.split(",").map{|v| v.to_i}.join(",")})"
   when "11" # rated
     # todo: order by rate date
     queryParams << "levels.stars is not null"

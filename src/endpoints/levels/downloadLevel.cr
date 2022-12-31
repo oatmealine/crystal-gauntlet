@@ -96,6 +96,8 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
         27 => xor_pass,
       })
 
+      # todo: shove this into fmt_hash to prevent injects
+
       if params.has_key?("extras")
         response += ":26:" + level_info
       end
