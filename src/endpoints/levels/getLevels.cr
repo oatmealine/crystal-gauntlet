@@ -67,7 +67,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   if params["diff"]? && params["diff"]? != "-"
     case params["diff"]?
     when "-1"
-      queryParams << "difficulty is null" # NA
+      queryParams << "difficulty is null and community_difficulty is null" # NA
     when "-2"
       puts "demon :)"
       case params["demonFilter"]?
@@ -82,9 +82,9 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
       when "5"
         queryParams << "demon_difficulty = #{DemonDifficulty::Extreme.value}"
       end
-      queryParams << "difficulty = #{LevelDifficulty::Demon.value}"
+      queryParams << "difficulty = #{LevelDifficulty::Demon.value} or (difficulty is null and community_difficulty = #{LevelDifficulty::Demon.value})"
     when "-3"
-      queryParams << "difficulty = #{LevelDifficulty::Auto.value}"
+      queryParams << "difficulty = #{LevelDifficulty::Auto.value} or (difficulty is null and community_difficulty = #{LevelDifficulty::Auto.value})"
     else
       # easy, normal, hard, harder, insane
       # todo
@@ -143,7 +143,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
 
   hash_data = [] of Tuple(Int32, Int32, Bool)
 
-  DATABASE.query "select levels.id, levels.name, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered #{query_base} limit #{levels_per_page} offset #{page_offset}" do |rs|
+  DATABASE.query "select levels.id, levels.name, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered #{query_base} limit #{levels_per_page} offset #{page_offset}" do |rs|
     rs.each do
       id = rs.read(Int32)
       name = rs.read(String)
@@ -161,8 +161,11 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
       two_player = rs.read(Bool)
       downloads = rs.read(Int32)
       likes = rs.read(Int32)
-      difficulty_int = rs.read(Int32 | Nil)
-      difficulty = difficulty_int && LevelDifficulty.new(difficulty_int)
+      set_difficulty_int = rs.read(Int32 | Nil)
+      set_difficulty = set_difficulty_int && LevelDifficulty.new(set_difficulty_int)
+      community_difficulty_int = rs.read(Int32 | Nil)
+      community_difficulty = community_difficulty_int && LevelDifficulty.new(community_difficulty_int)
+      difficulty = set_difficulty || community_difficulty
       demon_difficulty_int = rs.read(Int32 | Nil)
       demon_difficulty = demon_difficulty_int && DemonDifficulty.new(demon_difficulty_int)
       stars = rs.read(Int32 | Nil)

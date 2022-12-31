@@ -33,14 +33,15 @@ CREATE TABLE levels (
   has_ldm     INTEGER  NOT NULL  DEFAULT 0,
   two_player  INTEGER  NOT NULL  DEFAULT 0,
 
-  downloads         INTEGER  NOT NULL  DEFAULT 0,
-  likes             INTEGER  NOT NULL  DEFAULT 0,
-  difficulty        INTEGER,
-  demon_difficulty  INTEGER,
-  stars             INTEGER,
-  featured          INTEGER  NOT NULL  DEFAULT 0,
-  epic              INTEGER  NOT NULL  DEFAULT 0,
-  rated_coins       INTEGER  NOT NULL  DEFAULT 0
+  downloads             INTEGER  NOT NULL  DEFAULT 0,
+  likes                 INTEGER  NOT NULL  DEFAULT 0,
+  difficulty            INTEGER,
+  community_difficulty  INTEGER,
+  demon_difficulty      INTEGER,
+  stars                 INTEGER,
+  featured              INTEGER  NOT NULL  DEFAULT 0,
+  epic                  INTEGER  NOT NULL  DEFAULT 0,
+  rated_coins           INTEGER  NOT NULL  DEFAULT 0
 );
 
 -- +migrate down
