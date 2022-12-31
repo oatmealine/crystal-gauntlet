@@ -3,9 +3,139 @@ require "base64"
 
 include CrystalGauntlet
 
+# things might break if you modify this
+levels_per_page = 10
+
 CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
   puts params.inspect
+
+  # where [...]
+  queryParams = ["unlisted = 0"] # don't leave the default empty!!
+  # order by [...]
+  order = "levels.created_at desc"
+
+  page_offset = Clean.clean_number(params["page"]? || "0").to_i * levels_per_page
+
+  searchQuery = params["str"]? || ""
+
+  # filters
+  if params["featured"]? == "1"
+    queryParams << "featured = 1"
+  end
+  if params["original"]? == "1"
+    queryParams << "original is null"
+  end
+  if params["coins"]? == "1"
+    queryParams << "rated_coins = 1 and levels.coins != 0"
+  end
+  if params["epic"]? == "1"
+    queryParams << "epic = 1"
+  end
+  if params["uncompleted"]? == "1"
+    # todo
+    # $completedLevels = ExploitPatch::numbercolon($_POST["completedLevels"]);
+	  # $params[] = "NOT levelID IN ($completedLevels)";
+  end
+  if params["onlyCompleted"]? == "1"
+    # todo
+	  # $completedLevels = ExploitPatch::numbercolon($_POST["completedLevels"]);
+	  # $params[] = "levelID IN ($completedLevels)";
+  end
+  if params["song"]?
+    if params["customSong"]? && params["customSong"]? != ""
+      # todo
+    else
+      queryParams << "song_id = '#{Clean.clean_number(params["song"])}'"
+    end
+  end
+  if params["twoPlayer"]? == "1"
+    queryParams << "two_player = 1"
+  end
+  if params["star"]? == "1"
+    queryParams << "levels.stars is not null"
+  end
+  if params["noStar"]? == "1"
+    queryParams << "levels.stars is null"
+  end
+  if params["gauntlet"]?
+    # todo
+  end
+  if params["len"]?
+    # todo
+  end
+  if params["diff"]? && params["diff"]? != "-"
+    case params["diff"]?
+    when "-1"
+      queryParams << "difficulty is null" # NA
+    when "-2"
+      puts "demon :)"
+      case params["demonFilter"]?
+      when "1"
+        queryParams << "demon_difficulty = #{DemonDifficulty::Easy.value}"
+      when "2"
+        queryParams << "demon_difficulty = #{DemonDifficulty::Medium.value}"
+      when "3"
+        queryParams << "demon_difficulty = #{DemonDifficulty::Hard.value}"
+      when "4"
+        queryParams << "demon_difficulty = #{DemonDifficulty::Insane.value}"
+      when "5"
+        queryParams << "demon_difficulty = #{DemonDifficulty::Extreme.value}"
+      end
+      queryParams << "difficulty = #{LevelDifficulty::Demon.value}"
+    when "-3"
+      queryParams << "difficulty = #{LevelDifficulty::Auto.value}"
+    else
+      # easy, normal, hard, harder, insane
+      # todo
+    end
+  end
+
+  # level search type
+  case params["type"]
+  when "0", "15", nil # default sort (gdw is 15)
+    order = "likes desc"
+  when "1" # most downloaded
+    order = "downloads desc"
+  when "2" # most liked
+    order = "likes desc"
+  when "3" # trending
+    # todo
+  when "5" # made by user
+    queryParams << "levels.user_id = #{Clean.clean_number(searchQuery)}" # (you can't sql inject with numbers)
+  when "6", "17" # featured (gdw is 17)
+    # todo: order by feature date
+    queryParams << "featured = 1"
+  when "16" # hall of fame (epic)
+    # todo: order by epic date
+    queryParams << "epic = 1"
+  when "7" # magic
+    # todo
+  when "10", "19" # map packs
+    # todo
+  when "11" # rated
+    # todo: order by rate date
+    queryParams << "levels.stars is not null"
+  when "12" # followed
+    # todo
+  when "13" # friends
+    # todo
+  when "21" # daily
+    # todo
+  when "22" # weekly
+    # todo
+  when "23" # event (unused)
+    # todo
+  end
+
+  # todo: search query
+
+  where_str = "where (#{queryParams.join(") and (")})"
+  query_base = "from levels join users on levels.user_id = users.id #{where_str} order by #{order}"
+
+  puts query_base
+
+  level_count = DATABASE.scalar("select count(*) #{query_base}").as(Int64)
 
   results = [] of String
   users = [] of String
@@ -13,7 +143,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
 
   hash_data = [] of Tuple(Int32, Int32, Bool)
 
-  DATABASE.query "select levels.id, levels.name, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered from levels join users on levels.user_id = users.id" do |rs|
+  DATABASE.query "select levels.id, levels.name, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered #{query_base} limit #{levels_per_page} offset #{page_offset}" do |rs|
     rs.each do
       id = rs.read(Int32)
       name = rs.read(String)
@@ -83,8 +213,8 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
     end
   end
 
-  # `:${offset}:${levelsPerPage}`
-  searchMeta = "#{results.size}:0:10"
+  # `${amount}:${offset}:${levelsPerPage}`
+  searchMeta = "#{level_count}:#{page_offset}:#{levels_per_page}"
 
   res = [results.join("|"), users.join("|"), songs.join("|"), searchMeta, CrystalGauntlet::Hashes.gen_multi(hash_data)].join("#")
   puts res

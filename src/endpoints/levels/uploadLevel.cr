@@ -30,6 +30,11 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(body : String): String {
   # todo: https://github.com/Cvolton/GMDprivateServer/blob/master/incl/levels/uploadGJLevel.php#L53
   extraString = params["extraString"]? || "29_29_29_40_29_29_29_29_29_29_29_29_29_29_29_29"
 
+  original = (params["original"]? || "0").to_i32
+  if original == 0
+    original = nil
+  end
+
   # todo: cap level length
   # todo: cap coins
   # todo: cap ldm to bool
