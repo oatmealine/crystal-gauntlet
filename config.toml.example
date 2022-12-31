@@ -22,6 +22,12 @@ allow_registration = true
 # hasn't been set yet. when set to false, all unrated
 # levels will be NA
 allow_votes = true
+# same as above, but for demon difficulties
+# this will let people vote and influence a demon'S
+# difficulty past its original demon rating
+allow_demon_votes = true
 # the minimum amount of votes before a level's difficulty
 # will go from NA to the average
 min_votes = 10
+# same as above, but for demon ratings
+min_demon_votes = 10

@@ -26,11 +26,11 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
     # todo: fix
     # progress = XorCrypt.encrypt_string(GDBase64.decode_string(params["s6"]), "41274")
     coins = params["s9"].to_i - 5819
-    if coins > 3
+    if coins > 3 || coins < 0
       return "-1"
     end
     percent = params["percent"].to_i
-    if percent > 100
+    if percent > 100 || percent < 0
       return "-1"
     end
 
