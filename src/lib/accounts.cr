@@ -16,7 +16,6 @@ module CrystalGauntlet::Accounts
   end
 
   def get_ext_id_from_params(params : URI::Params) : String | Nil
-    return "1"
     if params.has_key?("udid") && params["udid"] != ""
       # todo: numeric id check
       params["udid"]

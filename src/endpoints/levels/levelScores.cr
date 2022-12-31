@@ -66,7 +66,9 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
 
   scores = [] of String
 
-  DATABASE.query_each "select percent, level_scores.coins, set_at, users.username, users.id, users.icon_type, users.color1, users.color2, users.cube, users.ship, users.ball, users.ufo, users.wave, users.robot, users.spider, users.special, users.account_id from level_scores join users on level_scores.account_id = users.account_id where level_id = ? order by percent, level_scores.coins desc", level_id do |rs|
+  i = 0
+  DATABASE.query_each "select percent, level_scores.coins, set_at, users.username, users.id, users.icon_type, users.color1, users.color2, users.cube, users.ship, users.ball, users.ufo, users.wave, users.robot, users.spider, users.special, users.account_id from level_scores join users on level_scores.account_id = users.account_id where level_id = ? order by percent desc, level_scores.coins desc", level_id do |rs|
+    i += 1
     percent = rs.read(Int32)
     coins = rs.read(Int32)
     set_at = rs.read(String)
@@ -93,7 +95,7 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
       15 => special,
       16 => account_id,
       3 => percent,
-      6 => percent == 100 ? 1 : (percent > 75 ? 2 : 3), # ???
+      6 => i,
       13 => coins,
       42 => set_at
     })
