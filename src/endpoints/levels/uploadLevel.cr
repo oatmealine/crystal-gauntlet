@@ -6,8 +6,9 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
   puts params.inspect
 
+  # todo: green user fixes? pretty please?
   ext_id = Accounts.get_ext_id_from_params(params)
-  if ext_id == "-1" || !Accounts.verify_gjp(ext_id, params["gjp"])
+  if !ext_id || !Accounts.verify_gjp(ext_id.to_i, params["gjp"])
     return "-1"
   end
   user_id = Accounts.get_user_id(ext_id)

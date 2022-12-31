@@ -6,16 +6,25 @@ include CrystalGauntlet
 module CrystalGauntlet::Accounts
   extend self
 
-  def get_ext_id_from_params(params : URI::Params) : String
+  def get_account_id_from_params(params : URI::Params) : Int32 | Nil
+    if params["accountID"]? && params["accountID"]? != "0"
+      # todo: validate password
+      params["accountID"].to_i32
+    else
+      nil
+    end
+  end
+
+  def get_ext_id_from_params(params : URI::Params) : String | Nil
     return "1"
     if params.has_key?("udid") && params["udid"] != ""
       # todo: numeric id check
       params["udid"]
-    elsif params.has_key?("account_id") && params["account_id"] != "" && params["account_id"] != "0"
+    elsif params.has_key?("accountID") && params["accountID"] != "" && params["accountID"] != "0"
       # todo: validate password
-      params["account_id"]
+      params["accountID"]
     else
-      "-1"
+      nil
     end
   end
 
@@ -29,7 +38,7 @@ module CrystalGauntlet::Accounts
     end
   end
 
-  def verify_gjp(account_id : String, gjp : String) : Bool
+  def verify_gjp(account_id : Int32, gjp : String) : Bool
     hash = DATABASE.scalar("select password from accounts where id = ?", account_id).as(String)
     bcrypt = Crypto::Bcrypt::Password.new(hash)
     bcrypt.verify(GJP.decrypt(gjp))
