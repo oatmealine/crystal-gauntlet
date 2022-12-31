@@ -5,10 +5,10 @@ require "migrate"
 require "dotenv"
 
 require "./enums"
-require "./hash"
-require "./format"
-require "./accounts"
-require "./gjp"
+require "./lib/hash"
+require "./lib/format"
+require "./lib/accounts"
+require "./lib/gjp"
 
 Dotenv.load
 
