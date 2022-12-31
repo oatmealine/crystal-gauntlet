@@ -15,15 +15,11 @@ module CrystalGauntlet::Accounts
     end
   end
 
-  def get_ext_id_from_params(params : URI::Params) : String | Nil
+  def get_ext_id_from_params(params : URI::Params) : Int32 | Nil
     if params.has_key?("udid") && params["udid"] != ""
-      # todo: numeric id check
-      params["udid"]
-    elsif params.has_key?("accountID") && params["accountID"] != "" && params["accountID"] != "0"
-      # todo: validate password
-      params["accountID"]
+      params["udid"].to_i32?
     else
-      nil
+      get_account_id_from_params(params)
     end
   end
 
@@ -41,7 +37,7 @@ module CrystalGauntlet::Accounts
     return user_id, ext_id.to_i
   end
 
-  def get_user_id(ext_id : String) : Int32
+  def get_user_id(ext_id : Int32) : Int32
     DATABASE.query("select id from users where udid = ? or account_id = ?", ext_id, ext_id) do |rs|
       if rs.move_next
         return rs.read(Int32)

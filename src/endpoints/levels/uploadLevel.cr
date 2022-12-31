@@ -7,11 +7,10 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(body : String): String {
   puts params.inspect
 
   # todo: green user fixes? pretty please?
-  ext_id = Accounts.get_ext_id_from_params(params)
-  if !ext_id || !Accounts.verify_gjp(ext_id.to_i, params["gjp"])
+  user_id, account_id = Accounts.auth(params)
+  if !(user_id && account_id)
     return "-1"
   end
-  user_id = Accounts.get_user_id(ext_id)
 
   song_id = params["songID"] == "0" ? params["audioTrack"] : params["songID"]
 

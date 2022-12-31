@@ -8,12 +8,10 @@ CrystalGauntlet.endpoints["/updateGJUserScore22.php"] = ->(body : String): Strin
   params = URI::Params.parse(body)
   puts params.inspect
 
-  account_id = Accounts.get_account_id_from_params(params)
-  if !account_id || !Accounts.verify_gjp(account_id, params["gjp"])
+  user_id, account_id = Accounts.auth(params)
+  if !(user_id && account_id)
     return "-1"
   end
-
-  user_id = Accounts.get_user_id(account_id.to_s)
 
   # todo: prevent username change unless it's a capitalization change
   # todo: update account username casing w/ user username

@@ -16,7 +16,7 @@ CrystalGauntlet.endpoints["/accounts/loginGJAccount.php"] = ->(body : String): S
     bcrypt = Crypto::Bcrypt::Password.new(hash)
 
     if bcrypt.verify(password)
-      user_id = Accounts.get_user_id(account_id.to_s)
+      user_id = Accounts.get_user_id(account_id)
       "#{account_id},#{user_id}"
     else
       return "-12"
