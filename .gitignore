@@ -3,4 +3,5 @@
 /.shards/
 *.dwarf
 .env
-crystalgauntlet.db
+/crystalgauntlet.db
+/config.toml

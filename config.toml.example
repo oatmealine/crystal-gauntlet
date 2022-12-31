@@ -1,0 +1,26 @@
+[general]
+# if this path is encountered during path traversal,
+# it will be removed. this is useful for instances
+# where your absolute domain path is not long enough
+# to replace boomlings.com, because you can then point
+# it at a different, longer path to fill the gap
+#
+# example:
+#   boomlings.com/database/
+#   exampke.com/aaaaaaaaaa/
+#
+# leaving blank will disable this
+append_path = ""
+
+[accounts]
+# allow new accounts to be created
+allow_registration = true
+
+[voting]
+# allow votes to influence a level's difficulty when it
+# hasn't been set yet. when set to false, all unrated
+# levels will be NA
+allow_votes = true
+# the minimum amount of votes before a level's difficulty
+# will go from NA to the average
+min_votes = 10
