@@ -20,8 +20,12 @@ CrystalGauntlet.endpoints["/getGJMapPacks21.php"] = ->(body : String): String {
       coins = rs.read(Int32)
       difficulty = rs.read(Int32)
       col1 = rs.read(String)
-      col2 = rs.read(String)
+      col2 = rs.read(String | Nil)
       level_id = rs.read(Int32)
+
+      if !col2
+        col2 = col1
+      end
 
       if !properties.has_key?(id)
         properties[id] = { 
