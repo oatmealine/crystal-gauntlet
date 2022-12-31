@@ -7,7 +7,7 @@ module CrystalGauntlet::Clean
     # these are just the ones commonly used in response formatting
     # i'm unsure if any other ones should be added, so for the time
     # being i'll just keep it as is
-    str.gsub(/[:\|~#\(\)\0\n]/, "")
+    str.gsub(/[:\|~#\(\)\0\n~]/, "")
   end
 
   # for descriptions & similar

@@ -20,6 +20,8 @@ dependencies:
   toml:
     github: crystal-community/toml.cr
     branch: master
+  crystagiri:
+    github: madeindjs/crystagiri
 
 crystal: 1.6.2
 

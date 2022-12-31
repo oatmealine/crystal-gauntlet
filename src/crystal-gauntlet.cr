@@ -11,6 +11,7 @@ require "./lib/format"
 require "./lib/accounts"
 require "./lib/gjp"
 require "./lib/clean"
+require "./lib/songs"
 
 Dotenv.load
 

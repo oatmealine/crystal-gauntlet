@@ -69,10 +69,11 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
         9 => difficulty ? difficulty.to_star_difficulty : 0, # 0=N/A 10=EASY 20=NORMAL 30=HARD 40=HARDER 50=INSANE 50=AUTO 50=DEMON
         10 => downloads,
         11 => 1,
-        12 => song_id < 50 ? song_id : 0,
+        12 => !Songs.is_custom_song(song_id) ? song_id : 0,
         13 => game_version,
         14 => likes,
         17 => difficulty && difficulty.demon?,
+        # 0 for n/a, 10 for easy, 20, for medium, ...
         43 => (demon_difficulty || DemonDifficulty::Hard).to_demon_difficulty,
         25 => difficulty && difficulty.auto?,
         18 => stars || 0,
@@ -84,7 +85,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
         31 => two_player,
         28 => "1",
         29 => "1",
-        35 => song_id >= 50 ? song_id : 0,
+        35 => Songs.is_custom_song(song_id) ? song_id : 0,
         36 => extra_data,
         37 => coins,
         38 => rated_coins,
@@ -93,7 +94,6 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
         47 => 2,
         40 => has_ldm,
         27 => xor_pass,
-        # 0 for n/a, 10 for easy, 20, for medium, ...
       })
 
       if params.has_key?("extras")

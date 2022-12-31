@@ -1,5 +1,9 @@
 version: 2.0
 shards:
+  crystagiri:
+    git: https://github.com/madeindjs/crystagiri.git
+    version: 0.3.5
+
   db:
     git: https://github.com/crystal-lang/crystal-db.git
     version: 0.6.0
