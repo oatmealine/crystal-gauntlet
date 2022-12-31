@@ -27,6 +27,20 @@ module CrystalGauntlet::Accounts
     end
   end
 
+  # returns userid, accountid
+  def auth(params : URI::Params) : (Tuple(Int32, Int32) | Tuple(Nil, Nil))
+    ext_id = Accounts.get_ext_id_from_params(params)
+    if !ext_id || !Accounts.verify_gjp(ext_id.to_i, params["gjp"])
+      return nil, nil
+    end
+    user_id = Accounts.get_user_id(ext_id)
+    if !user_id
+      return nil, nil
+    end
+
+    return user_id, ext_id.to_i
+  end
+
   def get_user_id(ext_id : String) : Int32
     DATABASE.query("select id from users where udid = ? or account_id = ?", ext_id, ext_id) do |rs|
       if rs.move_next
