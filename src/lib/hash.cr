@@ -53,4 +53,18 @@ module CrystalGauntlet::Hashes
       ctx.update "pC26fpYaQCtg"
     end
   end
+
+  def gen_pack(map_packs : Array(Tuple(Int32, Int32, Int32))) : String
+    puts map_packs
+    
+    Digest::SHA1.hexdigest do |ctx|
+      map_packs.each.with_index() do |val, index|
+        level_id, stars, coins = val
+        level_id_str = level_id.to_s
+        ctx.update "#{level_id_str[0]}#{level_id_str[-1]}#{stars}#{coins ? 1 : 0}"
+      end
+
+      ctx.update "xI25fpAapCQg"
+    end
+  end
 end
