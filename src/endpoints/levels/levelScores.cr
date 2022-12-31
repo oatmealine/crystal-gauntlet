@@ -24,7 +24,8 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
     clicks = params["s2"].to_i - 3991
     time = params["s3"].to_i - 4085
     # todo: fix
-    # progress = XorCrypt.encrypt_string(GDBase64.decode_string(params["s6"]), "41274")
+    progress = String.new(XorCrypt.encrypt_string(GDBase64.decode_string(params["s6"]), "41274"))
+    puts progress
     coins = params["s9"].to_i - 5819
     if coins > 3 || coins < 0
       return "-1"
@@ -41,10 +42,10 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
       percent_old, coins_old = DATABASE.query_one("select percent, coins from level_scores where account_id = ? and level_id = ?", account_id, level_id, as: {Int32, Int32})
 
       if percent > percent_old || coins > coins_old
-        DATABASE.exec("update level_scores set account_id=?, level_id=?, daily_id=?, percent=?, attempts=?, clicks=?, coins=?, progress=?, time=?, set_at=? where account_id = ? and level_id = ?", account_id, level_id, daily_id, percent, attempts, clicks, coins, "", time, Time.utc.to_s("%Y-%m-%d %H:%M:%S"), account_id, level_id)
+        DATABASE.exec("update level_scores set account_id=?, level_id=?, daily_id=?, percent=?, attempts=?, clicks=?, coins=?, progress=?, time=?, set_at=? where account_id = ? and level_id = ?", account_id, level_id, daily_id, percent, attempts, clicks, coins, progress, time, Time.utc.to_s("%Y-%m-%d %H:%M:%S"), account_id, level_id)
       end
     else
-      DATABASE.exec("insert into level_scores (account_id, level_id, daily_id, percent, attempts, clicks, coins, progress, time) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", account_id, level_id, daily_id, percent, attempts, clicks, coins, "", time)
+      DATABASE.exec("insert into level_scores (account_id, level_id, daily_id, percent, attempts, clicks, coins, progress, time) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", account_id, level_id, daily_id, percent, attempts, clicks, coins, progress, time)
     end
   end
 
