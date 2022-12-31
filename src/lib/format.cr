@@ -46,6 +46,10 @@ module CrystalGauntlet::Format
   def fmt_song(hash) : String
     hash.map_with_index{ |(i, v)| "#{i}~|~#{fmt_value(v)}" }.join("~|~")
   end
+
+  def fmt_comment(hash) : String
+    hash.map_with_index{ |(i, v)| "#{i}~#{fmt_value(v)}" }.join("~")
+  end
 end
 
 module CrystalGauntlet::GDBase64

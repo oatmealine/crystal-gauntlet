@@ -18,16 +18,19 @@ CrystalGauntlet.endpoints["/likeGJItem211.php"] = ->(body : String): String {
   table = ""
   column = ""
   case type
-  when 1
+  when 1 # level like
     table = "levels"
     column = "id"
-  else # type 2 = comment, type 3 = account comments
+  when 2 # level comment like
+    table = "account_comments"
+    column = "id"
+  when 3 # account comments
     return "-1"
   end
 
   is_like = (params["isLike"]? || "1").to_i
   sign = is_like == 1 ? '+' : '-'
-  
+
   # note: formatting them like this is not a security vulnerability as the only possibilities for table, sign
   # and column are already known and not controlled directly by user input
   DATABASE.exec "update #{table} set likes = likes #{sign} 1 where #{column} = ?", item_id
