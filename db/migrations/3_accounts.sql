@@ -2,11 +2,12 @@
 CREATE TABLE accounts (
   id  SERIAL  PRIMARY KEY,
 
-  username  TEXT  NOT NULL,
+  username  TEXT  NOT NULL  COLLATE NOCASE,
   password  TEXT  NOT NULL, -- bcrypt hashed
   gjp2      TEXT  NOT NULL,
   email     TEXT  NOT NULL,
 
+  -- todo: swap to proper rank system
   is_admin  INTEGER  NOT NULL  DEFAULT 0,
 
   messages_enabled         INTEGER  NOT NULL  DEFAULT 1, -- messages from non-friends enabled

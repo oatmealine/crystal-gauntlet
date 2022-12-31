@@ -12,7 +12,7 @@ CREATE TABLE users (
   account_id    INTEGER  references accounts(id),
   registered    INTEGER  NOT NULL,
 
-  username  TEXT  NOT NULL,
+  username  TEXT  NOT NULL  COLLATE NOCASE,
 
   stars           INTEGER  NOT NULL  DEFAULT 0,
   demons          INTEGER  NOT NULL  DEFAULT 0,
