@@ -14,11 +14,7 @@ CrystalGauntlet.endpoints["/likeGJItem211.php"] = ->(body : String): String {
 
   item_id = params["itemID"].to_i
 
-  type = 1
-  if params.has_key?("type")
-    type = params["type"].to_i
-  end
-
+  type = (params["type"]? || "1").to_i
   table = ""
   column = ""
   case type
@@ -29,11 +25,7 @@ CrystalGauntlet.endpoints["/likeGJItem211.php"] = ->(body : String): String {
     return "-1"
   end
 
-  is_like = 1
-  if params.has_key?("isLike")
-    is_like = params["isLike"]
-  end
-
+  is_like = (params["isLike"]? || "1").to_i
   sign = is_like == 1 ? '+' : '-'
   
   # note: formatting them like this is not a security vulnerability as the only possibilities for table, sign
