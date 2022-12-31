@@ -13,6 +13,14 @@
 # leaving blank will disable this
 append_path = ""
 
+[formatting]
+# whether to format dates as relative or absolute
+# "relative" = relative, "absolute" = absolute
+# do note that absolute times can result in uglier
+# times due to colons being forbiddne in certain
+# spots
+date = "relative"
+
 [accounts]
 # allow new accounts to be created
 allow_registration = true
@@ -31,3 +39,11 @@ allow_demon_votes = true
 min_votes = 10
 # same as above, but for demon ratings
 min_demon_votes = 10
+
+[levels]
+# prevent users from deleting their own levels
+# if they are rated
+prevent_deletion_rated = true
+# prevent users from deleting their own levels
+# if they are featured
+prevent_deletion_featured = true

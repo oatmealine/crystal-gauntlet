@@ -2,6 +2,10 @@ module CrystalGauntlet::Format
   extend self
 
   TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+  # used when sending back to the client as an absolute date
+  TIME_FORMAT_GD_FRIENDLY = "%d/%m/%Y %H.%M"
+  # safe to send back in comments
+  TIME_FORMAT_USER_FRIENDLY = "%d/%m/%Y %H:%M"
 
   def fmt_timespan(s : Time::Span) : String
     seconds = s.total_seconds.floor()
@@ -26,14 +30,24 @@ module CrystalGauntlet::Format
     end
   end
 
-  def fmt_value(v) : String
+  def fmt_time(s : Time, colon_safe=false) : String
+    s.to_s(colon_safe ? TIME_FORMAT_USER_FRIENDLY : TIME_FORMAT_GD_FRIENDLY)
+  end
+
+  def fmt_value(v, colon_safe=false) : String
     case v
     when Bool
       v ? "1" : "0"
     when String
       v
     when Time::Span
-      fmt_span(v)
+      fmt_timespan(v)
+    when Time
+      if config_get("formatting.date") == "relative"
+        fmt_timespan(Time.utc - v)
+      else
+        fmt_time(v, colon_safe)
+      end
     else
       v.to_s
     end
@@ -44,11 +58,11 @@ module CrystalGauntlet::Format
   end
 
   def fmt_song(hash) : String
-    hash.map_with_index{ |(i, v)| "#{i}~|~#{fmt_value(v)}" }.join("~|~")
+    hash.map_with_index{ |(i, v)| "#{i}~|~#{fmt_value(v, true)}" }.join("~|~")
   end
 
   def fmt_comment(hash) : String
-    hash.map_with_index{ |(i, v)| "#{i}~#{fmt_value(v)}" }.join("~")
+    hash.map_with_index{ |(i, v)| "#{i}~#{fmt_value(v, true)}" }.join("~")
   end
 end
 

@@ -29,7 +29,7 @@ CrystalGauntlet.endpoints["/getGJAccountComments20.php"] = ->(body : String): St
         4 => likes,
         5 => 0,
         7 => likes < -3, # todo: config?
-        #9 => Format.fmt_timespan(Time.utc - Time.parse(created_at, Format::TIME_FORMAT, Time::Location::UTC)),
+        9 => Time.parse(created_at, Format::TIME_FORMAT, Time::Location::UTC),
         6 => id
       })
     end

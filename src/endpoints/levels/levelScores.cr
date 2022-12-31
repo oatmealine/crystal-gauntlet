@@ -98,7 +98,7 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
       3 => percent,
       6 => i,
       13 => coins,
-      42 => Format.fmt_timespan(Time.utc - Time.parse(set_at, Format::TIME_FORMAT, Time::Location::UTC))
+      42 => Time.parse(set_at, Format::TIME_FORMAT, Time::Location::UTC)
     })
   end
 
