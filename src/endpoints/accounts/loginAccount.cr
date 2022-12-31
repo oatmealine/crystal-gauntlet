@@ -10,7 +10,7 @@ CrystalGauntlet.endpoints["/accounts/loginGJAccount.php"] = ->(body : String): S
 
   username = params["userName"]
   password = params["password"]
-  result = DATABASE.query_all("select id, password from accounts", as: {Int32, String})
+  result = DATABASE.query_all("select id, password from accounts where username = ?", username, as: {Int32, String})
   if result.size > 0
     account_id, hash = result[0]
     bcrypt = Crypto::Bcrypt::Password.new(hash)
