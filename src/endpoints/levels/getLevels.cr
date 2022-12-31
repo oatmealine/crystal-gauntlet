@@ -112,7 +112,8 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   when "7" # magic
     # todo
   when "10", "19" # map packs
-    # todo
+    order = "map_pack_links.idx asc"
+    queryParams << "levels.id in (#{Clean.clean_number_list(searchQuery)})"
   when "11" # rated
     # todo: order by rate date
     queryParams << "levels.stars is not null"
@@ -131,7 +132,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   # todo: search query
 
   where_str = "where (#{queryParams.join(") and (")})"
-  query_base = "from levels join users on levels.user_id = users.id left join songs on levels.song_id = songs.id #{where_str} order by #{order}"
+  query_base = "from levels join users on levels.user_id = users.id left join songs on levels.song_id = songs.id left join map_pack_links on map_pack_links.level_id = levels.id #{where_str} order by #{order}"
 
   puts query_base
 

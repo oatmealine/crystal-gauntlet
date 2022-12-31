@@ -25,6 +25,11 @@ module CrystalGauntlet::Clean
     str.gsub(/[^0-9]/, "")
   end
 
+  # only allows numbers and commas
+  def clean_number_list(str)
+    str.gsub(/[^0-9,]/, "")
+  end
+
   # for b64 inputs; thoroughly cleans them
   def clean_b64(str)
     GDBase64.encode(GDBase64.decode_string(str))
