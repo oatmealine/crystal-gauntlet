@@ -14,3 +14,11 @@ task :dbmigrate do
   )
   migrator.to_latest
 end
+
+desc "Migrate database a single version down"
+task :dbmigratedown do
+  migrator = Migrate::Migrator.new(
+    DB.open(ENV["DATABASE_URL"])
+  )
+  migrator.down
+end

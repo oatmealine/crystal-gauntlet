@@ -1,12 +1,39 @@
 module CrystalGauntlet::Format
   extend self
 
+  TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+  def fmt_timespan(s : Time::Span) : String
+    seconds = s.total_seconds.floor()
+    minutes = s.total_minutes.floor()
+    hours = s.total_hours.floor()
+    days = s.total_days.floor()
+    months = (s.total_days / 30).floor()
+    years = (s.total_days / 365).floor()
+    case
+    when months >= 17
+      "#{years.to_i} year#{years == 1 ? "" : "s"}"
+    when days >= 31
+      "#{months.to_i} month#{months == 1 ? "" : "s"}"
+    when hours >= 24
+      "#{days.to_i} day#{days == 1 ? "" : "s"}"
+    when minutes >= 60
+      "#{hours.to_i} hour#{hours == 1 ? "" : "s"}"
+    when seconds >= 60
+      "#{minutes.to_i} minute#{minutes == 1 ? "" : "s"}"
+    else
+      "#{seconds.to_i} second#{seconds == 1 ? "" : "s"}"
+    end
+  end
+
   def fmt_value(v) : String
     case v
     when Bool
       v ? "1" : "0"
     when String
       v
+    when Time::Span
+      fmt_span(v)
     else
       v.to_s
     end

@@ -42,7 +42,7 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
       percent_old, coins_old = DATABASE.query_one("select percent, coins from level_scores where account_id = ? and level_id = ?", account_id, level_id, as: {Int32, Int32})
 
       if percent > percent_old || coins > coins_old
-        DATABASE.exec("update level_scores set account_id=?, level_id=?, daily_id=?, percent=?, attempts=?, clicks=?, coins=?, progress=?, time=?, set_at=? where account_id = ? and level_id = ?", account_id, level_id, daily_id, percent, attempts, clicks, coins, progress, time, Time.utc.to_s("%Y-%m-%d %H:%M:%S"), account_id, level_id)
+        DATABASE.exec("update level_scores set account_id=?, level_id=?, daily_id=?, percent=?, attempts=?, clicks=?, coins=?, progress=?, time=?, set_at=? where account_id = ? and level_id = ?", account_id, level_id, daily_id, percent, attempts, clicks, coins, progress, time, Time.utc.to_s(Format::TIME_FORMAT), account_id, level_id)
       end
     else
       DATABASE.exec("insert into level_scores (account_id, level_id, daily_id, percent, attempts, clicks, coins, progress, time) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", account_id, level_id, daily_id, percent, attempts, clicks, coins, progress, time)
@@ -98,7 +98,7 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
       3 => percent,
       6 => i,
       13 => coins,
-      42 => set_at
+      42 => Format.fmt_timespan(Time.utc - Time.parse(set_at, Format::TIME_FORMAT, Time::Location::UTC))
     })
   end
 
