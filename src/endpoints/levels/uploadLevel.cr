@@ -16,7 +16,7 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(body : String): String {
 
   description = params["levelDesc"]
   if params["gameVersion"].to_i >= 20 # 2.0
-    description = GDBase64.decode description
+    description = GDBase64.decode_string description
   end
 
   if DATABASE.scalar("select count(*) from levels where id = ? and user_id = ?", params["levelID"], params["accountID"]).as(Int64) > 0
