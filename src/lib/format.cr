@@ -71,7 +71,7 @@ module CrystalGauntlet::Format
   end
 
   def fmt_comment(hash) : String
-    hash.map_with_index{ |(i, v)| "#{i}~#{fmt_value(v, true, false, true)}" }.join("~")
+    hash.map_with_index{ |(i, v)| "#{i}~#{fmt_value(v, false, false, true)}" }.join("~")
   end
 end
 
