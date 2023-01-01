@@ -5,3 +5,4 @@
 .env
 /crystalgauntlet.db
 /config.toml
+/data/

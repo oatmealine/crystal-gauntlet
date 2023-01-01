@@ -1,0 +1,101 @@
+[general]
+# if this path is encountered during path traversal,
+# it will be removed. this is useful for instances
+# where your absolute domain path is not long enough
+# to replace boomlings.com, because you can then point
+# it at a different, longer path to fill the gap
+#
+# example:
+#   boomlings.com/database/
+#   example.com/aaaaaaaaaa/
+#               ^^^^^^^^^^^
+#
+# leaving blank will disable this
+append_path = ""
+
+[formatting]
+# whether to format dates as relative or absolute
+# "relative" = relative, "absolute" = absolute
+# do note that absolute times can result in uglier
+# times due to colons being forbiddne in certain
+# spots
+date = "relative"
+
+[accounts]
+# allow new accounts to be created
+allow_registration = true
+
+[voting]
+# allow votes to influence a level's difficulty when it
+# hasn't been set yet. when set to false, all unrated
+# levels will be NA
+allow_votes = true
+# same as above, but for demon difficulties
+# this will let people vote and influence a demon'S
+# difficulty past its original demon rating
+allow_demon_votes = true
+# the minimum amount of votes before a level's difficulty
+# will go from NA to the average
+min_votes = 10
+# same as above, but for demon ratings
+min_demon_votes = 10
+
+[levels]
+# prevent users from deleting their own levels
+# if they are rated
+prevent_deletion_rated = true
+# prevent users from deleting their own levels
+# if they are featured
+prevent_deletion_featured = true
+
+[songs]
+# allow custom songs in general to be used,
+# whether it be non-newgrounds or newgrounds ones
+allow_custom_songs = true
+# allow non-newgrounds custom songs to be used
+# on the server
+allow_nong_songs = true
+# pushes all non-newgrounds songs above an arbitrary
+# id to prevent collisions with newgrounds ids, meaning
+# all song ids that work in vanilla GD will work
+# on the server
+preserve_newgrounds_ids = true
+
+[songs.sources]
+# allow ALL sources that yt-dlp supports for music
+# this is a BAD idea for many reasons
+allow_all_sources = false
+
+# lets you support much more sites but may result in much
+# slower download speeds and more bandwidth. requires ffmpeg
+allow_transcoding = true
+
+# location of your yt-dlp binary. get one here: https://github.com/yt-dlp/yt-dlp/releases/tag/2022.11.11
+# defaults to checking through path
+ytdlp_binary = "/usr/bin/yt-dlp"
+
+# location of your ffmpeg binary. get one here: https://ffmpeg.org/download.html
+# allows for transcoding
+# defaults to checking through path
+ffmpeg_binary = "/usr/bin/ffmpeg"
+
+# leads to more stable downloads at the cost of
+# using up much more storage to store every song
+#
+# required for allow_transcoding
+proxy_downloads = true
+
+# expressed in seconds, doesn't affect NG
+max_duration = 600
+
+# see: https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md
+# not every source is supported, and most video sites will fail w/o transcoding enabled
+[songs.sources.youtube]
+allow = true
+
+[songs.sources.soundcloud]
+allow = true
+
+[songs.sources.generic]
+# direct URLs and similar
+allow = true

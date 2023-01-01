@@ -72,6 +72,9 @@ module CrystalGauntlet
       server.bind_unix(listen_on.to_s.sub("unix://",""))
     end
 
+    # for debugging
+    #Songs.reupload("https://soundcloud.com/koraii/encroachingdark", 123456)
+
     puts "Listening on #{listen_on.to_s}"
     server.listen
   end
