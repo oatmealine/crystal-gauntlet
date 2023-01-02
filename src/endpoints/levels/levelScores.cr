@@ -51,6 +51,8 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
 
   type = params["type"]? ? params["type"] : "1"
 
+  where_query = ["level_id = ?"]
+
   case type
   when 0
     # friends
@@ -60,13 +62,13 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
     # todo
   when 2
     # weekly
-    # todo
+    where_query << "level_scores.set_at > \"#{(Time.utc - 7.days).to_s(Format::TIME_FORMAT)}\""
   end
 
   scores = [] of String
 
   i = 0
-  DATABASE.query_each "select percent, level_scores.coins, set_at, users.username, users.id, users.icon_type, users.color1, users.color2, users.cube, users.ship, users.ball, users.ufo, users.wave, users.robot, users.spider, users.special, users.account_id from level_scores join users on level_scores.account_id = users.account_id where level_id = ? order by percent desc, level_scores.coins desc", level_id do |rs|
+  DATABASE.query_each "select percent, level_scores.coins, set_at, users.username, users.id, users.icon_type, users.color1, users.color2, users.cube, users.ship, users.ball, users.ufo, users.wave, users.robot, users.spider, users.special, users.account_id from level_scores join users on level_scores.account_id = users.account_id where (#{where_query.join(") and (")}) order by percent desc, level_scores.coins desc limit 200", level_id do |rs|
     i += 1
     percent = rs.read(Int32)
     coins = rs.read(Int32)
