@@ -6,8 +6,8 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
   params = URI::Params.parse(body)
   LOG.debug { params.inspect }
 
-  account_id = Accounts.get_account_id_from_params(params)
-  if !account_id || !Accounts.verify_gjp(account_id, params["gjp"])
+  user_id, account_id = Accounts.auth(params)
+  if !(user_id && account_id)
     return "-1"
   end
 
