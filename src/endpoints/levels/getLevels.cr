@@ -19,6 +19,16 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
 
   searchQuery = params["str"]? || ""
 
+  if searchQuery != ""
+    if searchQuery.to_i?
+      queryParams << "levels.id = #{searchQuery.to_i}"
+    else
+      # no sql injections to see here; clean_char only leaves A-Za-z0-9 intact
+      # todo: make this configurable w/ fuzzy search
+      queryParams << "levels.name like \"#{Clean.clean_char(searchQuery)}%\""
+    end
+  end
+
   # filters
   if params["featured"]? == "1"
     queryParams << "featured = 1"
@@ -131,8 +141,6 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   when "23" # event (unused)
     # todo
   end
-
-  # todo: search query
 
   where_str = "where (#{queryParams.join(") and (")})"
   # todo: switch join users to left join to avoid losing levels to the shadow realm after a user vanishes
