@@ -71,15 +71,15 @@ module CrystalGauntlet
       Colorize.with.light_gray.dim.surround(@io) do
         timestamp
       end
-      string " "
+      string "  "
       severity_color(@entry.severity).surround(@io) do
         @entry.severity.label.rjust(@io, 6)
       end
-      string ": "
+      string "  "
       Colorize.with.white.surround(@io) do
         source
       end
-      string " - "
+      string "  "
       message
     end
   end
@@ -97,10 +97,27 @@ module CrystalGauntlet
 
       if CrystalGauntlet.endpoints.has_key?(path) && context.request.method == "POST" && body
         func = CrystalGauntlet.endpoints[path]
-        value = func.call(body.gets_to_end)
-        LOG.debug { "-> " + value }
-        context.response.content_type = "text/plain"
-        context.response.print value
+        begin
+          value = func.call(body.gets_to_end)
+        rescue err
+          LOG.error { "error while handling #{path}:" }
+          LOG.error { err.to_s }
+          is_relevant = true
+          err.backtrace.each do |str|
+            # this is a hack. Oh well
+            if str.starts_with?("src/crystal-gauntlet.cr") || (!is_relevant)
+              is_relevant = false
+            else
+              LOG.error {"  #{str}"}
+            end
+          end
+          context.response.content_type = "text/plain"
+          context.response.respond_with_status(500, "-1")
+        else
+          LOG.debug { "-> " + value }
+          context.response.content_type = "text/plain"
+          context.response.print value
+        end
       else
         call_next(context)
       end
@@ -109,9 +126,8 @@ module CrystalGauntlet
 
   def self.run()
     server = HTTP::Server.new([
-      HTTP::ErrorHandler.new,
       HTTP::LogHandler.new,
-      HTTP::StaticFileHandler.new("data/", fallthrough = true, directory_listing = false),
+      HTTP::StaticFileHandler.new("data/", fallthrough: true, directory_listing: false),
       CrystalGauntlet::GDHandler.new
     ])
 

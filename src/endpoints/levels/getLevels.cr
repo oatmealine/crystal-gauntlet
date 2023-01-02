@@ -102,7 +102,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   when "3" # trending
     # todo: make configurable?
     order = "likes desc"
-    queryParams << "created_at > #{(Time.utc - 7.days).to_s(Format::TIME_FORMAT)}"
+    queryParams << "levels.created_at > \"#{(Time.utc - 7.days).to_s(Format::TIME_FORMAT)}\""
   when "5" # made by user
     queryParams << "levels.user_id = #{searchQuery.to_i}" # (you can't sql inject with numbers)
   when "6", "17" # featured (gdw is 17)
