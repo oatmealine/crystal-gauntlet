@@ -10,7 +10,7 @@ CREATE TABLE songs (
 -- so this is a seperate table that's filled in for any given song once
 -- it's needed
 CREATE TABLE song_data (
-  id           SERIAL   PRIMARY KEY references songs(id),
+  id         SERIAL   PRIMARY KEY references songs(id),
 
   name       TEXT     NOT NULL,
   author_id  INTEGER  NOT NULL references song_authors(id),

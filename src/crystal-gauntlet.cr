@@ -1,4 +1,5 @@
 require "http/server"
+require "http/server/handler"
 require "uri"
 require "sqlite3"
 require "migrate"
@@ -41,38 +42,35 @@ module CrystalGauntlet
     @@endpoints
   end
 
-  def self.run()
-    server = HTTP::Server.new do |context|
+  class GDHandler
+    include HTTP::Handler
+
+    def call(context)
       # expunge trailing slashes
       path = context.request.path.chomp("/")
 
-      # todo: rethink life choices
-      if path.ends_with?(".mp3")
-        # todo: BIG NONO
-        # todo: path traversal exploits SCARY
-        file = File.open("./data#{path}", "r")
-        context.response.content_type = "audio/mp3"
-        IO.copy(file, context.response)
-        file.close
+      path = path.sub(config_get("general.append_path").as(String | Nil) || "", "")
+
+      body = context.request.body
+
+      if CrystalGauntlet.endpoints.has_key?(path) && body
+        func = CrystalGauntlet.endpoints[path]
+        value = func.call(body.gets_to_end)
+        context.response.content_type = "text/plain"
+        context.response.print value
       else
-        path = path.sub(config_get("general.append_path").as(String | Nil) || "", "")
-
-        body = context.request.body
-
-        if !body
-          puts "no body :("
-        elsif @@endpoints.has_key?(path)
-          func = @@endpoints[path]
-          value = func.call(body.gets_to_end)
-          context.response.content_type = "text/plain"
-          context.response.print value
-          puts "#{path} -> #{value}"
-        else
-          context.response.respond_with_status(404, "endpoint not found")
-          puts "#{path} -> 404"
-        end
+        call_next(context)
       end
     end
+  end
+
+  def self.run()
+    server = HTTP::Server.new([
+      HTTP::ErrorHandler.new,
+      HTTP::LogHandler.new,
+      CrystalGauntlet::GDHandler.new,
+      HTTP::StaticFileHandler.new("data/", directory_listing = true)
+    ])
 
     listen_on = URI.parse(ENV["LISTEN_ON"]? || "http://localhost:8080").normalize
 

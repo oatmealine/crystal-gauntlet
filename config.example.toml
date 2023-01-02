@@ -52,9 +52,6 @@ prevent_deletion_featured = true
 # allow custom songs in general to be used,
 # whether it be non-newgrounds or newgrounds ones
 allow_custom_songs = true
-# allow non-newgrounds custom songs to be used
-# on the server
-allow_nong_songs = true
 # pushes all non-newgrounds songs above an arbitrary
 # id to prevent collisions with newgrounds ids, meaning
 # all song ids that work in vanilla GD will work
@@ -85,11 +82,17 @@ ffmpeg_binary = "/usr/bin/ffmpeg"
 # required for allow_transcoding
 proxy_downloads = true
 
-# expressed in seconds, doesn't affect NG
+# expressed in seconds
 max_duration = 600
+
+# expressed in bytes
+max_filesize = 10000000 # = 10MB
 
 # see: https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md
 # not every source is supported, and most video sites will fail w/o transcoding enabled
+[songs.sources.newgrounds]
+allow = true
+
 [songs.sources.youtube]
 allow = true
 
