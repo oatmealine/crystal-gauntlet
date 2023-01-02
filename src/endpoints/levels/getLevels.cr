@@ -10,8 +10,10 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
   LOG.debug { params.inspect }
 
+  can_see_unlisted = false
+
   # where [...]
-  queryParams = ["unlisted = 0"] # don't leave the default empty!!
+  queryParams = [] of String
   # order by [...]
   order = "levels.created_at desc"
 
@@ -22,7 +24,8 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   if searchQuery != "" && params["type"] != "5"
     if searchQuery.to_i?
       # we do this to get rid of the initial "unlisted = 0" bit
-      queryParams = ["levels.id = #{searchQuery.to_i}"]
+      can_see_unlisted = true
+      queryParams << "levels.id = #{searchQuery.to_i}"
     else
       # no sql injections to see here; clean_char only leaves A-Za-z0-9 intact
       # todo: make this configurable w/ fuzzy search
@@ -115,7 +118,21 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
     order = "likes desc"
     queryParams << "levels.created_at > \"#{(Time.utc - 7.days).to_s(Format::TIME_FORMAT)}\""
   when "5" # made by user
-    queryParams << "levels.user_id = #{searchQuery.to_i}" # (you can't sql inject with numbers)
+    if params["local"] == "1"
+      user_id, account_id = Accounts.auth(params)
+      if !(user_id && account_id)
+        return "-1"
+      end
+
+      if user_id == searchQuery.to_i
+        can_see_unlisted = true
+        queryParams << "levels.user_id = #{searchQuery.to_i}"
+      else
+        return "-1"
+      end
+    else
+      queryParams << "levels.user_id = #{searchQuery.to_i}" # (you can't sql inject with numbers)
+    end
   when "6", "17" # featured (gdw is 17)
     # todo: order by feature date
     queryParams << "featured = 1"
@@ -141,6 +158,10 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
     # todo
   when "23" # event (unused)
     # todo
+  end
+
+  if !can_see_unlisted
+    queryParams << "unlisted = 0"
   end
 
   where_str = "where (#{queryParams.join(") and (")})"
