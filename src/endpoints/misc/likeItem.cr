@@ -6,7 +6,7 @@ include CrystalGauntlet
 
 CrystalGauntlet.endpoints["/likeGJItem211.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   if !params.has_key?("itemID")
     return "-1"

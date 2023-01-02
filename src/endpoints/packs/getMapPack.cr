@@ -6,12 +6,12 @@ include CrystalGauntlet
 
 CrystalGauntlet.endpoints["/getGJMapPacks21.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   page = params["page"].to_i32
   properties = Hash(Int32, Hash(String, String)).new
   levels = Hash(Int32, Array(Int32)).new
-  
+
   DATABASE.query("select map_packs.id, map_packs.name, map_packs.stars, map_packs.coins, map_packs.difficulty, map_packs.col1, map_packs.col2, map_pack_links.level_id from map_packs join map_pack_links on map_packs.id = map_pack_links.mappack_id order by map_pack_links.idx limit 10 offset #{page * 10}") do |rs|
     rs.each do
       id = rs.read(Int32)
@@ -28,9 +28,9 @@ CrystalGauntlet.endpoints["/getGJMapPacks21.php"] = ->(body : String): String {
       end
 
       if !properties.has_key?(id)
-        properties[id] = { 
-          "name" => name, 
-          "stars" => stars.to_s, 
+        properties[id] = {
+          "name" => name,
+          "stars" => stars.to_s,
           "coins" => coins.to_s,
           "difficulty" => difficulty.to_s,
           "col1" => col1,

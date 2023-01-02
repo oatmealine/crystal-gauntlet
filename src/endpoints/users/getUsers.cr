@@ -6,7 +6,7 @@ include CrystalGauntlet
 
 CrystalGauntlet.endpoints["/getGJUsers20.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   page = params["page"].to_i
   results = [] of String
@@ -49,6 +49,6 @@ CrystalGauntlet.endpoints["/getGJUsers20.php"] = ->(body : String): String {
 
   amount = DATABASE.scalar("select count(*) from users where id = ? or username like ?", params["str"], username)
   response = [results.join("|"), "#{amount}:#{page * 10}:10"].join("#")
-  
+
   response
 }

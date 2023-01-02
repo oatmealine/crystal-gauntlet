@@ -6,7 +6,7 @@ include CrystalGauntlet
 
 CrystalGauntlet.endpoints["/accounts/registerGJAccount.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   if config_get("accounts.allow_registration").as(Bool | Nil) == false
     return "-1"

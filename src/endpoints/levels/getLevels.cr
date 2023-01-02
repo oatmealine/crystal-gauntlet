@@ -8,7 +8,7 @@ levels_per_page = 10
 
 CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   # where [...]
   queryParams = ["unlisted = 0"] # don't leave the default empty!!
@@ -69,7 +69,6 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
     when "-1"
       queryParams << "difficulty is null and community_difficulty is null" # NA
     when "-2"
-      puts "demon :)"
       case params["demonFilter"]?
       when "1"
         queryParams << "demon_difficulty = #{DemonDifficulty::Easy.value}"
@@ -135,7 +134,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   # todo: switch join users to left join to avoid losing levels to the shadow realm after a user vanishes
   query_base = "from levels join users on levels.user_id = users.id left join map_pack_links on map_pack_links.level_id = levels.id #{where_str} order by #{order}"
 
-  puts query_base
+  LOG.debug { "query: #{query_base}" }
 
   level_count = DATABASE.scalar("select count(*) #{query_base}").as(Int64)
 
@@ -216,7 +215,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   searchMeta = "#{level_count}:#{page_offset}:#{levels_per_page}"
 
   res = [results.join("|"), users.join("|"), songs.join("~:~"), searchMeta, CrystalGauntlet::Hashes.gen_multi(hash_data)].join("#")
-  puts res
+  LOG.debug { res }
 
   res
 }

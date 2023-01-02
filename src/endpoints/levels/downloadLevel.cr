@@ -5,7 +5,7 @@ include CrystalGauntlet
 
 CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   response = ""
 

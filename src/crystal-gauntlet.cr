@@ -5,6 +5,7 @@ require "sqlite3"
 require "migrate"
 require "dotenv"
 require "toml"
+require "colorize"
 
 require "./enums"
 require "./lib/hash"
@@ -20,6 +21,7 @@ module CrystalGauntlet
   VERSION = "0.1.0"
 
   CONFIG = TOML.parse(File.read("./config.toml"))
+  LOG = ::Log.for("crystal-gauntlet")
 
   def config_get(key : String)
     this = CONFIG
@@ -42,6 +44,45 @@ module CrystalGauntlet
     @@endpoints
   end
 
+  def severity_color(severity : Log::Severity) : Colorize::Object
+    case severity
+    when .trace?
+      Colorize.with.dark_gray
+    when .debug?
+      Colorize.with.dark_gray
+    when .info?
+      Colorize.with.cyan
+    when .notice?
+      Colorize.with.cyan
+    when .warn?
+      Colorize.with.yellow
+    when .error?
+      Colorize.with.red
+    when .fatal?
+      Colorize.with.light_red
+    else
+      Colorize.with.white
+    end
+  end
+
+  struct CrystalGauntletFormat < Log::StaticFormatter
+    def run
+      Colorize.with.light_gray.dim.surround(@io) do
+        timestamp
+      end
+      string " "
+      severity_color(@entry.severity).surround(@io) do
+        @entry.severity.label.rjust(@io, 6)
+      end
+      string ": "
+      Colorize.with.white.surround(@io) do
+        source
+      end
+      string " - "
+      message
+    end
+  end
+
   class GDHandler
     include HTTP::Handler
 
@@ -56,6 +97,7 @@ module CrystalGauntlet
       if CrystalGauntlet.endpoints.has_key?(path) && body
         func = CrystalGauntlet.endpoints[path]
         value = func.call(body.gets_to_end)
+        LOG.debug { "-> " + value }
         context.response.content_type = "text/plain"
         context.response.print value
       else
@@ -81,10 +123,9 @@ module CrystalGauntlet
       server.bind_unix(listen_on.to_s.sub("unix://",""))
     end
 
-    # for debugging
-    #Songs.reupload("https://soundcloud.com/koraii/encroachingdark", 123456)
+    Log.setup_from_env(backend: Log::IOBackend.new(formatter: CrystalGauntletFormat))
 
-    puts "Listening on #{listen_on.to_s}"
+    LOG.notice { "Listening on #{listen_on.to_s}" }
     server.listen
   end
 end

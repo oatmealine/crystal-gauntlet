@@ -12,7 +12,7 @@ end
 
 CrystalGauntlet.endpoints["/getGJSongInfo.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   song_id = params["songID"].to_i32
 

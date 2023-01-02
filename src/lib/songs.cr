@@ -68,7 +68,7 @@ module CrystalGauntlet::Songs
 
   # will raise errors
   def fetch_song_metadata(url : String) : SongMetadata
-    puts "getting metadata for #{url}"
+    LOG.info { "getting metadata for #{url}" }
 
     output = IO::Memory.new
     # todo: ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️ LOOK OUT FOR SHELL INJECTION BULLSHIT!!!!!!!!!!!!!!!!!!
@@ -112,7 +112,7 @@ module CrystalGauntlet::Songs
   # returns nil if song should be disabled
   # throws if something failed
   def fetch_song(song_id : Int32, get_download = false) : Tuple(String, Int32, String, Int32 | Nil, String | Nil) | Nil
-    puts "fetching #{song_id}"
+    LOG.debug { "fetching #{song_id}" }
     if !config_get("songs.allow_custom_songs").as?(Bool)
       return nil
     end
@@ -151,8 +151,8 @@ module CrystalGauntlet::Songs
       begin
         metadata = fetch_song_metadata(url.not_nil!)
       rescue err
-        puts "ran into error fetching metadata: #{err}; disabling song"
-        puts err.inspect
+        LOG.warn { "ran into error fetching metadata: #{err}; disabling song" }
+        LOG.warn { err.inspect }
         if song_exists
           DATABASE.exec("update songs set disabled=1 where id = ?", song_id)
         else
@@ -177,7 +177,7 @@ module CrystalGauntlet::Songs
       end
     end
 
-    puts metadata.inspect
+    LOG.debug { metadata.inspect }
 
     # do checks to make sure this is a valid song
     max_duration = config_get("songs.sources.max_duration").as?(Int64)

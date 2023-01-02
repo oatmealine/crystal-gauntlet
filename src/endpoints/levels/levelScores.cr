@@ -4,7 +4,7 @@ include CrystalGauntlet
 
 CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   account_id = Accounts.get_account_id_from_params(params)
   if !account_id || !Accounts.verify_gjp(account_id, params["gjp"])
@@ -23,9 +23,7 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(body : String): Strin
     attempts = params["s1"].to_i - 8354
     clicks = params["s2"].to_i - 3991
     time = params["s3"].to_i - 4085
-    # todo: fix
     progress = String.new(XorCrypt.encrypt_string(GDBase64.decode_string(params["s6"]), "41274"))
-    puts progress
     coins = params["s9"].to_i - 5819
     if coins > 3 || coins < 0
       return "-1"

@@ -4,7 +4,7 @@ include CrystalGauntlet
 
 CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   # todo: green user fixes? pretty please?
   user_id, account_id = Accounts.auth(params)

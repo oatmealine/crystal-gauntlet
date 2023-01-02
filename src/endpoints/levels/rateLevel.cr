@@ -4,7 +4,7 @@ include CrystalGauntlet
 
 CrystalGauntlet.endpoints["/rateGJStars211.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   level_id = params["levelID"].to_i
   stars = params["stars"].to_i
@@ -45,7 +45,7 @@ CrystalGauntlet.endpoints["/rateGJStars211.php"] = ->(body : String): String {
 
 CrystalGauntlet.endpoints["/rateGJDemon21.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   level_id = params["levelID"].to_i
   rating = params["rating"].to_i

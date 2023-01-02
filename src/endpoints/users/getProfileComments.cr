@@ -6,7 +6,7 @@ comments_per_page = 10
 
 CrystalGauntlet.endpoints["/getGJAccountComments20.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   account_id = params["accountID"].to_i
 

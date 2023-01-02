@@ -4,7 +4,7 @@ include CrystalGauntlet
 
 CrystalGauntlet.endpoints["/uploadGJComment21.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   user_id, account_id = Accounts.auth(params)
   if !(user_id && account_id)
