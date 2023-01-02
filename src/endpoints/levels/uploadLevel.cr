@@ -50,7 +50,7 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(body : String): String {
     raise "not implemented"
   else
     # create new level
-    next_id = (DATABASE.scalar("select max(id) from levels").as(Int64 | Nil) || 0) + 1
+    next_id = IDs.get_next_id("levels")
 
     DATABASE.exec("insert into levels (id, name, user_id, description, original, game_version, binary_version, password, requested_stars, unlisted, version, level_data, extra_data, level_info, wt1, wt2, song_id, length, objects, coins, has_ldm, two_player) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", next_id, Clean.clean_special(params["levelName"]), user_id, description, params["original"].to_i32, params["gameVersion"].to_i32, params["binaryVersion"].to_i32, params["password"] == "0" ? nil : params["password"].to_i32, params["requestedStars"].to_i32, params["unlisted"].to_i32, params["levelVersion"].to_i32, Clean.clean_b64(params["levelString"]), Clean.clean_special(extraString), Clean.clean_b64(params["levelInfo"]), Clean.clean_number(params["wt"]), Clean.clean_number(params["wt2"]), song_id.to_i32, params["levelLength"].to_i32, params["objects"].to_i32, params["coins"].to_i32, params["ldm"].to_i32, params["twoPlayer"].to_i32)
 

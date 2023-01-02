@@ -14,6 +14,7 @@ require "./lib/accounts"
 require "./lib/gjp"
 require "./lib/clean"
 require "./lib/songs"
+require "./lib/ids"
 
 Dotenv.load
 
@@ -94,7 +95,7 @@ module CrystalGauntlet
 
       body = context.request.body
 
-      if CrystalGauntlet.endpoints.has_key?(path) && body
+      if CrystalGauntlet.endpoints.has_key?(path) && context.request.method == "POST" && body
         func = CrystalGauntlet.endpoints[path]
         value = func.call(body.gets_to_end)
         LOG.debug { "-> " + value }

@@ -44,7 +44,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   end
   if params["song"]?
     if params["customSong"]? && params["customSong"]? != ""
-      # todo
+      queryParams << "song_id = '#{params["customSong"].to_i}'"
     else
       queryParams << "song_id = '#{params["song"].to_i}'"
     end
@@ -86,7 +86,8 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
       queryParams << "difficulty = #{LevelDifficulty::Auto.value} or (difficulty is null and community_difficulty = #{LevelDifficulty::Auto.value})"
     else
       # easy, normal, hard, harder, insane
-      # todo
+      diffs = params["diff"].split(",").map{ |v| v.to_i }.join(",")
+      queryParams << "difficulty in (#{diffs}) or (difficulty is null and community_difficulty in (#{diffs}))"
     end
   end
 
@@ -99,7 +100,9 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   when "2" # most liked
     order = "likes desc"
   when "3" # trending
-    # todo
+    # todo: make configurable?
+    order = "likes desc"
+    queryParams << "created_at > #{(Time.utc - 7.days).to_s(Format::TIME_FORMAT)}"
   when "5" # made by user
     queryParams << "levels.user_id = #{searchQuery.to_i}" # (you can't sql inject with numbers)
   when "6", "17" # featured (gdw is 17)
@@ -109,7 +112,8 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
     # todo: order by epic date
     queryParams << "epic = 1"
   when "7" # magic
-    # todo
+    # todo: make configurable?
+    queryParams << "objects > 4000"
   when "10", "19" # map packs
     order = "map_pack_links.idx asc"
     queryParams << "levels.id in (#{searchQuery.split(",").map{|v| v.to_i}.join(",")})"
@@ -215,7 +219,6 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   searchMeta = "#{level_count}:#{page_offset}:#{levels_per_page}"
 
   res = [results.join("|"), users.join("|"), songs.join("~:~"), searchMeta, CrystalGauntlet::Hashes.gen_multi(hash_data)].join("#")
-  LOG.debug { res }
 
   res
 }

@@ -102,7 +102,7 @@ module CrystalGauntlet::Songs
     begin
       DATABASE.query_one("select id from song_authors where name = ? and url = ? and source = ?", artist_name, artist_url, source, as: {Int32})
     rescue
-      next_id = (DATABASE.scalar("select max(id) from song_authors").as(Int64 | Nil) || 0) + 1
+      next_id = IDs.get_next_id("song_authors")
       DATABASE.exec("insert into song_authors (id, source, name, url) values (?, ?, ?, ?)", next_id, source, artist_name, artist_url)
       next_id.to_i
     end
