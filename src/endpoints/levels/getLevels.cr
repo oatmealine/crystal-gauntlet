@@ -16,12 +16,14 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   queryParams = [] of String
   # order by [...]
   order = "levels.created_at desc"
+  # joins go here
+  joins = [] of String
 
   page_offset = (params["page"]? || "0").to_i * levels_per_page
 
   searchQuery = params["str"]? || ""
 
-  if searchQuery != "" && params["type"] != "5"
+  if searchQuery != "" && params["type"] != "5" && params["type"] != "10" && params["type"] != "19"
     if searchQuery.to_i?
       # we do this to get rid of the initial "unlisted = 0" bit
       can_see_unlisted = true
@@ -145,6 +147,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   when "10", "19" # map packs
     order = "map_pack_links.idx asc"
     queryParams << "levels.id in (#{searchQuery.split(",").map{|v| v.to_i}.join(",")})"
+    joins << "left join map_pack_links on map_pack_links.level_id = levels.id"
   when "11" # rated
     # todo: order by rate date
     queryParams << "levels.stars is not null"
@@ -166,7 +169,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
 
   where_str = "where (#{queryParams.join(") and (")})"
   # todo: switch join users to left join to avoid losing levels to the shadow realm after a user vanishes
-  query_base = "from levels join users on levels.user_id = users.id left join map_pack_links on map_pack_links.level_id = levels.id #{where_str} order by #{order}"
+  query_base = "from levels join users on levels.user_id = users.id #{joins.join(" ")} #{where_str} order by #{order}"
 
   LOG.debug { "query: #{query_base}" }
 
