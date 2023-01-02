@@ -21,7 +21,8 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
 
   if searchQuery != ""
     if searchQuery.to_i?
-      queryParams << "levels.id = #{searchQuery.to_i}"
+      # we do this to get rid of the initial "unlisted = 0" bit
+      queryParams = ["levels.id = #{searchQuery.to_i}"]
     else
       # no sql injections to see here; clean_char only leaves A-Za-z0-9 intact
       # todo: make this configurable w/ fuzzy search
