@@ -46,20 +46,31 @@ module CrystalGauntlet
       # expunge trailing slashes
       path = context.request.path.chomp("/")
 
-      path = path.sub(config_get("general.append_path").as(String | Nil) || "", "")
-      body = context.request.body
-
-      if !body
-        puts "no body :("
-      elsif @@endpoints.has_key?(path)
-        func = @@endpoints[path]
-        value = func.call(body.gets_to_end)
-        context.response.content_type = "text/plain"
-        context.response.print value
-        puts "#{path} -> #{value}"
+      # todo: rethink life choices
+      if path.ends_with?(".mp3")
+        # todo: BIG NONO
+        # todo: path traversal exploits SCARY
+        file = File.open("./data#{path}", "r")
+        context.response.content_type = "audio/mp3"
+        IO.copy(file, context.response)
+        file.close
       else
-        context.response.respond_with_status(404, "endpoint not found")
-        puts "#{path} -> 404"
+        path = path.sub(config_get("general.append_path").as(String | Nil) || "", "")
+
+        body = context.request.body
+
+        if !body
+          puts "no body :("
+        elsif @@endpoints.has_key?(path)
+          func = @@endpoints[path]
+          value = func.call(body.gets_to_end)
+          context.response.content_type = "text/plain"
+          context.response.print value
+          puts "#{path} -> #{value}"
+        else
+          context.response.respond_with_status(404, "endpoint not found")
+          puts "#{path} -> 404"
+        end
       end
     end
 

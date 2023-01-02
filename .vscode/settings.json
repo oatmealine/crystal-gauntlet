@@ -2,5 +2,14 @@
   "crystal-lang.completion": true,
   "crystal-lang.hover": true,
   "crystal-lang.implementations": true,
-  "crystal-lang.mainFile": "${workspaceRoot}/src/crystal-gauntlet.cr"
+  "crystal-lang.mainFile": "${workspaceRoot}/src/crystal-gauntlet.cr",
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "crystal-gauntlet",
+      "database": "${workspaceFolder:crystal-gauntlet}/crystalgauntlet.db"
+    }
+  ],
+  "sqltools.useNodeRuntime": true
 }

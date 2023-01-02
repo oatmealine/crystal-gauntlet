@@ -10,6 +10,8 @@ targets:
     main: src/crystal-gauntlet.cr
 
 dependencies:
+  db:
+    github: crystal-lang/crystal-db
   sqlite3:
     github: crystal-lang/crystal-sqlite3
   migrate:
@@ -20,8 +22,6 @@ dependencies:
   toml:
     github: crystal-community/toml.cr
     branch: master
-  crystagiri:
-    github: madeindjs/crystagiri
 
 crystal: 1.6.2
 

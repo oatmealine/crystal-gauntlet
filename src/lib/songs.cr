@@ -1,4 +1,5 @@
 require "json"
+require "db"
 
 include CrystalGauntlet
 
@@ -7,20 +8,49 @@ module CrystalGauntlet::Songs
 
   GD_AUDIO_FORMAT = "mp3"
 
+  # todo: make this configurable
+  REUPLOADED_SONG_ADD_ID = 5000000
+
+  CUSTOM_SONG_START = 50
+
+  # set in 6_songs.sql
+  UNKNOWN_SONG_AUTHOR = 1
+
   def is_custom_song(id)
-    id >= 50
+    id >= CUSTOM_SONG_START
   end
 
   def is_reuploaded_song(id)
-    id >= 5000000
+    id >= REUPLOADED_SONG_ADD_ID
   end
 
-  class Song
-    def initialize(name : String, author : String, size : Int32, download_url : String | Nil, normalized_url : String)
+  class SongMetadata
+    def initialize(name : String, author : String, normalized_url : String, source : String, author_url : String, duration : Int32 | Nil)
       @name = name
       @author = author
-      @size = size
-      @download_url = download_url
+      @normalized_url = normalized_url
+      @source = source
+      @author_url = author_url
+      @duration = duration
+    end
+
+    def name
+      @name
+    end
+    def author
+      @author
+    end
+    def normalized_url
+      @normalized_url
+    end
+    def source
+      @source
+    end
+    def author_url
+      @author_url
+    end
+    def duration
+      @duration
     end
   end
 
@@ -28,49 +58,158 @@ module CrystalGauntlet::Songs
     config_get("songs.allow_all_sources").as?(Bool) || config_get("songs.sources.#{source}.allow").as?(Bool) || false
   end
 
-  def reupload(url : String, id : Int32) : Song | Nil
-    puts url
+  def get_file_path(song_id : Int32)
+    Path.new("data", "#{song_id}.mp3")
+  end
+
+  # will raise errors
+  def fetch_song_metadata(url : String) : SongMetadata
+    puts "getting metadata for #{url}"
 
     output = IO::Memory.new
     # todo: ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️ LOOK OUT FOR SHELL INJECTION BULLSHIT!!!!!!!!!!!!!!!!!!
     Process.run(config_get("songs.sources.ytdlp_binary").as?(String) || "yt-dlp", ["-J", url], output: output)
     output.close
 
-    puts output.to_s
-
     metadata = JSON.parse(output.to_s)
 
-    if !is_source_allowed(metadata["extractor"].as_s? || "unknown")
-      raise "source forbidden: #{metadata["extractor"]}"
+    canonical_url = metadata["webpage_url"].as_s? || metadata["original_url"].as_s? || url
+    duration = metadata["duration"]? && (metadata["duration"].as_f? || metadata["duration"].as_i?)
+
+    return SongMetadata.new(
+      (metadata["fulltitle"]? && metadata["fulltitle"].as_s?) || (metadata["title"]? && metadata["title"].as_s?) || url,
+      (metadata["uploader"]? && metadata["uploader"].as_s?) || "",
+      canonical_url,
+      metadata["extractor"].as_s,
+      (metadata.["uploader_url"]? && metadata["uploader_url"].as_s?) || canonical_url,
+      duration ? duration.to_i : nil
+    )
+  end
+
+  # name, author id, author name, size, download url
+  # returns nil if song should be disabled
+  # throws if something failed
+  def fetch_song(song_id : Int32, get_download = false) : Tuple(String, Int32, String, Int32 | Nil, String | Nil) | Nil
+    puts "fetching #{song_id}"
+    if !config_get("songs.allow_custom_songs").as?(Bool)
+      puts "custom songs not allowed"
+      return nil
     end
 
-    max_duration = config_get("songs.sources.max_duration").as?(Int64) || 0
+    # todo: this is kinda spaghetti
+    metadata = nil
+    author_id = nil
+    size = nil
+    fetch_url = nil
 
-    if max_duration > 0
-      if !metadata["duration"]
-        raise "failed to determine track duration"
-      elsif metadata["duration"].as_f >= max_duration
-        raise "track goes above max track duration (#{max_duration}s)"
+    song_exists = false
+    url = nil
+
+    begin
+      url, disabled = DATABASE.query_one("select url, disabled from songs where id = ?", song_id, as: {String, Bool})
+
+      if disabled
+        return nil
+      end
+
+      song_exists = true
+    rescue
+      if config_get("songs.preserve_newgrounds_ids").as?(Bool)
+        url = "https://www.newgrounds.com/audio/listen/#{song_id}"
+      else
+        raise "unknown song ID"
       end
     end
 
-    if config_get("songs.sources.allow_transcoding")
-      if !config_get("songs.sources.proxy_downloads").as?(Bool)
-        raise "can't download a song with transcoding but without proxying allowed"
-      end
+    if DATABASE.scalar("select count(*) from song_data where id = ?", song_id).as(Int64) > 0
+      song_name, song_author_id, song_author_name, song_author_url, song_size, song_source, song_duration, download_url = DATABASE.query_one("select song_data.name, author_id, song_authors.name, song_authors.url, size, song_data.source, duration, proxy_url from song_data left join song_authors on song_authors.id = song_data.author_id where song_data.id = ?", song_id, as: {String, Int32, String?, String?, Int32?, String, Int32?, String?})
 
-      canonical_url = metadata["webpage_url"].as_s? || metadata["original_url"].as_s? || url
-
-      target_path = Path.new("data", "#{id}.mp3")
-
-      Process.run(config_get("songs.sources.ytdlp_binary").as?(String) || "yt-dlp", ["-f", "ba", "-x", "--audio-format", GD_AUDIO_FORMAT, "-o", target_path.to_s, "--ffmpeg-location", config_get("songs.sources.ffmpeg_binary").as?(String) || "ffmpeg", canonical_url], output: STDOUT, error: STDOUT)
-
-      size = File.size(target_path)
-
-      # todo: don't point to localhost
-      Song.new(metadata["fulltitle"].as_s? || metadata["title"].as_s? || "Song", metadata["uploader"].as_s? || "", size.to_i32, "http://localhost:8080/#{id}.mp3", canonical_url)
+      fetch_url = download_url
+      size = song_size
+      author_id = song_author_id
+      metadata = SongMetadata.new(song_name, song_author_name || "", url.not_nil!, song_source, song_author_url || "", song_duration)
     else
-      # todo
+      begin
+        metadata = fetch_song_metadata(url.not_nil!)
+      rescue err
+        puts "ran into error fetching metadata: #{err}; disabling song"
+        puts err.inspect
+        if song_exists
+          DATABASE.exec("update songs set disabled=1 where id = ?", song_id)
+        else
+          DATABASE.exec("insert into songs (id, url, disabled) values (?, ?, 1)", song_id, url)
+        end
+      else
+        if song_exists && url != metadata.normalized_url
+          DATABASE.exec("update songs set url = ? where id = ?", metadata.normalized_url, song_id)
+        end
+
+        if DATABASE.scalar("select count(*) from songs join song_data on songs.id = song_data.id where songs.id != ? and url = ?", song_id, metadata.normalized_url).as(Int64) > 0
+          # just use that song's metadata instead
+          # todo: dedup this and the above similar block somehow?
+
+          song_name, song_author_id, song_author_name, song_author_url, song_size, song_source, song_duration, download_url = DATABASE.query_all("select song_data.name, author_id, song_authors.name, song_authors.url, size, song_data.source, duration, proxy_url from song_data left join songs on song_data.id = songs.id left join song_authors on song_authors.id = song_data.author_id where song_data.id != ? and songs.url = ?", song_id, metadata.normalized_url, as: {String, Int32, String?, String?, Int32?, String, Int32?, String?})[0]
+
+          fetch_url = download_url
+          size = song_size
+          author_id = song_author_id
+          metadata = SongMetadata.new(song_name, song_author_name || "", url.not_nil!, song_source, song_author_url || "", song_duration)
+        end
+      end
     end
+
+    puts metadata.inspect
+
+    # todo: insert into song_data
+
+    # do checks to make sure this is a valid song
+    max_duration = config_get("songs.sources.max_duration").as?(Int64)
+    # todo
+
+    if (fetch_url || !get_download) && metadata && size && author_id
+      # we're done! woo
+      if fetch_url && fetch_url.starts_with?("./")
+        # todo
+        fetch_url = "localhost:8080/#{fetch_url[2..]}"
+      end
+      return {metadata.name, author_id, metadata.author, size, fetch_url}
+    end
+
+    metadata = metadata.not_nil!
+
+    if get_download
+      if config_get("songs.sources.allow_transcoding")
+        if !config_get("songs.sources.proxy_downloads").as?(Bool)
+          raise "can't download a song with transcoding but without proxying allowed"
+        end
+
+        # todo: check if song file exists
+
+        target_path = get_file_path(song_id)
+
+        Process.run(config_get("songs.sources.ytdlp_binary").as?(String) || "yt-dlp", ["-f", "ba", "-x", "--audio-format", GD_AUDIO_FORMAT, "-o", target_path.to_s, "--ffmpeg-location", config_get("songs.sources.ffmpeg_binary").as?(String) || "ffmpeg", metadata.normalized_url], output: STDOUT, error: STDOUT)
+
+        size = File.size(target_path).to_i
+
+        fetch_url = "./#{song_id}.mp3"
+      else
+        # todo
+        raise "fetching songs without transcoding and proxying downloads currently unimplemented"
+      end
+
+      # todo: update song_data with size, duration and url
+    end
+
+    if !author_id
+      # todo
+      author_id = 1
+    end
+
+    if fetch_url && fetch_url.starts_with?("./")
+      # todo
+      # todo also: deduplicate this with similar block above?
+      fetch_url = "localhost:8080/#{fetch_url[2..]}"
+    end
+    return {metadata.name, author_id, metadata.author, size, fetch_url}
   end
 end
