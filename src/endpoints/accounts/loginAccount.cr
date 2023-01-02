@@ -6,7 +6,7 @@ include CrystalGauntlet
 
 CrystalGauntlet.endpoints["/accounts/loginGJAccount.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   username = params["userName"]
   password = params["password"]

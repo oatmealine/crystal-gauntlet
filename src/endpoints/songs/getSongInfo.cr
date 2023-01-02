@@ -4,12 +4,6 @@ require "digest/sha256"
 
 include CrystalGauntlet
 
-NEWGROUNDS_AUDIO_URL_REGEX = /(?<!\\)"url":"(.+?)(?<!\\)"/
-
-def unescape_string(s : String) : String
-  s.gsub(/\\(.)/) { |v| v[1] }
-end
-
 CrystalGauntlet.endpoints["/getGJSongInfo.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
   LOG.debug { params.inspect }

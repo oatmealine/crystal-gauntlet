@@ -2,8 +2,6 @@ require "uri"
 
 include CrystalGauntlet
 
-# URI::Params{"gameVersion" => ["21"], "binaryVersion" => ["35"], "gdw" => ["0"], "accountID" => ["1"], "gjp" => ["XFZBX1NSW1xcUw=="], "targetAccountID" => ["1"], "secret" => ["Wmfd2893gb7"]}
-
 CrystalGauntlet.endpoints["/updateGJUserScore22.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
   LOG.debug { params.inspect }

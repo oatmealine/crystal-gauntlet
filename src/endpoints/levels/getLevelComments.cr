@@ -6,7 +6,7 @@ comments_per_page = 10
 
 CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(body : String): String {
   params = URI::Params.parse(body)
-  puts params.inspect
+  LOG.debug { params.inspect }
 
   level_id = params["levelID"].to_i
 

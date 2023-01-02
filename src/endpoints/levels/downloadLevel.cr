@@ -57,7 +57,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
         xor_pass = password
       end
 
-      # https://github.com/Cvolton/GMDprivateServer/blob/master/incl/levels/getGJLevels.php#L266
+      # todo: deduplicate this with getLevels?
       response += CrystalGauntlet::Format.fmt_hash({
         1 => id,
         2 => name,
