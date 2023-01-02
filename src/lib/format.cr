@@ -46,6 +46,8 @@ module CrystalGauntlet::Format
       else
         fmt_time(v, colon_safe)
       end
+    when Nil
+      ""
     else
       v = v.to_s
       v = Clean.clean_special(v)

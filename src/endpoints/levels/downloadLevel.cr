@@ -7,7 +7,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
   params = URI::Params.parse(body)
   LOG.debug { params.inspect }
 
-  response = ""
+  response = [] of String
 
   DATABASE.query("select levels.id, levels.name, levels.level_data, levels.extra_data, levels.level_info, levels.password, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered from levels join users on levels.user_id = users.id where levels.id = ?", params["levelID"].to_i32) do |rs|
     if rs.move_next
@@ -58,7 +58,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
       end
 
       # todo: deduplicate this with getLevels?
-      response += CrystalGauntlet::Format.fmt_hash({
+      response << CrystalGauntlet::Format.fmt_hash({
         1 => id,
         2 => name,
         3 => GDBase64.encode(description),
@@ -94,22 +94,16 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
         47 => 2,
         40 => has_ldm,
         27 => xor_pass,
+        26 => params.has_key?("extras") ? level_info : nil
       })
-
-      # todo: shove this into fmt_hash to prevent injects
-
-      if params.has_key?("extras")
-        response += ":26:" + level_info
-      end
-
-      response += "#" + Hashes.gen_solo(level_data)
+      response << Hashes.gen_solo(level_data)
 
       thing = [user_id, stars || 0, (difficulty && difficulty.demon?) || 0, id, rated_coins, featured, password, 0].map! { |x| Format.fmt_value(x) }
-      response += "#" + Hashes.gen_solo_2(thing.join(","))
+      response << Hashes.gen_solo_2(thing.join(","))
+
+      return response.join("#")
     else
-      response += "-1"
+      return "-1"
     end
   end
-
-  response
 }
