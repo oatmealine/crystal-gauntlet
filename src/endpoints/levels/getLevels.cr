@@ -19,7 +19,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
 
   searchQuery = params["str"]? || ""
 
-  if searchQuery != ""
+  if searchQuery != "" && params["type"] != "5"
     if searchQuery.to_i?
       # we do this to get rid of the initial "unlisted = 0" bit
       queryParams = ["levels.id = #{searchQuery.to_i}"]
