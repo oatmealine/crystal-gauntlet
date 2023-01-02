@@ -68,8 +68,8 @@ module CrystalGauntlet
     server = HTTP::Server.new([
       HTTP::ErrorHandler.new,
       HTTP::LogHandler.new,
-      CrystalGauntlet::GDHandler.new,
-      HTTP::StaticFileHandler.new("data/", directory_listing = true)
+      HTTP::StaticFileHandler.new("data/", fallthrough = true, directory_listing = false),
+      CrystalGauntlet::GDHandler.new
     ])
 
     listen_on = URI.parse(ENV["LISTEN_ON"]? || "http://localhost:8080").normalize
