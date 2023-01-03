@@ -6,6 +6,8 @@ require "migrate"
 require "dotenv"
 require "toml"
 require "colorize"
+require "option_parser"
+require "migrate"
 
 require "./enums"
 require "./lib/hash"
@@ -125,25 +127,50 @@ module CrystalGauntlet
   end
 
   def self.run()
-    server = HTTP::Server.new([
-      HTTP::LogHandler.new,
-      HTTP::StaticFileHandler.new("data/", fallthrough: true, directory_listing: false),
-      CrystalGauntlet::GDHandler.new
-    ])
-
-    listen_on = URI.parse(ENV["LISTEN_ON"]? || "http://localhost:8080").normalize
-
-    case listen_on.scheme
-    when "http"
-      server.bind_tcp(listen_on.hostname.not_nil!, listen_on.port.not_nil!)
-    when "unix"
-      server.bind_unix(listen_on.to_s.sub("unix://",""))
-    end
-
     Log.setup_from_env(backend: Log::IOBackend.new(formatter: CrystalGauntletFormat))
 
-    LOG.notice { "Listening on #{listen_on.to_s}" }
-    server.listen
+    migrate = false
+
+    parser = OptionParser.new do |parser|
+      parser.banner = "Usage: crystal-gauntlet [command] [arguments]"
+
+      parser.on("migrate", "Migrate the database") do
+        migrate = true
+        parser.banner = "Usage: crystal-gauntlet migrate [arguments]"
+      end
+      parser.on("-h", "--help", "Show this help") do
+        puts parser
+        exit
+      end
+    end
+
+    parser.parse
+
+    if migrate
+      LOG.info { "Migrating #{ENV["DATABASE_URL"].colorize(:white)}..." }
+      migrator = Migrate::Migrator.new(
+        DATABASE
+      )
+      migrator.to_latest
+    else
+      server = HTTP::Server.new([
+        HTTP::LogHandler.new,
+        HTTP::StaticFileHandler.new("data/", fallthrough: true, directory_listing: false),
+        CrystalGauntlet::GDHandler.new
+      ])
+
+      listen_on = URI.parse(ENV["LISTEN_ON"]? || "http://localhost:8080").normalize
+
+      case listen_on.scheme
+      when "http"
+        server.bind_tcp(listen_on.hostname.not_nil!, listen_on.port.not_nil!)
+      when "unix"
+        server.bind_unix(listen_on.to_s.sub("unix://",""))
+      end
+
+      LOG.notice { "Listening on #{listen_on.to_s.colorize(:white)}" }
+      server.listen
+    end
   end
 end
 
