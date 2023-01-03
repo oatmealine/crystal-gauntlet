@@ -156,11 +156,13 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
   when "13" # friends
     # todo
   when "21" # daily
-    # todo
+    order = "daily_levels.idx desc"
+    joins << "join daily_levels on levels.id = daily_levels.level_id"
   when "22" # weekly
-    # todo
+    order = "weekly_levels.idx desc"
+    joins << "join weekly_levels on levels.id = weekly_levels.level_id"
   when "23" # event (unused)
-    # todo
+    # todo..?
   end
 
   if !can_see_unlisted

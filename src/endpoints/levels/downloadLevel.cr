@@ -9,7 +9,30 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
 
   response = [] of String
 
-  DATABASE.query("select levels.id, levels.name, levels.extra_data, levels.level_info, levels.password, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered, editor_time, editor_time_copies from levels join users on levels.user_id = users.id where levels.id = ?", params["levelID"].to_i32) do |rs|
+  level_id = params["levelID"].to_i32
+  daily_num = nil # for hash checks
+
+  case level_id
+  when -1
+    # daily
+    level_id, _, idx = Dailies.fetch_current_level(false)
+    if !level_id || !idx
+      return "-1"
+    end
+    daily_num = idx
+  when -2
+    # weekly
+    level_id, _, idx = Dailies.fetch_current_level(true)
+    if !level_id || !idx
+      return "-1"
+    end
+    daily_num = idx + Dailies::WEEKLY_OFFSET
+  when -3
+    # events
+    raise "events?? what the hell"
+  end
+
+  DATABASE.query("select levels.id, levels.name, levels.extra_data, levels.level_info, levels.password, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered, editor_time, editor_time_copies from levels join users on levels.user_id = users.id where levels.id = ?", level_id) do |rs|
     if rs.move_next
       id = rs.read(Int32)
       name = rs.read(String)
@@ -102,6 +125,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
         38 => rated_coins,
         39 => requested_stars || 0,
         40 => has_ldm,
+        41 => daily_num,
         42 => epic,
         # 0 for n/a, 10 for easy, 20, for medium, ...
         43 => (demon_difficulty || DemonDifficulty::Hard).to_demon_difficulty,
@@ -113,8 +137,12 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
       })
       response << Hashes.gen_solo(level_data)
 
-      thing = [user_id, stars || 0, (difficulty && difficulty.demon?) || 0, id, rated_coins, featured, password, 0].map { |x| Format.fmt_value(x) }
+      thing = [user_id, stars || 0, (difficulty && difficulty.demon?) || 0, id, rated_coins, featured, password, daily_num || 0].map { |x| Format.fmt_value(x) }
       response << Hashes.gen_solo_2(thing.join(","))
+
+      if daily_num
+        response << [user_id, user_username, user_account_id].join(":")
+      end
 
       return response.join("#")
     else

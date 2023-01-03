@@ -33,14 +33,12 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(context : HTTP::Serve
       return "-1"
     end
 
-    # todo: account for dailies
-
-    if DATABASE.scalar("select count(*) from level_scores where account_id = ? and level_id = ?", account_id, level_id).as(Int64) > 0
+    if DATABASE.scalar("select count(*) from level_scores where account_id = ? and level_id = ? and daily_id is ?", account_id, level_id, daily_id).as(Int64) > 0
       # check if an update is truly necessary
-      percent_old, coins_old = DATABASE.query_one("select percent, coins from level_scores where account_id = ? and level_id = ?", account_id, level_id, as: {Int32, Int32})
+      percent_old, coins_old = DATABASE.query_one("select percent, coins from level_scores where account_id = ? and level_id = ? and daily_id is ?", account_id, level_id, daily_id, as: {Int32, Int32})
 
       if percent > percent_old || coins > coins_old
-        DATABASE.exec("update level_scores set account_id=?, level_id=?, daily_id=?, percent=?, attempts=?, clicks=?, coins=?, progress=?, time=?, set_at=? where account_id = ? and level_id = ?", account_id, level_id, daily_id, percent, attempts, clicks, coins, progress, time, Time.utc.to_s(Format::TIME_FORMAT), account_id, level_id)
+        DATABASE.exec("update level_scores set account_id=?, percent=?, attempts=?, clicks=?, coins=?, progress=?, time=?, set_at=? where account_id = ? and level_id = ? and daily_id is ?", account_id, percent, attempts, clicks, coins, progress, time, Time.utc.to_s(Format::TIME_FORMAT), account_id, level_id, daily_id)
       end
     else
       DATABASE.exec("insert into level_scores (account_id, level_id, daily_id, percent, attempts, clicks, coins, progress, time) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", account_id, level_id, daily_id, percent, attempts, clicks, coins, progress, time)
@@ -51,7 +49,7 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(context : HTTP::Serve
 
   type = params["type"]? ? params["type"] : "1"
 
-  where_query = ["level_id = ?"]
+  where_query = ["level_id = ? and daily_id is ?"]
 
   case type
   when 0
@@ -68,7 +66,7 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(context : HTTP::Serve
   scores = [] of String
 
   i = 0
-  DATABASE.query_each "select percent, level_scores.coins, set_at, users.username, users.id, users.icon_type, users.color1, users.color2, users.cube, users.ship, users.ball, users.ufo, users.wave, users.robot, users.spider, users.special, users.account_id from level_scores join users on level_scores.account_id = users.account_id where (#{where_query.join(") and (")}) order by percent desc, level_scores.coins desc limit 200", level_id do |rs|
+  DATABASE.query_each "select percent, level_scores.coins, set_at, users.username, users.id, users.icon_type, users.color1, users.color2, users.cube, users.ship, users.ball, users.ufo, users.wave, users.robot, users.spider, users.special, users.account_id from level_scores join users on level_scores.account_id = users.account_id where (#{where_query.join(") and (")}) order by percent desc, level_scores.coins desc limit 200", level_id, daily_id do |rs|
     i += 1
     percent = rs.read(Int32)
     coins = rs.read(Int32)
