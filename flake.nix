@@ -28,7 +28,7 @@
 
             buildInputs = with pkgs; [ openssl sqlite pkg-config ] ++ [ crystal ];
 
-            nativeBuildInputs = with pkgs; [ openssl pkg-config ] ++ [ crystal ];
+            nativeBuildInputs = with pkgs; [ openssl pkg-config yt-dlp ffmpeg ] ++ [ crystal ];
 
             crystal = crystal;
           };
