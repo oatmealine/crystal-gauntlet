@@ -9,11 +9,10 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
 
   response = [] of String
 
-  DATABASE.query("select levels.id, levels.name, levels.level_data, levels.extra_data, levels.level_info, levels.password, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered, editor_time, editor_time_copies from levels join users on levels.user_id = users.id where levels.id = ?", params["levelID"].to_i32) do |rs|
+  DATABASE.query("select levels.id, levels.name, levels.extra_data, levels.level_info, levels.password, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered, editor_time, editor_time_copies from levels join users on levels.user_id = users.id where levels.id = ?", params["levelID"].to_i32) do |rs|
     if rs.move_next
       id = rs.read(Int32)
       name = rs.read(String)
-      level_data = rs.read(String)
       extra_data = rs.read(String)
       level_info = rs.read(String)
       password = rs.read(String | Nil)
@@ -48,8 +47,8 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
       user_account_id = rs.read(Int32 | Nil)
       user_registered = rs.read(Bool)
 
-      editor_time = rs.read(String)
-      editor_time_copies = rs.read(String)
+      editor_time = rs.read(Int32)
+      editor_time_copies = rs.read(Int32)
 
       xor_pass = "0"
       if !password
@@ -59,6 +58,8 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
       else
         xor_pass = password
       end
+
+      level_data = Base64.urlsafe_encode(File.read("data/#{id}.lvl"))
 
       # todo: deduplicate this with getLevels?
       response << CrystalGauntlet::Format.fmt_hash({

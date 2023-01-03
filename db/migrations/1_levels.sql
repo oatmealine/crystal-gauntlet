@@ -17,7 +17,6 @@ CREATE TABLE levels (
   unlisted         INTEGER  NOT NULL  DEFAULT 0,
 
   version     INTEGER  NOT NULL  DEFAULT 0,
-  level_data  BLOB     NOT NULL,
   extra_data  BLOB     NOT NULL,
   level_info  BLOB     NOT NULL,
 
