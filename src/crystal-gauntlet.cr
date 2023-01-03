@@ -45,9 +45,14 @@ module CrystalGauntlet
   DATABASE = DB.open(ENV["DATABASE_URL"]? || "sqlite3://./crystal-gauntlet.db")
 
   @@endpoints = Hash(String, (HTTP::Server::Context -> String)).new
+  @@template_endpoints = Hash(String, (HTTP::Server::Context -> String)).new
 
   def self.endpoints
     @@endpoints
+  end
+
+  def self.template_endpoints
+    @@template_endpoints
   end
 
   def severity_color(severity : Log::Severity) : Colorize::Object
@@ -129,6 +134,44 @@ module CrystalGauntlet
     end
   end
 
+  class TemplateHandler
+    include HTTP::Handler
+
+    def call(context : HTTP::Server::Context)
+      # expunge trailing slashes
+      path = context.request.path.chomp("/")
+
+      body = context.request.body
+
+      if CrystalGauntlet.template_endpoints.has_key?(path)
+        func = CrystalGauntlet.template_endpoints[path]
+        begin
+          value = func.call(context)
+        rescue err
+          LOG.error { "error while handling #{path.colorize(:white)}:" }
+          LOG.error { err.to_s }
+          is_relevant = true
+          err.backtrace.each do |str|
+            # this is a hack. Oh well
+            if str.starts_with?("src/crystal-gauntlet.cr") || (!is_relevant)
+              is_relevant = false
+            else
+              LOG.error {"  #{str}"}
+            end
+          end
+          context.response.content_type = "text/html"
+          context.response.respond_with_status(500, "Internal server error occurred, sorry about that")
+        else
+          LOG.debug { "-> " + value }
+          context.response.content_type = "text/html"
+          context.response.print value
+        end
+      else
+        call_next(context)
+      end
+    end
+  end
+
   def self.run()
     Log.setup_from_env(backend: Log::IOBackend.new(formatter: CrystalGauntletFormat))
 
@@ -159,7 +202,8 @@ module CrystalGauntlet
       server = HTTP::Server.new([
         HTTP::LogHandler.new,
         HTTP::StaticFileHandler.new("data/", fallthrough: true, directory_listing: false),
-        CrystalGauntlet::GDHandler.new
+        CrystalGauntlet::GDHandler.new,
+        CrystalGauntlet::TemplateHandler.new
       ])
 
       listen_on = URI.parse(ENV["LISTEN_ON"]? || "http://localhost:8080").normalize
@@ -178,5 +222,6 @@ module CrystalGauntlet
 end
 
 require "./endpoints/**"
+require "./template_endpoints/**"
 
 CrystalGauntlet.run()

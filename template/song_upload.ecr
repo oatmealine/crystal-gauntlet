@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Song Uploader</title>
+  </head>
+  <body>
+    <%- if error -%>
+      <div>Error while uploading: <%= error %></div><br />
+    <%- elsif song_id -%>
+      <div>Uploaded successfully! Song ID: <%= song_id %></div><br />
+    <%- end -%>
+    
+    <form action="/tools/song_upload" method="post">
+      URL: <input type="text" id="url" name="url" />
+      <input type="submit" value="Submit" />
+    </form>
+  </body>
+</html>

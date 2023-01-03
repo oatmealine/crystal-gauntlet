@@ -30,17 +30,19 @@ module CrystalGauntlet::Accounts
   # returns userid, accountid
   def auth(params : URI::Params) : (Tuple(Int32, Int32) | Tuple(Nil, Nil))
     gjp = params["gjp"]?
+    gjp2 = params["gjp2"]?
+    pass = gjp || gjp2
     udid = params["udid"]?
     account_id = params["accountID"]?
 
-    if AUTH_CACHE[{gjp, udid, account_id}]?
+    if AUTH_CACHE[{pass, udid, account_id}]?
       LOG.debug {"#{account_id || udid || "???"}: gjp cache hit"}
-      return AUTH_CACHE[{gjp, udid, account_id}]
+      return AUTH_CACHE[{pass, udid, account_id}]
     end
     LOG.debug {"#{account_id || udid || "???"}: gjp cache miss"}
 
     ext_id = Accounts.get_ext_id_from_params(params)
-    if !ext_id || !Accounts.verify_gjp(ext_id.to_i, gjp || "")
+    if !ext_id || (!Accounts.verify_gjp(ext_id.to_i, gjp || "") && !Accounts.verify_gjp2(ext_id.to_i, gjp2 || ""))
       return nil, nil
     end
     user_id = Accounts.get_user_id(ext_id)
@@ -48,7 +50,7 @@ module CrystalGauntlet::Accounts
       return nil, nil
     end
 
-    AUTH_CACHE[{gjp, udid, account_id}] = {user_id, ext_id.to_i}
+    AUTH_CACHE[{pass, udid, account_id}] = {user_id, ext_id.to_i}
     return user_id, ext_id.to_i
   end
 
@@ -69,5 +71,15 @@ module CrystalGauntlet::Accounts
     hash = DATABASE.scalar("select password from accounts where id = ?", account_id).as(String)
     bcrypt = Crypto::Bcrypt::Password.new(hash)
     bcrypt.verify(GJP.decrypt(gjp))
+  end
+
+  def verify_gjp2(account_id : Int32, gjp2 : String) : Bool
+    if gjp2 == ""
+      return false
+    end
+
+    hash = DATABASE.scalar("select gjp2 from accounts where id = ?", account_id).as(String)
+    bcrypt = Crypto::Bcrypt::Password.new(hash)
+    bcrypt.verify(gjp2)
   end
 end
