@@ -12,7 +12,7 @@ module CrystalGauntlet::IDs
       next_id
     else
       next_id = id + 1
-      DATABASE.exec("update next_id set id = ?", next_id)
+      DATABASE.exec("update next_id set id = ? where name = ?", next_id, key)
       return next_id
     end
   end
