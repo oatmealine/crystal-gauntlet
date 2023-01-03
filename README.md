@@ -28,8 +28,6 @@ additionally, the lack of configuration compelled me even more to write my own s
 
 `shards install` && `shards build`
 
-you may need to head into `lib/` to fix deps. i'm Very sorry
-
 ## setup
 
 copy `.env.example` to `.env` and fill it out, same for `config.example.toml` -> `config.toml`

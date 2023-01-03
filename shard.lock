@@ -2,7 +2,7 @@ version: 2.0
 shards:
   db:
     git: https://github.com/crystal-lang/crystal-db.git
-    version: 0.6.0
+    version: 0.11.0
 
   dotenv:
     git: https://github.com/gdotdesign/cr-dotenv.git
@@ -10,11 +10,11 @@ shards:
 
   migrate:
     git: https://github.com/oatmealine/migrate.cr.git
-    version: 0.5.0+git.commit.31af921c4a0ba1d42c4bff8047c5d91584082158
+    version: 0.5.0+git.commit.a4a24df3d05d0481c76ccd42e45cc48fa3fc1e73
 
   sqlite3:
     git: https://github.com/crystal-lang/crystal-sqlite3.git
-    version: 0.13.0
+    version: 0.19.0
 
   time_format:
     git: https://github.com/vladfaust/time_format.cr.git
