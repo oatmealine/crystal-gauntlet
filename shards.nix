@@ -1,8 +1,8 @@
 {
   db = {
     url = "https://github.com/crystal-lang/crystal-db.git";
-    rev = "v0.6.0";
-    sha256 = "1gf6ylzcb8ywpy6m7w7d49xnvn6q636xb86f3vh292s1kml3vm99";
+    rev = "v0.11.0";
+    sha256 = "1ylfhpn64p72ywi39niqb179f61z08q4qd4hhjza05z18mdaghl3";
   };
   dotenv = {
     url = "https://github.com/gdotdesign/cr-dotenv.git";
@@ -11,13 +11,13 @@
   };
   migrate = {
     url = "https://github.com/oatmealine/migrate.cr.git";
-    rev = "31af921c4a0ba1d42c4bff8047c5d91584082158";
-    sha256 = "0hp8w0n6cqrxawmkm7rr5dq4bllx1al69f99ks3li8wrpmx590p4";
+    rev = "a4a24df3d05d0481c76ccd42e45cc48fa3fc1e73";
+    sha256 = "0mlq624badj6mhs396gvisanp2qgrnj4ycx4s33vmhsxv96h8vxv";
   };
   sqlite3 = {
     url = "https://github.com/crystal-lang/crystal-sqlite3.git";
-    rev = "v0.13.0";
-    sha256 = "0myd9vvz40wnwl5ij1n1sva63nnmdbfv6xka5fb4y7v77l512y7c";
+    rev = "v0.19.0";
+    sha256 = "1gaxd56cvh7gqyl5pmcxzi8nrnwcqpvplhxfzxj3fw4hk3l5kx4v";
   };
   time_format = {
     url = "https://github.com/vladfaust/time_format.cr.git";

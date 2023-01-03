@@ -19,12 +19,14 @@ require "./lib/songs"
 require "./lib/ids"
 require "./lib/level"
 
-Dotenv.load
+if File.exists?(".env")
+  Dotenv.load
+end
 
 module CrystalGauntlet
   VERSION = "0.1.0"
 
-  CONFIG = TOML.parse(File.read("./config.toml"))
+  CONFIG = File.exists?("./config.toml") ? TOML.parse(File.read("./config.toml")) : TOML.parse("") # todo: log warning?
   LOG = ::Log.for("crystal-gauntlet")
 
   def config_get(key : String)
@@ -40,7 +42,7 @@ module CrystalGauntlet
     return this
   end
 
-  DATABASE = DB.open(ENV["DATABASE_URL"])
+  DATABASE = DB.open(ENV["DATABASE_URL"]? || "sqlite3://./crystal-gauntlet.db")
 
   @@endpoints = Hash(String, (HTTP::Server::Context -> String)).new
 
