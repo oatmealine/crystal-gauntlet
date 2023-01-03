@@ -100,6 +100,19 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
     two_player = params["twoPlayer"].to_i == 1
   end
 
+  if coins < 0 || coins > 3
+    return "-1"
+  end
+  if objects <= 0
+    return "-1"
+  end
+
+  max_objects = config_get("levels.max_objects").as?(Int64)
+  if max_objects != nil && max_objects.not_nil! > 0 && objects > max_objects.not_nil!
+    LOG.info { "preventing upload of level with #{objects} objects (max #{max_objects})" }
+    return "-1"
+  end
+
   # todo: verify level length
 
   # todo: check seed2?

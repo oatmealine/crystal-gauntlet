@@ -47,6 +47,26 @@ prevent_deletion_rated = true
 # prevent users from deleting their own levels
 # if they are featured
 prevent_deletion_featured = true
+# prevents levels above a certain object count from
+# being uploaded
+# works best with levels.parsing.enabled = true
+# set to 0 to disable
+max_objects = 80_000
+
+[levels.parsing]
+# parse the level to extract data and enforce
+# rulesets. makes uploads a tiny bit slower and
+# less stable
+enabled = true
+
+# a list of ids to prevent levels from including
+# see ID 58079690 on vanilla GD servers
+object_blocklist = [ 31 ] # 31 : start pos
+#object_blocklist = [ 901, 1006, 1007, 1049, 1268, 1346, 1347, 1520, 1585, 1595, 1611, 1612, 1613, 1616, 1811, 1812, 1814, 1815, 1817, 1818, 1819 ] # every 2.0+ trigger, essentially turns your server into a 1.9 gdps
+
+# a list of ids to exclusively allow; leave empty
+# to disable
+object_allowlist = [ ]
 
 [songs]
 # allow custom songs in general to be used,
