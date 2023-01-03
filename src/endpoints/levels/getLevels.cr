@@ -6,8 +6,8 @@ include CrystalGauntlet
 # things might break if you modify this
 levels_per_page = 10
 
-CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
-  params = URI::Params.parse(body)
+CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
   can_see_unlisted = false

@@ -2,8 +2,8 @@ require "uri"
 
 include CrystalGauntlet
 
-CrystalGauntlet.endpoints["/deleteGJLevelUser20.php"] = ->(body : String): String {
-  params = URI::Params.parse(body)
+CrystalGauntlet.endpoints["/deleteGJLevelUser20.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
 
   user_id, account_id = Accounts.auth(params)
   if !(user_id && account_id)

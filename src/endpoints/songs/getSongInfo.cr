@@ -4,8 +4,8 @@ require "digest/sha256"
 
 include CrystalGauntlet
 
-CrystalGauntlet.endpoints["/getGJSongInfo.php"] = ->(body : String): String {
-  params = URI::Params.parse(body)
+CrystalGauntlet.endpoints["/getGJSongInfo.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
   song_id = params["songID"].to_i32

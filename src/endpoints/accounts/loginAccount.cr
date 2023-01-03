@@ -4,8 +4,8 @@ require "crypto/bcrypt/password"
 
 include CrystalGauntlet
 
-CrystalGauntlet.endpoints["/accounts/loginGJAccount.php"] = ->(body : String): String {
-  params = URI::Params.parse(body)
+CrystalGauntlet.endpoints["/accounts/loginGJAccount.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
   username = params["userName"]

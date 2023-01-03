@@ -6,8 +6,8 @@ include CrystalGauntlet
 
 mappacks_per_page = 10
 
-CrystalGauntlet.endpoints["/getGJMapPacks21.php"] = ->(body : String): String {
-  params = URI::Params.parse(body)
+CrystalGauntlet.endpoints["/getGJMapPacks21.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
   page = params["page"].to_i32

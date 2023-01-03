@@ -2,8 +2,8 @@ require "uri"
 
 include CrystalGauntlet
 
-CrystalGauntlet.endpoints["/rateGJStars211.php"] = ->(body : String): String {
-  params = URI::Params.parse(body)
+CrystalGauntlet.endpoints["/rateGJStars211.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
   level_id = params["levelID"].to_i
@@ -43,8 +43,8 @@ CrystalGauntlet.endpoints["/rateGJStars211.php"] = ->(body : String): String {
   return "1"
 }
 
-CrystalGauntlet.endpoints["/rateGJDemon21.php"] = ->(body : String): String {
-  params = URI::Params.parse(body)
+CrystalGauntlet.endpoints["/rateGJDemon21.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
   level_id = params["levelID"].to_i

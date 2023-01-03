@@ -2,8 +2,8 @@ require "uri"
 
 include CrystalGauntlet
 
-CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(body : String): String {
-  params = URI::Params.parse(body)
+CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
   # todo: green user fixes? pretty please?

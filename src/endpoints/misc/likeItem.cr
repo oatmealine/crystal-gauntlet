@@ -4,8 +4,8 @@ require "crypto/bcrypt/password"
 
 include CrystalGauntlet
 
-CrystalGauntlet.endpoints["/likeGJItem211.php"] = ->(body : String): String {
-  params = URI::Params.parse(body)
+CrystalGauntlet.endpoints["/likeGJItem211.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
   if !params.has_key?("itemID")

@@ -3,8 +3,8 @@ require "base64"
 
 include CrystalGauntlet
 
-CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String {
-  params = URI::Params.parse(body)
+CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
   response = [] of String

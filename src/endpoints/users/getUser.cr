@@ -2,8 +2,8 @@ require "uri"
 
 include CrystalGauntlet
 
-CrystalGauntlet.endpoints["/getGJUserInfo20.php"] = ->(body : String): String {
-  params = URI::Params.parse(body)
+CrystalGauntlet.endpoints["/getGJUserInfo20.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
   DATABASE.query("select accounts.id, accounts.username, is_admin, messages_enabled, friend_requests_enabled, comments_enabled, youtube_url, twitter_url, twitch_url, accounts.created_at, users.id, stars, demons, coins, user_coins, diamonds, orbs, creator_points, icon_type, color1, color2, glow, cube, ship, ball, ufo, wave, robot, spider, explosion from accounts join users on accounts.id = users.account_id where accounts.id = ?", params["targetAccountID"]) do |rs|

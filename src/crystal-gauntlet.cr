@@ -41,7 +41,7 @@ module CrystalGauntlet
 
   DATABASE = DB.open(ENV["DATABASE_URL"])
 
-  @@endpoints = Hash(String, (String -> String)).new
+  @@endpoints = Hash(String, (HTTP::Server::Context -> String)).new
 
   def self.endpoints
     @@endpoints
@@ -89,7 +89,7 @@ module CrystalGauntlet
   class GDHandler
     include HTTP::Handler
 
-    def call(context)
+    def call(context : HTTP::Server::Context)
       # expunge trailing slashes
       path = context.request.path.chomp("/")
 
@@ -100,9 +100,9 @@ module CrystalGauntlet
       if CrystalGauntlet.endpoints.has_key?(path) && context.request.method == "POST" && body
         func = CrystalGauntlet.endpoints[path]
         begin
-          value = func.call(body.gets_to_end)
+          value = func.call(context)
         rescue err
-          LOG.error { "error while handling #{path}:" }
+          LOG.error { "error while handling #{path.colorize(:white)}:" }
           LOG.error { err.to_s }
           is_relevant = true
           err.backtrace.each do |str|
