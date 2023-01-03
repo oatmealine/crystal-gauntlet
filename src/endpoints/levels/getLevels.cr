@@ -120,7 +120,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
     order = "likes desc"
     queryParams << "levels.created_at > \"#{(Time.utc - 7.days).to_s(Format::TIME_FORMAT)}\""
   when "5" # made by user
-    if params["local"] == "1"
+    if params["local"]? == "1"
       user_id, account_id = Accounts.auth(params)
       if !(user_id && account_id)
         return "-1"
