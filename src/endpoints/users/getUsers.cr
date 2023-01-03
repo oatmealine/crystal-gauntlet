@@ -32,17 +32,17 @@ CrystalGauntlet.endpoints["/getGJUsers20.php"] = ->(body : String): String {
       results << Format.fmt_hash({
         1 => username,
         2 => id,
-        13 => coins,
-        17 => user_coins,
+        3 => stars,
+        4 => demons,
+        8 => creator_points,
         9 => icon_value,
         10 => color1,
         11 => color2,
+        13 => coins,
         14 => icon_type,
         15 => special,
         16 => account_id || udid,
-        3 => stars,
-        8 => creator_points,
-        4 => demons
+        17 => user_coins,
       })
     end
   end

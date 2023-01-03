@@ -24,10 +24,10 @@ CrystalGauntlet.endpoints["/getGJSongInfo.php"] = ->(body : String): String {
         3 => song_author_id,
         4 => song_author_name,
         5 => (song_size || 0) / (1000 * 1000),
-        6 => "",
+        6 => "", # yt video id; unused i think?
+        7 => "", # yt video url; unused also??
+        8 => "1", # if the song is verified/scouted
         10 => song_download || "",
-        7 => "",
-        8 => "1"
       })
     end
   else

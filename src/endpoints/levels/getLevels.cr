@@ -182,7 +182,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   hash_data = [] of Tuple(Int32, Int32, Bool)
 
   # fucking help
-  DATABASE.query_all("select levels.id, levels.name, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered #{query_base} limit #{levels_per_page} offset #{page_offset}", as: {Int32, String, Int32, String, Int32 | Nil, Int32, Int32 | Nil, Int32, Int32, Int32, Int32, Int32, Bool, Bool, Int32, Int32, Int32 | Nil, Int32 | Nil, Int32 | Nil, Int32 | Nil, Bool, Bool, Bool, String, String | Nil, Int32 | Nil, Bool}).map() do |id, name, user_id, description, original, game_version, requested_stars, version, song_id, length, objects, coins, has_ldm, two_player, downloads, likes, set_difficulty_int, community_difficulty_int, demon_difficulty_int, stars, featured, epic, rated_coins, user_username, user_udid, user_account_id, user_registered|
+  DATABASE.query_all("select levels.id, levels.name, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered, wt1, wt2 #{query_base} limit #{levels_per_page} offset #{page_offset}", as: {Int32, String, Int32, String, Int32 | Nil, Int32, Int32 | Nil, Int32, Int32, Int32, Int32, Int32, Bool, Bool, Int32, Int32, Int32 | Nil, Int32 | Nil, Int32 | Nil, Int32 | Nil, Bool, Bool, Bool, String, String | Nil, Int32 | Nil, Bool, String, String}).map() do |id, name, user_id, description, original, game_version, requested_stars, version, song_id, length, objects, coins, has_ldm, two_player, downloads, likes, set_difficulty_int, community_difficulty_int, demon_difficulty_int, stars, featured, epic, rated_coins, user_username, user_udid, user_account_id, user_registered, wt1, wt2|
     set_difficulty = set_difficulty_int && LevelDifficulty.new(set_difficulty_int)
     community_difficulty = community_difficulty_int && LevelDifficulty.new(community_difficulty_int)
     difficulty = set_difficulty || community_difficulty
@@ -192,33 +192,44 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
     results << Format.fmt_hash({
       1 => id,
       2 => name,
+      3 => GDBase64.encode(description),
       5 => version,
       6 => user_id,
+      # this is suppoused to be the amount of people who have
+      # voted on a level, but this is unused by the game, so
+      # we just always tell the game 10 people have voted
       8 => 10,
-      9 => difficulty ? difficulty.to_star_difficulty : 0, # 0=N/A 10=EASY 20=NORMAL 30=HARD 40=HARDER 50=INSANE 50=AUTO 50=DEMON
+      # 0=N/A 10=EASY 20=NORMAL 30=HARD 40=HARDER 50=INSANE 50=AUTO 50=DEMON
+      # divided by above value, which is why its multiplied by 10
+      9 => (difficulty ? difficulty.to_star_difficulty : 0).not_nil! * 10,
       10 => downloads,
       12 => !Songs.is_custom_song(song_id) ? song_id : 0,
       13 => game_version,
+      # likes - dislikes
       14 => likes,
+      # dislikes - likes
+      16 => -likes,
+      15 => length,
       17 => difficulty && difficulty.demon?,
-      # 0 for n/a, 10 for easy, 20, for medium, ...
-      43 => (demon_difficulty || DemonDifficulty::Hard).to_demon_difficulty,
-      25 => difficulty && difficulty.auto?,
       18 => stars || 0,
       19 => featured,
-      42 => epic,
-      45 => objects,
-      3 => GDBase64.encode(description),
-      15 => length,
+      # 0 for n/a, 10 for easy, 20, for medium, ...
+      25 => difficulty && difficulty.auto?,
       30 => original || 0,
       31 => two_player,
+      35 => Songs.is_custom_song(song_id) ? song_id : 0,
       37 => coins,
       38 => rated_coins,
       39 => requested_stars || 0,
-      46 => 1,
-      47 => 2,
       40 => has_ldm,
-      35 => Songs.is_custom_song(song_id) ? song_id : 0,
+      42 => epic,
+      43 => (demon_difficulty || DemonDifficulty::Hard).to_demon_difficulty,
+      # is in gauntlet
+      # todo
+      44 => false,
+      45 => objects,
+      46 => wt1,
+      47 => wt2
     })
 
     users << "#{user_id}:#{user_username}:#{user_registered ? user_account_id : user_udid}"

@@ -38,31 +38,30 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(body : String): String {
 
       special = rs.read(Int32)
 
-      comment_str = Format.fmt_comment({
-        2 => GDBase64.encode(comment),
-        3 => user_id,
-        4 => likes,
-        5 => 0,
-        7 => likes < -3,
-        9 => Time.parse(created_at, Format::TIME_FORMAT, Time::Location::UTC),
-        6 => id,
-        10 => percent || 0,
-        12 => "0,0,0", # todo: badge
-        11 => "0",
-      })
-
-      comment_str += ":" + Format.fmt_comment({
-        1 => username || "-",
-        7 => 1,
-        9 => icon_value,
-        10 => color1,
-        11 => color2,
-        14 => icon_type,
-        15 => special,
-        16 => account_id || udid
-      })
-
-      users_str << comment_str
+      users_str << [
+        Format.fmt_comment({
+          2 => GDBase64.encode(comment),
+          3 => user_id,
+          4 => likes,
+          5 => 0,
+          6 => id,
+          7 => likes < -3,
+          8 => account_id,
+          9 => Time.parse(created_at, Format::TIME_FORMAT, Time::Location::UTC),
+          10 => percent || 0,
+          11 => "0",
+          12 => "0,0,0", # todo: badge
+        }),
+        Format.fmt_comment({
+          1 => username || "-",
+          9 => icon_value,
+          10 => color1,
+          11 => color2,
+          14 => icon_type,
+          15 => special,
+          16 => account_id || udid
+        })
+      ].join(":")
     end
   end
 

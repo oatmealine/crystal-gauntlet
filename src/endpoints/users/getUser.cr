@@ -43,17 +43,17 @@ CrystalGauntlet.endpoints["/getGJUserInfo20.php"] = ->(body : String): String {
       return CrystalGauntlet::Format.fmt_hash({
         1 => username,
         2 => user_id,
-        13 => coins,
-        17 => user_coins,
-        10 => color1,
-        11 => color2,
         3 => stars,
-        46 => diamonds,
         4 => demons,
         8 => creator_points,
+        10 => color1,
+        11 => color2,
+        13 => coins,
+        16 => id,
+        17 => user_coins,
+        # todo: messages can actually be disabled for _everyone_; this is actually an enum (0: all, 1: only friends, 2: none)
         18 => !messages_enabled,
         19 => !friend_requests_enabled,
-        50 => !comments_enabled,
         20 => youtube_url || "",
         21 => cube,
         22 => ship,
@@ -62,10 +62,9 @@ CrystalGauntlet.endpoints["/getGJUserInfo20.php"] = ->(body : String): String {
         25 => wave,
         26 => robot,
         28 => glow,
-        43 => spider,
-        47 => explosion,
+        # registered or not; always 1 here
+        29 => 1,
         30 => 1, # rank; todo
-        16 => id,
         # 31 = isnt (0) or is (1) friend or (3) incoming request or (4) outgoing request
         # todo
         31 => 0,
@@ -73,11 +72,21 @@ CrystalGauntlet.endpoints["/getGJUserInfo20.php"] = ->(body : String): String {
         # 32 => id,
         # 35 => comment,
         # 37 => date,
+        # todo: how many messages you have; exclusive to if you're viewing your own profile
+        38 => 0,
+        # todo: above, but friend requests
+        39 => 0,
+        # todo: above: but how many new friends the user has
+        40 => 0,
+        43 => spider,
         44 => twitter_url || "",
         45 => twitch_url || "",
-        29 => 1,
+        46 => diamonds,
+        48 => explosion,
         # badge, todo
-        49 => 0
+        49 => 0,
+        # todo: this is actually also an enum (0: all, 1: only friends, 2: none)
+        50 => !comments_enabled,
       })
     else
       "-1"

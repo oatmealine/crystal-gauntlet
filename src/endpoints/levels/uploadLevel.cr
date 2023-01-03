@@ -44,6 +44,8 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(body : String): String {
 
   # todo: verify object count, coins and twoplayer (i'm sure it's possible)
 
+  # todo: check seed2?
+
   if DATABASE.scalar("select count(*) from levels where id = ? and user_id = ?", params["levelID"], params["accountID"]).as(Int64) > 0
     # update existing level
     # todo

@@ -27,10 +27,10 @@ CrystalGauntlet.endpoints["/getGJAccountComments20.php"] = ->(body : String): St
         2 => Base64.encode(comment).strip("\n"),
         3 => account_id,
         4 => likes,
-        5 => 0,
+        5 => 0, # dislikes; unused
+        6 => id,
         7 => likes < -3, # todo: config?
         9 => Time.parse(created_at, Format::TIME_FORMAT, Time::Location::UTC),
-        6 => id
       })
     end
   end

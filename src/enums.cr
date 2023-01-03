@@ -19,19 +19,19 @@ module CrystalGauntlet
     def to_star_difficulty
       case self
       when .auto?
-        50
+        5
       when .easy?
-        10
+        1
       when .normal?
-        20
+        2
       when .hard?
-        30
+        3
       when .harder?
-        40
+        4
       when .insane?
-        50
+        5
       when .demon?
-        50
+        5
       end
     end
   end

@@ -21,7 +21,8 @@ CREATE TABLE levels (
   extra_data  BLOB     NOT NULL,
   level_info  BLOB     NOT NULL,
 
-  -- checksums, presumably
+  -- times spent in the editor
+  -- wt1 doesn't count copies, wt2 does
   wt1         TEXT     NOT NULL,
   wt2         TEXT     NOT NULL,
 
