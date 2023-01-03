@@ -77,22 +77,6 @@ module CrystalGauntlet::Format
   end
 end
 
-module CrystalGauntlet::GDBase64
-  extend self
-
-  def encode(v)
-    Base64.encode(v).gsub('/', '_').gsub('+', '-').strip("\n")
-  end
-
-  def decode(v)
-    Base64.decode(v.gsub('_', '/').gsub('-', '+'))
-  end
-
-  def decode_string(v)
-    Base64.decode_string(v.gsub('_', '/').gsub('-', '+'))
-  end
-end
-
 module CrystalGauntlet::XorCrypt
   extend self
 

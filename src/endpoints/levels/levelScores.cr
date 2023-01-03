@@ -23,7 +23,7 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(context : HTTP::Serve
     attempts = params["s1"].to_i - 8354
     clicks = params["s2"].to_i - 3991
     time = params["s3"].to_i - 4085
-    progress = String.new(XorCrypt.encrypt_string(GDBase64.decode_string(params["s6"]), "41274"))
+    progress = String.new(XorCrypt.encrypt_string(Base64.decode_string(params["s6"]), "41274"))
     coins = params["s9"].to_i - 5819
     if coins > 3 || coins < 0
       return "-1"

@@ -7,7 +7,7 @@ module CrystalGauntlet::GJP
   XOR_KEY = "37526"
 
   def decrypt(pass : String)
-    pwd = GDBase64.decode(pass)
+    pwd = Base64.decode(pass)
     decrypted = ""
 
     pwd.each.with_index() do |chr, index|
@@ -24,7 +24,7 @@ module CrystalGauntlet::GJP
       encrypted[index] = chr ^ XOR_KEY.byte_at(index % XOR_KEY.bytesize)
     end
 
-    GDBase64.encode(encrypted)
+    Base64.urlsafe_encode(encrypted)
   end
 
   def hash(pass : String)

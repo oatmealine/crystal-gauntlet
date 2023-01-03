@@ -31,7 +31,7 @@ module CrystalGauntlet::Accounts
   def auth(params : URI::Params) : (Tuple(Int32, Int32) | Tuple(Nil, Nil))
     gjp = params["gjp"]?
     udid = params["udid"]?
-    account_id = params["account_id"]?
+    account_id = params["accountID"]?
 
     if AUTH_CACHE[{gjp, udid, account_id}]?
       LOG.debug {"#{account_id || udid || "???"}: gjp cache hit"}

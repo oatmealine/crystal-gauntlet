@@ -55,7 +55,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
       if !password
         password = "0"
       elsif params["gameVersion"].to_i >= 20
-        xor_pass = GDBase64.encode(XorCrypt.encrypt_string(password, "26364"))
+        xor_pass = Base64.urlsafe_encode(XorCrypt.encrypt_string(password, "26364"))
       else
         xor_pass = password
       end
@@ -64,7 +64,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
       response << CrystalGauntlet::Format.fmt_hash({
         1 => id,
         2 => name,
-        3 => GDBase64.encode(description),
+        3 => Base64.urlsafe_encode(description),
         4 => level_data,
         5 => version,
         6 => user_id,

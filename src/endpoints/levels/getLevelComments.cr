@@ -40,7 +40,7 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(context : HTTP::Server::C
 
       users_str << [
         Format.fmt_comment({
-          2 => GDBase64.encode(comment),
+          2 => Base64.urlsafe_encode(comment),
           3 => user_id,
           4 => likes,
           5 => 0,

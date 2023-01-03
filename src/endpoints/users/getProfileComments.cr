@@ -24,7 +24,7 @@ CrystalGauntlet.endpoints["/getGJAccountComments20.php"] = ->(context : HTTP::Se
       likes = rs.read(Int32)
 
       users_str << Format.fmt_comment({
-        2 => Base64.encode(comment).strip("\n"),
+        2 => Base64.strict_encode(comment),
         3 => account_id,
         4 => likes,
         5 => 0, # dislikes; unused

@@ -192,7 +192,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
     results << Format.fmt_hash({
       1 => id,
       2 => name,
-      3 => GDBase64.encode(description),
+      3 => Base64.urlsafe_encode(description),
       5 => version,
       6 => user_id,
       # this is suppoused to be the amount of people who have

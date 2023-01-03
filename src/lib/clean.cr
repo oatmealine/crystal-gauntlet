@@ -24,6 +24,6 @@ module CrystalGauntlet::Clean
 
   # for b64 inputs; thoroughly cleans them
   def clean_b64(str)
-    GDBase64.encode(GDBase64.decode_string(str))
+    Base64.urlsafe_encode(Base64.decode_string(str))
   end
 end

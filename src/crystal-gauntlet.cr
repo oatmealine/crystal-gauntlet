@@ -17,6 +17,7 @@ require "./lib/gjp"
 require "./lib/clean"
 require "./lib/songs"
 require "./lib/ids"
+require "./lib/level"
 
 Dotenv.load
 
