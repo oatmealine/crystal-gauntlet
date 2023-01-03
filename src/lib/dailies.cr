@@ -30,7 +30,7 @@ module CrystalGauntlet::Dailies
       level_id, expires, idx = grab_new_level(weekly)
     else
       # check if it has expired, roll a new one if so
-      expires = (Time.utc - Time.parse(expires_at, Format::TIME_FORMAT, Time::Location::UTC)).total_seconds.to_i
+      expires = (Time.parse(expires_at, Format::TIME_FORMAT, Time::Location::UTC) - Time.utc).total_seconds.to_i
       if expires <= 0
         level_id, expires, idx = grab_new_level(weekly, Time.parse(expires_at, Format::TIME_FORMAT, Time::Location::UTC))
       end
