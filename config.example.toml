@@ -12,6 +12,10 @@
 #
 # leaving blank will disable this
 append_path = ""
+# where can your server be accessible?
+# for dev environments, "localhost:8080" will do
+# otherwise, try something like "gdpstest.oat.zone"
+hostname = "localhost:8080"
 
 [formatting]
 # whether to format dates as relative or absolute

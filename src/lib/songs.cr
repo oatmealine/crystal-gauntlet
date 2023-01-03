@@ -186,8 +186,7 @@ module CrystalGauntlet::Songs
     if (fetch_url || !get_download) && metadata && author_id
       # we're done! woo
       if fetch_url && fetch_url.starts_with?("./")
-        # todo
-        fetch_url = "localhost:8080/#{fetch_url[2..]}"
+        fetch_url = "#{config_get("general.hostname").as?(String) || ""}/#{fetch_url[2..]}"
       end
       return {metadata.name, author_id, metadata.author, metadata.size, fetch_url}
     end
@@ -233,9 +232,8 @@ module CrystalGauntlet::Songs
     end
 
     if fetch_url && fetch_url.starts_with?("./")
-      # todo
-      # todo also: deduplicate this with similar block above?
-      fetch_url = "localhost:8080/#{fetch_url[2..]}"
+      # todo: deduplicate this with similar block above?
+      fetch_url = "#{config_get("general.hostname").as?(String) || ""}/#{fetch_url[2..]}"
     end
     return {metadata.name, author_id, metadata.author, new_size || metadata.size, fetch_url}
   end
