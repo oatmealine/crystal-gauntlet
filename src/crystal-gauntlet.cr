@@ -215,6 +215,17 @@ module CrystalGauntlet
         server.bind_unix(listen_on.to_s.sub("unix://",""))
       end
 
+      full_server_path = (config_get("general.hostname").as?(String) || "") + "/" + (config_get("general.append_path").as?(String) || "")
+      robtop_server_path = "www.boomlings.com/database/"
+      if full_server_path.size != robtop_server_path.size
+        LOG.warn { "i think you made a mistake? length of full server path and default .exe location do not match" }
+        LOG.warn { "  #{full_server_path}" }
+        LOG.warn { "  #{robtop_server_path}" }
+        min_length = Math.min(full_server_path.size, robtop_server_path.size)
+        max_length = Math.max(full_server_path.size, robtop_server_path.size)
+        LOG.warn { "  #{" " * min_length}#{"^" * (max_length - min_length)}"}
+      end
+
       LOG.notice { "Listening on #{listen_on.to_s.colorize(:white)}" }
       server.listen
     end
