@@ -201,6 +201,7 @@ module CrystalGauntlet
     else
       server = HTTP::Server.new([
         HTTP::LogHandler.new,
+        HTTP::StaticFileHandler.new("public/", fallthrough: true, directory_listing: false),
         HTTP::StaticFileHandler.new("data/", fallthrough: true, directory_listing: false),
         CrystalGauntlet::GDHandler.new,
         CrystalGauntlet::TemplateHandler.new

@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
     <title>Song Uploader</title>
   </head>
   <body>
     <%- if error -%>
       <div>Error while uploading: <%= error %></div><br />
     <%- elsif song_id -%>
-      <div>Uploaded successfully! Song ID: <%= song_id %></div><br />
+      <div>Uploaded successfully! Song ID: <b><%= song_id %></b></div><br />
     <%- end -%>
     
     <form action="/tools/song_upload" method="post">

@@ -28,11 +28,11 @@ CrystalGauntlet.template_endpoints["/tools/song_upload"] = ->(context : HTTP::Se
       DATABASE.exec("insert into songs (id, url) values (?, ?)", song_id, params["url"])
     rescue error
       # todo: HELP HOW DO I DO THIS BUT BETTER
-      ECR.render("./template/song_upload.ecr")
+      ECR.render("./public/template/song_upload.ecr")
     else
-      ECR.render("./template/song_upload.ecr")
+      ECR.render("./public/template/song_upload.ecr")
     end
   end
-  
-  ECR.render("./template/song_upload.ecr")
+
+  ECR.render("./public/template/song_upload.ecr")
 }

@@ -1,6 +1,6 @@
 <h1 style="vertical-align:center">
   <center>
-    <img src="./docs/crystal-gauntlet-icon.png" width="auto" height="32"> crystal-gauntlet
+    <img src="./public/favicon.png" width="auto" height="32"> crystal-gauntlet
   </center>
 </h1>
 
