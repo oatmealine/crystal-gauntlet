@@ -1,4 +1,4 @@
-<h1 style="vertical-align:center">
+<h1 style="vertical-align: middle">
   <center>
     <img src="./public/favicon.png" width="auto" height="32"> crystal-gauntlet
   </center>

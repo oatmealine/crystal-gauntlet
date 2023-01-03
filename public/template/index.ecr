@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>crystal-gauntlet</title>
+  </head>
+  <body style="display: flex; align-items: center; gap: 1.5em; flex-direction: column">
+    <h1 style="display: flex; align-items: center; gap: 1em">
+      <img src="/favicon.png" width="64" height="auto" class="spinny"> crystal-gauntlet
+    </h1>
+    <div style="max-width: 400px; font-style: italic; text-align: center" class="dim"><%=
+      strings = [
+        "did yoy know? 50 Kilometers Remaining",
+        "Fun Basil Fact: If you start running now, you may be fast enough",
+        "Made in Yugoslavia",
+        "There might be moths here",
+        "< 6 security vulnerabilities (for 2 of which a CVE is pending!)",
+        "Overengineered Hellspawn",
+        "Home of <b>The Intrinsic</b>",
+        "home of ㏒",
+        "wake up, take a shit, novosibirsk",
+        "The catalyst of ball itching",
+        "<a href='https://xkcd.com/927/'>XKCD 927</a>'s biggest fan"
+      ]
+      strings[Random.rand(strings.size)]
+    %></div>
+    <div class="block">
+      <p>
+        <b>crystal-gauntlet</b> is a work-in-progress <a href="https://store.steampowered.com/app/322170/Geometry_Dash/" target="_blank" rel="noreferrer noopener">Geometry Dash</a>
+        private server written in <a href="https://crystal-lang.org/" target="_blank" rel="noreferrer noopener">Crystal</a>, focusing on performance and 1:1 accuracy of GD feature recreations.
+      </p>
+      <p>
+        But you probably already knew that. You may be looking for:<br>
+        <el>
+          <li>The <a href="https://git.oat.zone/oat/crystal-gauntlet">Git repository</a></li>
+          <li><a href="/tools/song_upload">Song reuploading</a></li>
+          <li><a href="https://oat.zone/f/geometry_dash_gdpstest.oat.zone.zip"><i>Completely legal</i> executable download</a></li>
+        </el>
+      </p>
+    </div>
+    <div class="dim">
+      Crystal <%= Crystal::VERSION %> <pre><%= Crystal::BUILD_COMMIT %></pre> running on <pre><%= System.hostname %></pre>
+    </div>
+  </body>
+</html>
