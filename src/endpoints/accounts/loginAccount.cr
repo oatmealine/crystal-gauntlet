@@ -10,6 +10,14 @@ CrystalGauntlet.endpoints["/accounts/loginGJAccount.php"] = ->(context : HTTP::S
 
   username = params["userName"]
   password = params["password"]
+
+  if password.size < 6
+    return "-8"
+  end
+  if username.size < 3
+    return "-9"
+  end
+
   result = DATABASE.query_all("select id, password from accounts where username = ?", username, as: {Int32, String})
   if result.size > 0
     account_id, hash = result[0]
@@ -19,7 +27,7 @@ CrystalGauntlet.endpoints["/accounts/loginGJAccount.php"] = ->(context : HTTP::S
       user_id = Accounts.get_user_id(account_id)
       "#{account_id},#{user_id}"
     else
-      return "-12"
+      return "-11"
     end
   else
     return "-1"

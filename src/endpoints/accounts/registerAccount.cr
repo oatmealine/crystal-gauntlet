@@ -16,6 +16,17 @@ CrystalGauntlet.endpoints["/accounts/registerGJAccount.php"] = ->(context : HTTP
   password = params["password"]
   email = params["email"]
 
+  if username != params["userName"]
+    return "-4"
+  end
+
+  if password.size < 6
+    return "-8"
+  end
+  if username.size < 3
+    return "-9"
+  end
+
   # caps checks aren't required because `username` is already COLLATE NOCASE in the db
   username_exists = DATABASE.scalar "select count(*) from accounts where username = ?", username
   if username_exists != 0
