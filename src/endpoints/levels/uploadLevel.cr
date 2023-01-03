@@ -127,8 +127,6 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
 
     DATABASE.exec("insert into levels (id, name, user_id, description, original, game_version, binary_version, password, requested_stars, unlisted, version, level_data, extra_data, level_info, editor_time, editor_time_copies, song_id, length, objects, coins, has_ldm, two_player) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", next_id, Clean.clean_special(params["levelName"]), user_id, description, params["original"].to_i32, params["gameVersion"].to_i32, params["binaryVersion"].to_i32, params["password"] == "0" ? nil : params["password"].to_i32, params["requestedStars"].to_i32, params["unlisted"].to_i32, params["levelVersion"].to_i32, Clean.clean_b64(params["levelString"]), Clean.clean_special(extraString), Clean.clean_b64(params["levelInfo"]), params["wt"].to_i32, params["wt2"].to_i32, song_id.to_i32, params["levelLength"].to_i32, objects, coins, params["ldm"].to_i32, two_player)
 
-    return "-1"
-
-    #return next_id.to_s
+    return next_id.to_s
   end
 }
