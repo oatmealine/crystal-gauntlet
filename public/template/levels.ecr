@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Levels</title>
+
+    <style>
+      .level {
+        width: 600px;
+        height: 4em;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 2em;
+        padding: 1em;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 0.5em;
+      }
+      .line {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .name {
+        flex: 1 1 0px;
+        min-width: 0;
+        font-size: 1.2em;
+      }
+      .id {
+        flex: 0 0 auto;
+      }
+      .level-img {
+        flex: 0 0 auto;
+      }
+      .level-right {
+        flex: 1 1 0px;
+      }
+      .pagination {
+        display: flex;
+        flex-direction: row;
+        gap: 1em;
+      }
+    </style>
+  </head>
+  <body style="display: flex; flex-direction: column; align-items: center; gap: 1em">
+    <%- levels.each do |id, name, username, difficulty_community, difficulty_set, featured, epic| -%>
+      <div class="level">
+        <%=
+          difficulties = [
+            "auto",
+            "easy",
+            "normal",
+            "hard",
+            "harder",
+            "insane",
+            "demon-hard"
+          ]
+          difficulty_int = difficulty_set || difficulty_community
+          difficulty_img = difficulty_int ? difficulties[difficulty_int] : "unrated"
+          "<img src='https://gdbrowser.com/assets/difficulties/#{difficulty_img + (epic ? "-epic" : (featured ? "-featured" : ""))}.png' class='level-img'>"
+        %>
+        <div class="level-right">
+          <span class="line"><span class="name"><%= name %></span><span class="id dim">#<%= id %></span></span>
+          <small>by <%= username %></small><br>
+        </div>
+      </div>
+    <%- end -%>
+    <div class="pagination">
+      <%- if total_levels > ((page + 1) * levels_per_page) && page > 0 -%>
+        <a href="/?page=<%= page - 1 %>"><</a>
+      <%- end -%>
+      <%- if total_levels > ((page + 1) * levels_per_page) -%>
+        <a href="/?page=<%= page + 1 %>">></a>
+      <%- end -%>
+    </div>
+  </body>
+</html>
