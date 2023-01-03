@@ -1,20 +1,16 @@
 version: 2.0
 shards:
-  crystagiri:
-    git: https://github.com/madeindjs/crystagiri.git
-    version: 0.3.5
-
   db:
     git: https://github.com/crystal-lang/crystal-db.git
     version: 0.6.0
 
   dotenv:
     git: https://github.com/gdotdesign/cr-dotenv.git
-    version: 0.1.0
+    version: 1.0.0
 
   migrate:
-    git: https://github.com/vladfaust/migrate.cr.git
-    version: 0.5.0
+    git: https://github.com/oatmealine/migrate.cr.git
+    version: 0.5.0+git.commit.31af921c4a0ba1d42c4bff8047c5d91584082158
 
   sqlite3:
     git: https://github.com/crystal-lang/crystal-sqlite3.git
