@@ -182,7 +182,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
   hash_data = [] of Tuple(Int32, Int32, Bool)
 
   # fucking help
-  DATABASE.query_all("select levels.id, levels.name, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered, wt1, wt2 #{query_base} limit #{levels_per_page} offset #{page_offset}", as: {Int32, String, Int32, String, Int32 | Nil, Int32, Int32 | Nil, Int32, Int32, Int32, Int32, Int32, Bool, Bool, Int32, Int32, Int32 | Nil, Int32 | Nil, Int32 | Nil, Int32 | Nil, Bool, Bool, Bool, String, String | Nil, Int32 | Nil, Bool, String, String}).map() do |id, name, user_id, description, original, game_version, requested_stars, version, song_id, length, objects, coins, has_ldm, two_player, downloads, likes, set_difficulty_int, community_difficulty_int, demon_difficulty_int, stars, featured, epic, rated_coins, user_username, user_udid, user_account_id, user_registered, wt1, wt2|
+  DATABASE.query_all("select levels.id, levels.name, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered, editor_time, editor_time_copies #{query_base} limit #{levels_per_page} offset #{page_offset}", as: {Int32, String, Int32, String, Int32 | Nil, Int32, Int32 | Nil, Int32, Int32, Int32, Int32, Int32, Bool, Bool, Int32, Int32, Int32 | Nil, Int32 | Nil, Int32 | Nil, Int32 | Nil, Bool, Bool, Bool, String, String | Nil, Int32 | Nil, Bool, String, String}).each() do |id, name, user_id, description, original, game_version, requested_stars, version, song_id, length, objects, coins, has_ldm, two_player, downloads, likes, set_difficulty_int, community_difficulty_int, demon_difficulty_int, stars, featured, epic, rated_coins, user_username, user_udid, user_account_id, user_registered, editor_time, editor_time_copies|
     set_difficulty = set_difficulty_int && LevelDifficulty.new(set_difficulty_int)
     community_difficulty = community_difficulty_int && LevelDifficulty.new(community_difficulty_int)
     difficulty = set_difficulty || community_difficulty
@@ -228,8 +228,8 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(body : String): String {
       # todo
       44 => false,
       45 => objects,
-      46 => wt1,
-      47 => wt2
+      46 => editor_time,
+      47 => editor_time_copies
     })
 
     users << "#{user_id}:#{user_username}:#{user_registered ? user_account_id : user_udid}"

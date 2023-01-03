@@ -9,7 +9,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
 
   response = [] of String
 
-  DATABASE.query("select levels.id, levels.name, levels.level_data, levels.extra_data, levels.level_info, levels.password, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered, wt1, wt2 from levels join users on levels.user_id = users.id where levels.id = ?", params["levelID"].to_i32) do |rs|
+  DATABASE.query("select levels.id, levels.name, levels.level_data, levels.extra_data, levels.level_info, levels.password, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered, editor_time, editor_time_copies from levels join users on levels.user_id = users.id where levels.id = ?", params["levelID"].to_i32) do |rs|
     if rs.move_next
       id = rs.read(Int32)
       name = rs.read(String)
@@ -48,8 +48,8 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
       user_account_id = rs.read(Int32 | Nil)
       user_registered = rs.read(Bool)
 
-      wt1 = rs.read(String)
-      wt2 = rs.read(String)
+      editor_time = rs.read(String)
+      editor_time_copies = rs.read(String)
 
       xor_pass = "0"
       if !password
@@ -107,8 +107,8 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(body : String): String 
         # todo
         44 => false,
         45 => objects,
-        46 => wt1,
-        47 => wt2
+        46 => editor_time,
+        47 => editor_time_copies
       })
       response << Hashes.gen_solo(level_data)
 

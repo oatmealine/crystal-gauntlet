@@ -21,10 +21,8 @@ CREATE TABLE levels (
   extra_data  BLOB     NOT NULL,
   level_info  BLOB     NOT NULL,
 
-  -- times spent in the editor
-  -- wt1 doesn't count copies, wt2 does
-  wt1         TEXT     NOT NULL,
-  wt2         TEXT     NOT NULL,
+  editor_time         INTEGER  NOT NULL,
+  editor_time_copies  INTEGER  NOT NULL,
 
   song_id  INTEGER  NOT NULL,
 
