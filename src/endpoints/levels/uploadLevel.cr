@@ -117,10 +117,19 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
 
   # todo: check seed2?
 
-  if DATABASE.scalar("select count(*) from levels where id = ? and user_id = ?", params["levelID"], params["accountID"]).as(Int64) > 0
+  if DATABASE.scalar("select count(*) from levels where id = ?", params["levelID"]).as(Int64) > 0
     # update existing level
-    # todo
-    raise "not implemented"
+    level_user_id = DATABASE.query_one("select user_id from levels where id = ?", params["levelID"].to_i, as: {Int32})
+
+    if level_user_id != user_id
+      return "-1"
+    end
+
+    DATABASE.exec("update levels set description = ?, password = ?, requested_stars = ?, version = ?, extra_data = ?, level_info = ?, editor_time = ?, editor_time_copies = ?, song_id = ?, length = ?, objects = ?, coins = ?, has_ldm = ?, two_player = ? where id = ?", description, params["password"] == "0" ? nil : params["password"].to_i, params["requestedStars"].to_i, params["levelVersion"].to_i, Clean.clean_special(extraString), Clean.clean_b64(params["levelInfo"]), params["wt"].to_i, params["wt2"].to_i, song_id.to_i, params["levelLength"].to_i, objects, coins, params["ldm"].to_i, two_player, params["levelID"].to_i)
+
+    File.write("data/#{params["levelID"]}.lvl", Base64.decode(params["levelString"]))
+
+    return params["levelID"]
   else
     # create new level
     next_id = IDs.get_next_id("levels")
