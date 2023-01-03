@@ -193,13 +193,18 @@ module CrystalGauntlet
 
     parser.parse
 
+    migrator = Migrate::Migrator.new(
+      DATABASE
+    )
+
     if migrate
       LOG.info { "Migrating #{ENV["DATABASE_URL"].colorize(:white)}..." }
-      migrator = Migrate::Migrator.new(
-        DATABASE
-      )
       migrator.to_latest
     else
+      if !migrator.latest?
+        LOG.fatal { "Database hasn\'t been migrated!! Please run #{"crystal-gauntlet migrate".colorize(:white)}" }
+      end
+
       server = HTTP::Server.new([
         HTTP::LogHandler.new,
         HTTP::StaticFileHandler.new("public/", fallthrough: true, directory_listing: false),
