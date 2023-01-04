@@ -140,7 +140,14 @@ module CrystalGauntlet
           context.response.content_type = "text/plain"
           context.response.respond_with_status(500, "-1")
         else
-          LOG.debug { "-> " + value }
+          max_size = 2048
+
+          value_displayed = value
+          if value.size > max_size
+            value_displayed = value[0..max_size] + ("…".colorize(:dark_gray).to_s)
+          end
+          LOG.debug { "-> ".colorize(:green).to_s + value_displayed }
+
           context.response.content_type = "text/plain"
           context.response.print value
         end
