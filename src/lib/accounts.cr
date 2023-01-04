@@ -17,7 +17,7 @@ module CrystalGauntlet::Accounts
 
   # DOESN'T VERIFY PASSWORD
   def get_ext_id_from_params(params : URI::Params) : Int32 | Nil
-    if params.has_key?("udid") && params["udid"] != ""
+    if params.has_key?("udid") && !params["udid"].blank?
       params["udid"].to_i32?
     else
       get_account_id_from_params(params)
@@ -63,7 +63,7 @@ module CrystalGauntlet::Accounts
   end
 
   def verify_gjp(account_id : Int32, gjp : String) : Bool
-    if gjp == ""
+    if gjp.blank?
       return false
     end
     hash = DATABASE.scalar("select password from accounts where id = ?", account_id).as(String)

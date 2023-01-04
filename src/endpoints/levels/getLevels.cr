@@ -23,7 +23,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
 
   searchQuery = params["str"]? || ""
 
-  if searchQuery != "" && params["type"] != "5" && params["type"] != "10" && params["type"] != "19"
+  if !searchQuery.blank? && params["type"] != "5" && params["type"] != "10" && params["type"] != "19"
     if searchQuery.to_i?
       # we do this to get rid of the initial "unlisted = 0" bit
       can_see_unlisted = true
@@ -59,7 +59,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
 	  # $params[] = "levelID IN ($completedLevels)";
   end
   if params["song"]?
-    if params["customSong"]? && params["customSong"]? != ""
+    if params["customSong"]? && !params["customSong"].blank?
       queryParams << "song_id = '#{params["customSong"].to_i}'"
     else
       queryParams << "song_id = '#{params["song"].to_i}'"

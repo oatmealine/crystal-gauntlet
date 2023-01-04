@@ -13,7 +13,7 @@ CrystalGauntlet.endpoints["/uploadGJAccComment20.php"] = ->(context : HTTP::Serv
 
   comment = params["comment"]?
 
-  if comment && comment != ""
+  if comment && !comment.blank?
     # todo: cap comment size
     comment_value = Base64.decode_string comment # usual b64, surprisingly
     next_id = IDs.get_next_id("account_comments")

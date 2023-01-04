@@ -95,7 +95,7 @@ module CrystalGauntlet::Songs
     if source == "unknown"
       return UNKNOWN_SONG_AUTHOR
     end
-    if artist_name == ""
+    if artist_name.blank?
       return UNKNOWN_SONG_AUTHOR
     end
 
