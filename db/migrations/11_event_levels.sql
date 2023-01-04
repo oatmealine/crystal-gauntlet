@@ -7,7 +7,8 @@ CREATE TABLE daily_queue (
 CREATE TABLE daily_levels (
   level_id    INTEGER  NOT NULL  references levels(id),
   idx         SERIAL   NOT NULL  PRIMARY KEY,
-  expires_at  TEXT     NOT NULL
+  expires_at  TEXT     NOT NULL,
+  queue_idx   INTEGER  NOT NULL  references daily_queue(idx)
 );
 
 CREATE TABLE weekly_queue (
@@ -18,7 +19,8 @@ CREATE TABLE weekly_queue (
 CREATE TABLE weekly_levels (
   level_id    INTEGER  NOT NULL  references levels(id),
   idx         SERIAL   NOT NULL  PRIMARY KEY,
-  expires_at  TEXT     NOT NULL
+  expires_at  TEXT     NOT NULL,
+  queue_idx   INTEGER  NOT NULL  references weekly_queue(idx)
 );
 
 -- +migrate down
