@@ -17,7 +17,9 @@ def get_next_song_id() : Int32
   end
 end
 
-CrystalGauntlet.template_endpoints["/tools/song_upload"] = ->(context : HTTP::Server::Context): String {
+CrystalGauntlet.template_endpoints["/tools/song_upload"] = ->(context : HTTP::Server::Context) {
+  context.response.content_type = "text/html"
+
   error = nil
   song_id = nil
   body = context.request.body
@@ -28,11 +30,11 @@ CrystalGauntlet.template_endpoints["/tools/song_upload"] = ->(context : HTTP::Se
       DATABASE.exec("insert into songs (id, url) values (?, ?)", song_id, params["url"])
     rescue error
       # todo: HELP HOW DO I DO THIS BUT BETTER
-      ECR.render("./public/template/song_upload.ecr")
+      ECR.embed("./public/template/song_upload.ecr", context.response)
     else
-      ECR.render("./public/template/song_upload.ecr")
+      ECR.embed("./public/template/song_upload.ecr", context.response)
     end
   end
 
-  ECR.render("./public/template/song_upload.ecr")
+  ECR.embed("./public/template/song_upload.ecr", context.response)
 }

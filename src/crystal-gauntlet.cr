@@ -46,7 +46,7 @@ module CrystalGauntlet
   DATABASE = DB.open(ENV["DATABASE_URL"]? || "sqlite3://./crystal-gauntlet.db")
 
   @@endpoints = Hash(String, (HTTP::Server::Context -> String)).new
-  @@template_endpoints = Hash(String, (HTTP::Server::Context -> String)).new
+  @@template_endpoints = Hash(String, (HTTP::Server::Context -> Nil)).new
 
   @@up_at = nil
 
@@ -162,7 +162,7 @@ module CrystalGauntlet
       if CrystalGauntlet.template_endpoints.has_key?(path)
         func = CrystalGauntlet.template_endpoints[path]
         begin
-          value = func.call(context)
+          func.call(context)
         rescue err
           LOG.error { "error while handling #{path.colorize(:white)}:" }
           LOG.error { err.to_s }
@@ -177,10 +177,6 @@ module CrystalGauntlet
           end
           context.response.content_type = "text/html"
           context.response.respond_with_status(500, "Internal server error occurred, sorry about that")
-        else
-          LOG.debug { "-> " + value }
-          context.response.content_type = "text/html"
-          context.response.print value
         end
       else
         call_next(context)
