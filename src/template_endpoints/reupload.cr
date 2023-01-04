@@ -23,7 +23,7 @@ CrystalGauntlet.template_endpoints["/tools/reupload"] = ->(context : HTTP::Serve
       level = data["records"].as_a
         .select { |rec| rec["level_string_available"] == true }
         .sort { |a, b| a["real_date"].as_s <=> b["real_date"].as_s }
-        .first
+        .last
 
       gmd_file = HTTP::Client.get "https://history.geometrydash.eu/level/#{remote_level_id}/#{level["id"]}/download/"
       level_data = Level.gmd_parse(gmd_file.body)
