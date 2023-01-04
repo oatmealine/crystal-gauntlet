@@ -48,6 +48,21 @@ module CrystalGauntlet
   @@endpoints = Hash(String, (HTTP::Server::Context -> String)).new
   @@template_endpoints = Hash(String, (HTTP::Server::Context -> String)).new
 
+  @@up_at = nil
+
+  def self.uptime
+    if !@@up_at
+      return Time::Span::ZERO
+    else
+      return Time.utc - @@up_at.not_nil!
+    end
+  end
+
+  def self.uptime_s
+    span = uptime
+    Format.fmt_timespan_long(span)
+  end
+
   def self.endpoints
     @@endpoints
   end
@@ -233,6 +248,7 @@ module CrystalGauntlet
         LOG.warn { "  #{" " * min_length}#{"^" * (max_length - min_length)}"}
       end
 
+      @@up_at = Time.utc
       LOG.notice { "Listening on #{listen_on.to_s.colorize(:white)}" }
       server.listen
     end

@@ -30,6 +30,21 @@ module CrystalGauntlet::Format
     end
   end
 
+  def fmt_timespan_bit(n : Int, s : String) : String | Nil
+    if n > 0
+      return "#{n} #{s}#{n == 1 ? "" : "s"}"
+    end
+  end
+
+  def fmt_timespan_long(s : Time::Span) : String
+    [
+      {s.days, "day"},
+      {s.hours, "hour"},
+      {s.minutes, "minute"},
+      {s.seconds, "second"}
+    ].map { |n, s| fmt_timespan_bit(n.floor().to_i, s) }.compact.join(" ")
+  end
+
   def fmt_time(s : Time, colon_safe=false) : String
     s.to_s(colon_safe ? TIME_FORMAT_USER_FRIENDLY : TIME_FORMAT_GD_FRIENDLY)
   end
