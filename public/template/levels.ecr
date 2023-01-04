@@ -9,7 +9,7 @@
 
     <style>
       .level {
-        width: 600px;
+        width: 100%;
         height: 4em;
         background-color: rgba(0, 0, 0, 0.2);
         border-radius: 2em;
@@ -49,9 +49,18 @@
         width: auto;
         height: 100%;
       }
+      .levels {
+        width: 600px;
+        max-width: 90vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1em
+      }
     </style>
   </head>
   <body style="display: flex; flex-direction: column; align-items: center; gap: 1em">
+    <div class="levels">
     <%- levels.each do |id, name, username, difficulty_community, difficulty_set, featured, epic| -%>
       <div class="level">
         <%=
@@ -74,12 +83,13 @@
         </div>
       </div>
     <%- end -%>
+    </div>
     <div class="pagination">
       <%- if total_levels > ((page + 1) * levels_per_page) && page > 0 -%>
-        <a href="/?page=<%= page - 1 %>"><</a>
+        <a href="?page=<%= page - 1 %>"><</a>
       <%- end -%>
       <%- if total_levels > ((page + 1) * levels_per_page) -%>
-        <a href="/?page=<%= page + 1 %>">></a>
+        <a href="?page=<%= page + 1 %>">></a>
       <%- end -%>
     </div>
   </body>
