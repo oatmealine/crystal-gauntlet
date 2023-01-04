@@ -85,7 +85,7 @@
     <%- end -%>
     </div>
     <div class="pagination">
-      <%- if total_levels > ((page + 1) * levels_per_page) && page > 0 -%>
+      <%- if page > 0 -%>
         <a href="?page=<%= page - 1 %>"><</a>
       <%- end -%>
       <%- if total_levels > ((page + 1) * levels_per_page) -%>
