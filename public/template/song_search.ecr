@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Song Search</title>
+  </head>
+  <body>    
+    <form action="/tools/song_search" method="post">
+      ID/Author/Title: <input type="text" id="query" name="query" />
+      <input type="submit" value="Submit" />
+    </form>
+
+    <%- if error -%>
+      <div>Error while searching for song: <%= error %></div><br />
+    <%- elsif songs -%>
+      <div>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Author</th>
+            <th>Title</th>
+          </tr>
+          <%- songs.each do |song| -%>
+            <tr>
+              <td><%= song[0] %></td>
+              <td><%= song[1] %></td>
+              <td><%= song[2] %></td>
+            </tr>
+          <%- end -%>
+        </table>
+      </div>
+    <%- end -%>
+  </body>
+</html>
