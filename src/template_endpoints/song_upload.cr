@@ -34,7 +34,7 @@ CrystalGauntlet.template_endpoints["/tools/song_upload"] = ->(context : HTTP::Se
     else
       ECR.embed("./public/template/song_upload.ecr", context.response)
     end
+  else
+    ECR.embed("./public/template/song_upload.ecr", context.response)
   end
-
-  ECR.embed("./public/template/song_upload.ecr", context.response)
 }
