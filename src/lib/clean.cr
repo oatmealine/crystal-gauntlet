@@ -3,7 +3,7 @@ module CrystalGauntlet::Clean
   extend self
 
   # for descriptions & similar
-  def clean_special(str)
+  def clean_special(str : String)
     str.gsub(/[\0]/, "")
   end
 

@@ -3,6 +3,8 @@ require "ecr"
 include CrystalGauntlet
 
 CrystalGauntlet.template_endpoints["/tools/song_search"] = ->(context : HTTP::Server::Context) {
+  context.response.content_type = "text/html"
+
   error = nil
   songs = nil
   result_limit = 10

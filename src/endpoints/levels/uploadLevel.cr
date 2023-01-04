@@ -27,8 +27,7 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
 
   # todo: use 2.2 unlisted
 
-  # todo: https://github.com/Cvolton/GMDprivateServer/blob/master/incl/levels/uploadGJLevel.php#L53
-  extraString = params["extraString"]? || "29_29_29_40_29_29_29_29_29_29_29_29_29_29_29_29"
+  extraString = params["extraString"]? || Level::DEFAULT_EXTRA_STRING
 
   original = (params["original"]? || "0").to_i32
   if original == 0

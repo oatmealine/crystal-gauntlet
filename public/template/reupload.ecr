@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Level Reupload</title>
+  </head>
+  <body>
+    <%- if error -%>
+      <div>Error while uploading: <%= error %></div><br />
+    <%- elsif level_id -%>
+      <div>Uploaded successfully! Level ID: <b><%= level_id %></b></div><br />
+    <%- end -%>
+
+    <form action="/tools/reupload" method="post">
+      ID: <input type="text" id="level_id" name="level_id" />
+      <input type="submit" value="Submit" />
+    </form>
+    <i>Currently only vanilla servers are supported</i>
+  </body>
+</html>
