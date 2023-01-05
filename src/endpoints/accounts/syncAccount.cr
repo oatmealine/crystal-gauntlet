@@ -2,7 +2,7 @@ require "uri"
 
 include CrystalGauntlet
 
-CrystalGauntlet.endpoints["/accounts/backupGJAccount.php"] = ->(context : HTTP::Server::Context): String {
+CrystalGauntlet.endpoints["/accounts/syncGJAccount.php"] = ->(context : HTTP::Server::Context): String {
   params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
@@ -16,14 +16,7 @@ CrystalGauntlet.endpoints["/accounts/backupGJAccount.php"] = ->(context : HTTP::
     
     if bcrypt.verify(password)
       folder = DATA_FOLDER / "saves"
-      params.each do |key, _|
-        if key.starts_with?("H4s")
-          File.write(folder / "#{account_id}_levels.sav", key)
-        end
-      end
-
-      File.write(folder / "#{account_id}.sav", params["saveData"])
-      return "1"
+      return "#{File.read(folder / "#{account_id}.sav")};#{File.read(folder / "#{account_id}_levels.sav")};21;30;a;a"
     else
       return "-1"
     end
@@ -32,5 +25,5 @@ CrystalGauntlet.endpoints["/accounts/backupGJAccount.php"] = ->(context : HTTP::
   end
 }
 
-CrystalGauntlet.endpoints["/database/accounts/backupGJAccountNew.php"] = CrystalGauntlet.endpoints["/accounts/backupGJAccount.php"]
+CrystalGauntlet.endpoints["/database/accounts/syncGJAccountNew.php"] = CrystalGauntlet.endpoints["/accounts/syncGJAccount.php"]
 
