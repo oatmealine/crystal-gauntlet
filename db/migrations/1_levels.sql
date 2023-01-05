@@ -4,9 +4,9 @@ CREATE TABLE levels (
   created_at   TEXT    NOT NULL  DEFAULT (STRFTIME('%Y-%m-%d %H:%M:%f', 'now')),
   modified_at  TEXT    NOT NULL  DEFAULT (STRFTIME('%Y-%m-%d %H:%M:%f', 'now')),
 
-  name         TEXT     NOT NULL,
-  user_id      INTEGER  NOT NULL  references users(id),
-  description  TEXT     NOT NULL  DEFAULT "",
+  name         VARCHAR(20)   NOT NULL,
+  user_id      INTEGER       NOT NULL  references users(id),
+  description  VARCHAR(140)  NOT NULL  DEFAULT "",
   original     INTEGER,
 
   game_version    INTEGER  NOT NULL,

@@ -20,8 +20,7 @@ CrystalGauntlet.endpoints["/uploadGJComment21.php"] = ->(context : HTTP::Server:
   end
 
   if comment && !comment.blank?
-    # todo: cap comment size
-    comment_value = Base64.decode_string comment # usual b64, surprisingly
+    comment_value = Base64.decode_string(comment)[..100-1]
     next_id = IDs.get_next_id("comments")
     DATABASE.exec("insert into comments (id, level_id, user_id, comment, percent) values (?, ?, ?, ?, ?)", next_id, level_id, user_id, comment_value, percent)
     return "1"

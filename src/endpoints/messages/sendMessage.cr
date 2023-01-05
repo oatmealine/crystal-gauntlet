@@ -17,7 +17,7 @@ CrystalGauntlet.endpoints["/uploadGJMessage20.php"] = ->(context : HTTP::Server:
   end
 
   next_message_id = IDs.get_next_id("messages")
-  DATABASE.exec("insert into messages (id, from_account_id, to_account_id, subject, body) values (?, ?, ?, ?, ?)", next_message_id, account_id, params["toAccountID"].to_i, Base64.decode_string(params["subject"]), String.new(XorCrypt.encrypt_string(Base64.decode_string(params["body"]), XorCrypt::MESSAGE_XOR_KEY)))
+  DATABASE.exec("insert into messages (id, from_account_id, to_account_id, subject, body) values (?, ?, ?, ?, ?)", next_message_id, account_id, params["toAccountID"].to_i, Base64.decode_string(params["subject"])[..35-1], String.new(XorCrypt.encrypt_string(Base64.decode_string(params["body"])[..200-1], XorCrypt::MESSAGE_XOR_KEY)))
 
   return "1"
 }

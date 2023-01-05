@@ -26,6 +26,12 @@ CrystalGauntlet.endpoints["/accounts/registerGJAccount.php"] = ->(context : HTTP
   if username.size < 3
     return "-9"
   end
+  if username.size > 16
+    return "-4"
+  end
+  if email.size > 254
+    return "-6"
+  end
 
   # caps checks aren't required because `username` is already COLLATE NOCASE in the db
   username_exists = DATABASE.scalar "select count(*) from accounts where username = ?", username
