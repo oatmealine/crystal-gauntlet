@@ -17,7 +17,7 @@ private def get_rand(type : String, large = false)
   ((Random.rand(min.to_f .. (max.to_f + 1)) / increment).floor() * increment).to_i
 end
 
-private REWARD_TYPES = ["orbs", "diamonds", "shards", "keys"]
+private REWARD_TYPES = StaticArray["orbs", "diamonds", "shards", "keys"]
 
 private def get_chest(account_id : Int32, large = false) : {Int32?, Int32?}
   begin

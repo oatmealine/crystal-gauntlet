@@ -64,7 +64,7 @@
     <%- levels.each do |id, name, username, difficulty_community, difficulty_set, featured, epic| -%>
       <div class="level">
         <%=
-          difficulties = [
+          difficulties = StaticArray[
             "auto",
             "easy",
             "normal",
