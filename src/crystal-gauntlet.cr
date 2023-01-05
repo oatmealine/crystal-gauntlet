@@ -221,6 +221,7 @@ module CrystalGauntlet
     else
       if !migrator.latest?
         LOG.fatal { "Database hasn\'t been migrated!! Please run #{"crystal-gauntlet migrate".colorize(:white)}" }
+        Process.exit(1)
       end
 
       server = HTTP::Server.new([
