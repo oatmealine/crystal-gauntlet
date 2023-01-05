@@ -22,8 +22,8 @@
     <%- end -%>
 
     <form action="/tools/reupload" method="post">
-      ID: <input type="text" id="level_id" name="level_id" disabled="<%= disabled ? "1" : "" %>" />
-      <input type="submit" value="Submit" disabled="<%= disabled ? "1" : "" %>" />
+      ID: <input type="text" id="level_id" name="level_id" <%= disabled ? "disabled" : "" %> />
+      <input type="submit" value="Submit" <%= disabled ? "disabled" : "" %> />
     </form>
     <br>
     <i>Currently only vanilla servers are supported</i>

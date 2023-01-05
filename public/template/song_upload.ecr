@@ -15,10 +15,14 @@
     <%- elsif song_id -%>
       <div>Uploaded successfully! Song ID: <b><%= song_id %></b></div><br />
     <%- end -%>
-    
+
+    <%- if disabled -%>
+      <b>Custom songs have been disabled</b><br><br>
+    <%- end -%>
+
     <form action="/tools/song_upload" method="post">
-      URL: <input type="text" id="url" name="url" />
-      <input type="submit" value="Submit" />
+      URL: <input type="text" id="url" name="url" <%= disabled ? "disabled" : "" %> />
+      <input type="submit" value="Submit" <%= disabled ? "disabled" : "" %>  />
     </form>
   </body>
 </html>

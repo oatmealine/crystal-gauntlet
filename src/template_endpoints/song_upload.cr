@@ -20,10 +20,12 @@ end
 CrystalGauntlet.template_endpoints["/tools/song_upload"] = ->(context : HTTP::Server::Context) {
   context.response.content_type = "text/html"
 
+  disabled = !(config_get("songs.allow_custom_songs").as?(Bool))
+
   error = nil
   song_id = nil
   body = context.request.body
-  if body
+  if body && !disabled
     begin
       params = URI::Params.parse(body.gets_to_end)
       song_id = get_next_song_id()
