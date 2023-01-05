@@ -226,9 +226,6 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
       40 => has_ldm,
       42 => epic,
       43 => (demon_difficulty || DemonDifficulty::Hard).to_demon_difficulty,
-      # is in gauntlet
-      # todo
-      44 => false,
       45 => objects,
       46 => editor_time,
       47 => editor_time_copies

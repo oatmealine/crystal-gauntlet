@@ -56,9 +56,6 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(context : HTTP::Serve
   when 0
     # friends
     # todo
-  when 1
-    # global
-    # todo
   when 2
     # weekly
     where_query << "level_scores.set_at > \"#{(Time.utc - 7.days).to_s(Format::TIME_FORMAT)}\""
