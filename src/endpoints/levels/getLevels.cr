@@ -49,14 +49,12 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
     queryParams << "epic = 1"
   end
   if params["uncompleted"]? == "1"
-    # todo
-    # $completedLevels = ExploitPatch::numbercolon($_POST["completedLevels"]);
-	  # $params[] = "NOT levelID IN ($completedLevels)";
+    clean_levels = params["completedLevels"][1..-2].split(",").map { |v| v.to_i }
+    queryParams << "not levels.id in (#{clean_levels.join(",")})"
   end
   if params["onlyCompleted"]? == "1"
-    # todo
-	  # $completedLevels = ExploitPatch::numbercolon($_POST["completedLevels"]);
-	  # $params[] = "levelID IN ($completedLevels)";
+    clean_levels = params["completedLevels"][1..-2].split(",").map { |v| v.to_i }
+    queryParams << "levels.id in (#{clean_levels.join(",")})"
   end
   if params["song"]?
     if params["customSong"]? && !params["customSong"].blank?
@@ -79,8 +77,8 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
     joins << "left join gauntlet_links on gauntlet_links.level_id = levels.id"
     queryParams << "gauntlet_id = #{params["gauntlet"].to_i}"
   end
-  if params["len"]?
-    # todo
+  if params["len"]? && params["len"]? != "-"
+    queryParams << "levels.length = #{params["len"].to_i}"
   end
   if params["diff"]? && params["diff"]? != "-"
     case params["diff"]?
