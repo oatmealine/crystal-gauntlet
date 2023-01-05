@@ -48,6 +48,7 @@ CrystalGauntlet.endpoints["/getGJRewards.php"] = ->(context : HTTP::Server::Cont
   LOG.debug { params.inspect }
 
   if !config_get("chests.enabled").as?(Bool)
+    LOG.debug { "chests disabled" }
     return "-1"
   end
 
