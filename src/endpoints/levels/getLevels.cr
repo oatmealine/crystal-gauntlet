@@ -75,7 +75,9 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
     queryParams << "levels.stars is null"
   end
   if params["gauntlet"]?
-    # todo
+    order = "gauntlet_links.idx asc"
+    joins << "left join gauntlet_links on gauntlet_links.level_id = levels.id"
+    queryParams << "gauntlet_id = #{params["gauntlet"].to_i}"
   end
   if params["len"]?
     # todo
@@ -108,7 +110,7 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
   end
 
   # level search type
-  case params["type"]
+  case params["type"]?
   when "0", "15", nil # default sort (gdw is 15)
     order = "likes desc"
   when "1" # most downloaded
