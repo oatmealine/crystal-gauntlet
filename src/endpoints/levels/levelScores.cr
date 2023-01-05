@@ -7,9 +7,6 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(context : HTTP::Serve
   LOG.debug { params.inspect }
 
   user_id, account_id = Accounts.auth(params)
-  if !(user_id && account_id)
-    return "-1"
-  end
 
   level_id = params["levelID"].to_i32
   daily_id = params["s10"].to_i32
@@ -19,6 +16,10 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(context : HTTP::Serve
 
   if params["percent"]? && params["percent"]? != "0"
     # set score
+
+    if !(user_id && account_id)
+      return "-1"
+    end
 
     attempts = params["s1"].to_i - 8354
     clicks = params["s2"].to_i - 3991
