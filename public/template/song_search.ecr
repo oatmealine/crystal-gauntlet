@@ -7,7 +7,10 @@
     <link rel="stylesheet" href="/style.css" />
     <title>Song Search</title>
   </head>
-  <body>    
+  <body style="max-width: 800px; margin: auto; padding-top: 1em;">
+    <%= Templates.dir_header %>
+    <h1>Song Search</h1>
+
     <form action="/tools/song_search" method="post">
       ID/Author/Title: <input type="text" id="query" name="query" />
       <input type="submit" value="Submit" />

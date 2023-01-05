@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="/style.css" />
     <title>Song Uploader</title>
   </head>
-  <body>
+  <body style="max-width: 800px; margin: auto; padding-top: 1em;">
+    <%= Templates.dir_header %>
+    <h1>Song Upload</h1>
     <%- if error -%>
       <div>Error while uploading: <%= error %></div><br />
     <%- elsif song_id -%>

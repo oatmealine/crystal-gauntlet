@@ -7,7 +7,10 @@
     <link rel="stylesheet" href="/style.css" />
     <title>Level Reupload</title>
   </head>
-  <body>
+  <body style="max-width: 800px; margin: auto; padding-top: 1em;">
+    <%= Templates.dir_header %>
+    <h1>Level Reupload</h1>
+
     <%- if error -%>
       <div>Error while uploading: <%= error %></div><br />
     <%- elsif level_id -%>
@@ -18,6 +21,7 @@
       ID: <input type="text" id="level_id" name="level_id" />
       <input type="submit" value="Submit" />
     </form>
+    <br>
     <i>Currently only vanilla servers are supported</i>
   </body>
 </html>

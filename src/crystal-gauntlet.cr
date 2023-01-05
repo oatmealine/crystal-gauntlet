@@ -20,6 +20,7 @@ require "./lib/songs"
 require "./lib/ids"
 require "./lib/level"
 require "./lib/dailies"
+require "./lib/templates"
 
 if File.exists?(".env")
   Dotenv.load

@@ -42,8 +42,6 @@
         </el>
       </p>
     </div>
-    <div class="dim">
-      Crystal <%= Crystal::VERSION %> <pre><%= Crystal::BUILD_COMMIT %></pre> running on <pre><%= System.hostname %></pre> for <%= CrystalGauntlet.uptime_s %>
-    </div>
+    <%= Templates.footer %>
   </body>
 </html>
