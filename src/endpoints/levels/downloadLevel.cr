@@ -32,7 +32,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
     raise "events?? what the hell"
   end
 
-  DATABASE.query("select levels.id, levels.name, levels.extra_data, levels.level_info, levels.password, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, users.username, users.udid, users.account_id, users.registered, editor_time, editor_time_copies from levels join users on levels.user_id = users.id where levels.id = ?", level_id) do |rs|
+  DATABASE.query("select levels.id, levels.name, levels.extra_data, levels.level_info, levels.password, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, levels.created_at, levels.modified_at, users.username, users.udid, users.account_id, users.registered, editor_time, editor_time_copies from levels join users on levels.user_id = users.id where levels.id = ?", level_id) do |rs|
     if rs.move_next
       id = rs.read(Int32)
       name = rs.read(String)
@@ -64,6 +64,8 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
       featured = rs.read(Bool)
       epic = rs.read(Bool)
       rated_coins = rs.read(Bool)
+      created_at = rs.read(String)
+      updated_at = rs.read(String)
 
       user_username = rs.read(String)
       user_udid = rs.read(String | Nil)
@@ -112,11 +114,8 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
         19 => featured,
         25 => difficulty && difficulty.auto?,
         27 => xor_pass,
-        # todo
-        # upload date
-        28 => "1",
-        # update date
-        29 => "1",
+        28 => Time.parse(created_at, Format::TIME_FORMAT, Time::Location::UTC),
+        29 => Time.parse(updated_at, Format::TIME_FORMAT, Time::Location::UTC),
         30 => original || 0,
         31 => two_player,26 => params.has_key?("extras") ? level_info : nil,
         35 => Songs.is_custom_song(song_id) ? song_id : 0,
