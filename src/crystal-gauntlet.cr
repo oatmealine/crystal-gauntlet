@@ -228,7 +228,7 @@ module CrystalGauntlet
         return
       end
 
-      ["songs", "levels"].each() { |v|
+      ["songs", "levels", "saves"].each() { |v|
         Dir.mkdir_p(DATA_FOLDER / v)
       }
 
