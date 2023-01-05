@@ -19,4 +19,5 @@ module CrystalGauntlet::XorCrypt
 
   QUESTS_XOR_KEY = "19847"
   CHEST_XOR_KEY = "59182"
+  MESSAGE_XOR_KEY = "14251"
 end
