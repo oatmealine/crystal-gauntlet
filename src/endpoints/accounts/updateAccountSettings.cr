@@ -2,7 +2,7 @@ require "uri"
 
 include CrystalGauntlet
 
-CrystalGauntlet.endpoints["/updateGJUserScore22.php"] = ->(context : HTTP::Server::Context): String {
+CrystalGauntlet.endpoints["/updateGJAccSettings20.php"] = ->(context : HTTP::Server::Context): String {
   params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
   LOG.debug { params.inspect }
 
