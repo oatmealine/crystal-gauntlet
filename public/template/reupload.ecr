@@ -17,9 +17,13 @@
       <div>Uploaded successfully! Level ID: <b><%= level_id %></b></div><br />
     <%- end -%>
 
+    <%- if disabled -%>
+      <b>Reuploading levels has been disabled</b><br><br>
+    <%- end -%>
+
     <form action="/tools/reupload" method="post">
-      ID: <input type="text" id="level_id" name="level_id" />
-      <input type="submit" value="Submit" />
+      ID: <input type="text" id="level_id" name="level_id" disabled="<%= disabled ? "1" : "" %>" />
+      <input type="submit" value="Submit" disabled="<%= disabled ? "1" : "" %>" />
     </form>
     <br>
     <i>Currently only vanilla servers are supported</i>

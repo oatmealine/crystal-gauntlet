@@ -29,6 +29,10 @@ date = "relative"
 # allow new accounts to be created
 allow_registration = true
 
+[reuploads]
+# allow reuploading levels from other servers
+allowed = true
+
 [chests]
 enabled = true
 

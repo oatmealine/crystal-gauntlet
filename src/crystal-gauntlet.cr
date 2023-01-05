@@ -21,6 +21,7 @@ require "./lib/ids"
 require "./lib/level"
 require "./lib/dailies"
 require "./lib/templates"
+require "./lib/reupload"
 
 if File.exists?(".env")
   Dotenv.load
@@ -260,6 +261,8 @@ module CrystalGauntlet
         max_length = Math.max(full_server_path.size, robtop_server_path.size)
         LOG.warn { "  #{" " * min_length}#{"^" * (max_length - min_length)}"}
       end
+
+      Reupload.init()
 
       @@up_at = Time.utc
       LOG.notice { "Listening on #{listen_on.to_s.colorize(:white)}" }
