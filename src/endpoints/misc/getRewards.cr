@@ -34,7 +34,7 @@ def claim_chest(account_id : Int32, prev_count : Int32, large = false)
   table = large ? "large_chests" : "small_chests"
   timer = config_get("chests.#{large ? "large" : "small"}.timer").as?(Int64) || 0
   next_at = (Time.utc + timer.seconds).to_s(Format::TIME_FORMAT)
-  if DATABASE.scalar("select count(*) from #{table}").as(Int64) > 0
+  if DATABASE.scalar("select count(*) from #{table} where account_id = ?", account_id).as(Int64) > 0
     DATABASE.exec("update #{table} set total_opened = ?, next_at = ? where account_id = ?", prev_count + 1, next_at, account_id)
   else
     DATABASE.exec("insert into #{table} (account_id, total_opened, next_at) values (?, ?, ?)", account_id, prev_count + 1, next_at)
