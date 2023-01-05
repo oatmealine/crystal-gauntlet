@@ -34,7 +34,7 @@ CrystalGauntlet.template_endpoints["/tools/reupload"] = ->(context : HTTP::Serve
       # todo: reupload as reupload acc
       DATABASE.exec("insert into levels (id, name, user_id, description, original, game_version, binary_version, password, requested_stars, unlisted, version, extra_data, level_info, editor_time, editor_time_copies, song_id, length, objects, coins, has_ldm, two_player) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", next_id, Clean.clean_special(level_data["k2"]), 1, Base64.decode_string(Base64.decode_string(level_data["k3"])), nil, level_data["k17"].to_i32, (level_data["k50"]? || "0").to_i32, level_data["k41"]? ? level_data["k41"].to_i32 : nil, level_data["k66"].to_i32, 0, level_data["k16"].to_i32, Clean.clean_special(level["extra_string"].as_s? || Level::DEFAULT_EXTRA_STRING), Level::DEFAULT_LEVEL_INFO, (level_data["k80"]? || "0").to_i32, (level_data["k81"]? || "0").to_i32, (level_data["k8"]? || "0") == "0" ? level_data["k45"] : level_data["k8"], level["length"].as_i, level_data["k48"], (level_data["k64"]? || "0").to_i, (level_data["k72"]? || "0").to_i, (level_data["k43"]? || "0").to_i)
 
-      File.write("data/#{next_id.to_s}.lvl", Base64.decode(level_data["k4"]))
+      File.write(DATA_FOLDER / "levels" / "#{next_id.to_s}.lvl", Base64.decode(level_data["k4"]))
 
       level_id = next_id
     rescue error

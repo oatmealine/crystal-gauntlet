@@ -46,6 +46,9 @@ module CrystalGauntlet
 
   DATABASE = DB.open(ENV["DATABASE_URL"]? || "sqlite3://./crystal-gauntlet.db")
 
+  # todo: unhardcore
+  DATA_FOLDER = Path.new("data")
+
   @@endpoints = Hash(String, (HTTP::Server::Context -> String)).new
   @@template_endpoints = Hash(String, (HTTP::Server::Context -> Nil)).new
 
@@ -225,10 +228,14 @@ module CrystalGauntlet
         return
       end
 
+      ["songs", "levels"].each() { |v|
+        Dir.mkdir_p(DATA_FOLDER / v)
+      }
+
       server = HTTP::Server.new([
         HTTP::LogHandler.new,
         HTTP::StaticFileHandler.new("public/", fallthrough: true, directory_listing: false),
-        HTTP::StaticFileHandler.new("data/", fallthrough: true, directory_listing: false),
+        HTTP::StaticFileHandler.new((DATA_FOLDER / "songs").to_s, fallthrough: true, directory_listing: false),
         CrystalGauntlet::GDHandler.new,
         CrystalGauntlet::TemplateHandler.new
       ])

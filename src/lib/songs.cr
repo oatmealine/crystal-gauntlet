@@ -63,7 +63,7 @@ module CrystalGauntlet::Songs
   end
 
   def get_file_path(song_id : Int32)
-    Path.new("data", "#{song_id}.mp3")
+    DATA_FOLDER / "songs" / "#{song_id}.mp3"
   end
 
   # will raise errors

@@ -82,7 +82,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
         xor_pass = password
       end
 
-      level_data = Base64.urlsafe_encode(File.read("data/#{id}.lvl"))
+      level_data = Base64.urlsafe_encode(File.read(DATA_FOLDER / "levels" / "#{id}.lvl"))
 
       # todo: deduplicate this with getLevels?
       response << CrystalGauntlet::Format.fmt_hash({
