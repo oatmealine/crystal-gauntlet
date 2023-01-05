@@ -2,14 +2,13 @@ require "uri"
 
 include CrystalGauntlet
 
-XOR_KEY = "59182"
-PAD_STR = "_____" # meaningless but necessary
+private PAD_STR = "_____" # meaningless but necessary
 
-def get_chk_value(chk_str : String)
-  XorCrypt.encrypt_string(Base64.decode_string(chk_str[5..]), XOR_KEY)
+private def get_chk_value(chk_str : String)
+  XorCrypt.encrypt_string(Base64.decode_string(chk_str[5..]), XorCrypt::CHEST_XOR_KEY)
 end
 
-def get_rand(type : String, large = false)
+private def get_rand(type : String, large = false)
   base = "chests.#{large ? "large" : "small"}.#{type}"
   min = config_get("#{base}_min").as?(Int64) || 0
   max = config_get("#{base}_max").as?(Int64) || 0
@@ -18,9 +17,9 @@ def get_rand(type : String, large = false)
   ((Random.rand(min.to_f .. (max.to_f + 1)) / increment).floor() * increment).to_i
 end
 
-REWARD_TYPES = ["orbs", "diamonds", "shards", "keys"]
+private REWARD_TYPES = ["orbs", "diamonds", "shards", "keys"]
 
-def get_chest(account_id : Int32, large = false) : {Int32?, Int32?}
+private def get_chest(account_id : Int32, large = false) : {Int32?, Int32?}
   begin
     total, next_at = DATABASE.query_one("select total_opened, next_at from #{large ? "large_chests" : "small_chests"} where account_id = ?", account_id, as: {Int32, String})
   rescue
@@ -30,7 +29,7 @@ def get_chest(account_id : Int32, large = false) : {Int32?, Int32?}
   end
 end
 
-def claim_chest(account_id : Int32, prev_count : Int32, large = false)
+private def claim_chest(account_id : Int32, prev_count : Int32, large = false)
   table = large ? "large_chests" : "small_chests"
   timer = config_get("chests.#{large ? "large" : "small"}.timer").as?(Int64) || 0
   next_at = (Time.utc + timer.seconds).to_s(Format::TIME_FORMAT)
@@ -92,7 +91,7 @@ CrystalGauntlet.endpoints["/getGJRewards.php"] = ->(context : HTTP::Server::Cont
     params["rewardType"].to_i? || 0
   ].join(":")
 
-  resp_str = Base64.urlsafe_encode(XorCrypt.encrypt_string(resp, XOR_KEY))
+  resp_str = Base64.urlsafe_encode(XorCrypt.encrypt_string(resp, XorCrypt::CHEST_XOR_KEY))
 
   return PAD_STR + resp_str + "|" + Hashes.gen_solo_4(resp_str)
 }

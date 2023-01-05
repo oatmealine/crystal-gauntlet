@@ -12,6 +12,7 @@ require "migrate"
 require "./enums"
 require "./lib/hash"
 require "./lib/format"
+require "./lib/xor"
 require "./lib/accounts"
 require "./lib/gjp"
 require "./lib/clean"
@@ -221,7 +222,7 @@ module CrystalGauntlet
     else
       if !migrator.latest?
         LOG.fatal { "Database hasn\'t been migrated!! Please run #{"crystal-gauntlet migrate".colorize(:white)}" }
-        Process.exit(1)
+        return
       end
 
       server = HTTP::Server.new([

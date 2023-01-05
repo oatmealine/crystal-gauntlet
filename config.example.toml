@@ -59,6 +59,69 @@ shards_max = 2
 keys_min = 0
 keys_max = 1
 
+[quests]
+enabled = true
+# in seconds
+timer = 21600 # 6hr
+
+# top slot quests
+[[quests.tier_1]]
+name = "Orb Finder"
+required_type = "orb"
+required_amt = 200
+reward_diamonds = 5
+
+[[quests.tier_1]]
+name = "Star Finder"
+required_type = "star"
+required_amt = 5
+reward_diamonds = 5
+
+[[quests.tier_1]]
+name = "Coin Finder"
+required_type = "coin"
+required_amt = 2
+reward_diamonds = 5
+
+# middle slot quests
+[[quests.tier_2]]
+name = "Orb Collector"
+required_type = "orb"
+required_amt = 500
+reward_diamonds = 10
+
+[[quests.tier_2]]
+name = "Star Collector"
+required_type = "star"
+required_amt = 10
+reward_diamonds = 10
+
+[[quests.tier_2]]
+name = "Coin Collector"
+required_type = "coin"
+required_amt = 4
+reward_diamonds = 10
+
+# bottom slot quests
+[[quests.tier_3]]
+name = "Orb Master"
+required_type = "orb"
+required_amt = 1000
+reward_diamonds = 15
+
+[[quests.tier_3]]
+name = "Star Master"
+required_type = "star"
+required_amt = 15
+reward_diamonds = 15
+
+[[quests.tier_3]]
+name = "Coin Master"
+required_type = "coin"
+required_amt = 6
+reward_diamonds = 15
+
+
 [voting]
 # allow votes to influence a level's difficulty when it
 # hasn't been set yet. when set to false, all unrated
