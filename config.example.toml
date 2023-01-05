@@ -29,6 +29,36 @@ date = "relative"
 # allow new accounts to be created
 allow_registration = true
 
+[chests]
+enabled = true
+
+# these are the vanilla values, but free for you to tweak
+[chests.small]
+# in seconds
+timer = 14400 # 4hr
+orbs_min = 20
+orbs_max = 50
+orbs_increment = 5
+diamonds_min = 1
+diamonds_max = 4
+shards_min = 0
+shards_max = 1
+keys_min = 0
+keys_max = 1
+
+[chests.large]
+# in seconds
+timer = 86400 # 24hr
+orbs_min = 100
+orbs_max = 300
+orbs_increment = 25
+diamonds_min = 4
+diamonds_max = 10
+shards_min = 1
+shards_max = 2
+keys_min = 0
+keys_max = 1
+
 [voting]
 # allow votes to influence a level's difficulty when it
 # hasn't been set yet. when set to false, all unrated

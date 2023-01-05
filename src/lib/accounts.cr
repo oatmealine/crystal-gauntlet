@@ -39,7 +39,7 @@ module CrystalGauntlet::Accounts
     end
     LOG.debug {"#{account_id || udid || "???"}: gjp cache miss"}
 
-    ext_id = Accounts.get_ext_id_from_params(params)
+    ext_id = Accounts.get_account_id_from_params(params)
     if !ext_id || !Accounts.verify_gjp(ext_id.to_i, gjp || "")
       return nil, nil
     end
