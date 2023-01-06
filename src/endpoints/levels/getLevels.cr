@@ -152,7 +152,8 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
     # todo: order by rate date
     queryParams << "levels.stars is not null"
   when "12" # followed
-    # todo
+    clean_levels = params["followed"].split(",").map { |v| v.to_i }
+    queryParams << "users.account_id in (#{clean_levels.join(",")})"
   when "13" # friends
     user_id, account_id = Accounts.auth(params)
     if !(user_id && account_id)
