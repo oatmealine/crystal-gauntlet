@@ -154,6 +154,16 @@ prevent_deletion_featured = true
 # set to 0 to disable
 max_objects = 80_000
 
+[levels.creator_points]
+# how many creator points to award per type of event
+rated = 1
+featured = 1
+epic = 1
+daily = 0
+weekly = 0
+mappack = 0
+gauntlet = 0
+
 [levels.parsing]
 # parse the level to extract data and enforce
 # rulesets. makes uploads a tiny bit slower and

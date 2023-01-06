@@ -22,6 +22,7 @@ require "./lib/level"
 require "./lib/dailies"
 require "./lib/templates"
 require "./lib/reupload"
+require "./lib/creator_points"
 
 if File.exists?(".env")
   Dotenv.load
@@ -204,6 +205,7 @@ module CrystalGauntlet
     Log.setup_from_env(backend: Log::IOBackend.new(formatter: CrystalGauntletFormat))
 
     migrate = false
+    calc_creator_points = false
 
     parser = OptionParser.new do |parser|
       parser.banner = "Usage: crystal-gauntlet [command] [arguments]"
@@ -211,6 +213,10 @@ module CrystalGauntlet
       parser.on("migrate", "Migrate the database") do
         migrate = true
         parser.banner = "Usage: crystal-gauntlet migrate [arguments]"
+      end
+      parser.on("calc_creator_points", "Calculate creator points and update them") do
+        calc_creator_points = true
+        parser.banner = "Usage: crystal-gauntlet calc_creator_points [arguments]"
       end
       parser.on("-h", "--help", "Show this help") do
         puts parser
@@ -227,6 +233,14 @@ module CrystalGauntlet
     if migrate
       LOG.info { "Migrating #{ENV["DATABASE_URL"].colorize(:white)}..." }
       migrator.to_latest
+    elsif calc_creator_points
+      LOG.info { "updating creator points" }
+      DATABASE.query_all("select id, username, creator_points from users", as: {Int32, String, Int32}).each() do |id, username, old_count|
+        new_count = CreatorPoints.update_creator_points id
+        if old_count > 0 || new_count > 0
+          LOG.info { "#{username}: #{old_count} -> #{new_count}" }
+        end
+      end
     else
       if !migrator.latest?
         LOG.fatal { "Database hasn\'t been migrated!! Please run #{"crystal-gauntlet migrate".colorize(:white)}" }
