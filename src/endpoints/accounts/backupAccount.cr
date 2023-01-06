@@ -4,7 +4,7 @@ include CrystalGauntlet
 
 CrystalGauntlet.endpoints["/accounts/backupGJAccount.php"] = ->(context : HTTP::Server::Context): String {
   params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
-  LOG.debug { params.inspect }
+  #LOG.debug { params.inspect }
 
   username = params["userName"]
   password = params["password"]
