@@ -10,9 +10,11 @@ CREATE TABLE accounts (
   -- todo: swap to proper rank system
   is_admin  INTEGER  NOT NULL  DEFAULT 0,
 
-  messages_enabled         INTEGER  NOT NULL  DEFAULT 1, -- messages from non-friends enabled
+  -- 0: disabled, 1: only for friends, 2: open to all
+  messages_enabled         INTEGER  NOT NULL  DEFAULT 2,
+  comments_enabled         INTEGER  NOT NULL  DEFAULT 0,
+  -- 0: disabled, 1: enabled
   friend_requests_enabled  INTEGER  NOT NULL  DEFAULT 1, -- frs enabled
-  comments_enabled         INTEGER  NOT NULL  DEFAULT 0, -- able to see user's comments
 
   youtube_url  TEXT,
   twitter_url  TEXT,

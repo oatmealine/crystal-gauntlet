@@ -16,8 +16,13 @@ CrystalGauntlet.endpoints["/uploadFriendRequest20.php"] = ->(context : HTTP::Ser
     return "-1"
   end
 
-  if DATABASE.scalar("select count(*) from friend_requests where from_account_id = ? or to_account_id = ?", account_id).as(Int64) > 0
+  if DATABASE.scalar("select count(*) from friend_requests where from_account_id = ? or to_account_id = ?", account_id, account_id).as(Int64) > 0
     # already fr'd
+    return "-1"
+  end
+
+  if DATABASE.scalar("select friend_requests_enabled from accounts where id = ?", account_id).as(Int64) == 0
+    # disabled
     return "-1"
   end
 

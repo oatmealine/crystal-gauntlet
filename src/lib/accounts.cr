@@ -70,4 +70,8 @@ module CrystalGauntlet::Accounts
     bcrypt = Crypto::Bcrypt::Password.new(hash)
     bcrypt.verify(GJP.decrypt(gjp))
   end
+
+  def are_friends(account_id_1 : Int32, account_id_2 : Int32)
+    DATABASE.scalar("select count(*) from friend_links where (account_id_1 = ? and account_id_2 = ?) or (account_id_2 = ? and account_id_1 = ?)", account_id_1, account_id_2, account_id_1, account_id_2).as(Int64) > 0
+  end
 end
