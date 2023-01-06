@@ -17,6 +17,9 @@ CREATE TABLE friend_links (
   account_id_1  INTEGER  references accounts(id),
   account_id_2  INTEGER  references accounts(id),
 
+  read_at_1  TEXT,
+  read_at_2  TEXT,
+
   created_at  TEXT  NOT NULL  DEFAULT (STRFTIME('%Y-%m-%d %H:%M:%f', 'now'))
 );
 
