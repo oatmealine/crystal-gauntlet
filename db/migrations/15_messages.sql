@@ -2,8 +2,8 @@
 CREATE TABLE messages (
   id  SERIAL  PRIMARY KEY,
 
-  from_account_id  INTEGER  NOT NULL,
-  to_account_id    INTEGER  NOT NULL,
+  from_account_id  INTEGER  NOT NULL  references accounts(id),
+  to_account_id    INTEGER  NOT NULL  references accounts(id),
 
   subject  VARCHAR(35)   NOT NULL,
   body     VARCHAR(200)  NOT NULL,
