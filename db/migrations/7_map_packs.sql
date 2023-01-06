@@ -19,3 +19,4 @@ CREATE TABLE map_pack_links (
 
 -- +migrate down
 DROP TABLE map_packs;
+DROP TABLE map_pack_links;

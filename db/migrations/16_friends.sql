@@ -25,3 +25,4 @@ CREATE TABLE friend_links (
 
 -- +migrate down
 DROP TABLE friend_requests;
+DROP TABLE friend_links;
