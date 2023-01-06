@@ -22,10 +22,11 @@ CrystalGauntlet.endpoints["/likeGJItem211.php"] = ->(context : HTTP::Server::Con
     table = "levels"
     column = "id"
   when 2 # level comment like
-    table = "account_comments"
+    table = "comments"
     column = "id"
   when 3 # account comments
-    return "-1"
+    table = "account_comments"
+    column = "id"
   end
 
   is_like = (params["isLike"]? || "1").to_i
