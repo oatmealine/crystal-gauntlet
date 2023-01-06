@@ -13,10 +13,14 @@ CrystalGauntlet.endpoints["/accounts/syncGJAccount.php"] = ->(context : HTTP::Se
   if result.size > 0
     account_id, hash = result[0]
     bcrypt = Crypto::Bcrypt::Password.new(hash)
-    
+
     if bcrypt.verify(password)
       folder = DATA_FOLDER / "saves"
-      return "#{File.read(folder / "#{account_id}.sav")};#{File.read(folder / "#{account_id}_levels.sav")};21;30;a;a"
+      Base64.urlsafe_encode(File.read(folder / "#{account_id}.sav"), context.response.output)
+      context.response.output << ";"
+      Base64.urlsafe_encode(File.read(folder / "#{account_id}_levels.sav"), context.response.output)
+      context.response.output << ";21;30;a;a"
+      return ""
     else
       return "-1"
     end

@@ -13,16 +13,16 @@ CrystalGauntlet.endpoints["/accounts/backupGJAccount.php"] = ->(context : HTTP::
   if result.size > 0
     account_id, hash = result[0]
     bcrypt = Crypto::Bcrypt::Password.new(hash)
-    
+
     if bcrypt.verify(password)
       folder = DATA_FOLDER / "saves"
       params.each do |key, _|
         if key.starts_with?("H4s")
-          File.write(folder / "#{account_id}_levels.sav", key)
+          File.open(folder / "#{account_id}_levels.sav", "w") { |file| Base64.decode(key, file) }
         end
       end
 
-      File.write(folder / "#{account_id}.sav", params["saveData"])
+      File.open(folder / "#{account_id}.sav", "w") { |file| Base64.decode(params["saveData"], file) }
       return "1"
     else
       return "-1"

@@ -155,7 +155,10 @@ module CrystalGauntlet
           LOG.debug { "-> ".colorize(:green).to_s + value_displayed }
 
           context.response.content_type = "text/plain"
-          context.response.print value
+          # to let endpoints manually write to IO
+          if value != ""
+            context.response.print value
+          end
         end
       else
         call_next(context)
