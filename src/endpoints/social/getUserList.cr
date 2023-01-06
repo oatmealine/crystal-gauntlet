@@ -46,5 +46,9 @@ CrystalGauntlet.endpoints["/getGJUserList20.php"] = ->(context : HTTP::Server::C
     DATABASE.exec("update friend_links set read_at_2 = ? where account_id_2 = ? and read_at_2 is null", Time.utc.to_s(Format::TIME_FORMAT), account_id)
   end
 
+  if users.empty?
+    return "-2"
+  end
+
   return users.join("|")
 }
