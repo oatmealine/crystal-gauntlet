@@ -14,7 +14,6 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(context : HTTP::Server::C
 
   amount = DATABASE.scalar("select count(*) from comments where level_id = ?", level_id)
 
-  # todo: account comment view (help)
   # todo: handle binaryVersion < 32
 
   users_str = [] of String
