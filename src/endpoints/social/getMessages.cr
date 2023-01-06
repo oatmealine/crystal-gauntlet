@@ -21,7 +21,7 @@ CrystalGauntlet.endpoints["/getGJMessages20.php"] = ->(context : HTTP::Server::C
 
   messages = [] of String
 
-  DATABASE.query_each("select messages.id, users.account_id, subject, body, messages.created_at, read_at, users.id, users.username from messages join users on users.id = #{get_sent ? "to_account_id" : "from_account_id"} where #{get_sent ? "from_account_id" : "to_account_id"} = ? limit #{messages_per_page} offset #{page_offset}", account_id) do |rs|
+  DATABASE.query_each("select messages.id, users.account_id, subject, body, messages.created_at, read_at, users.id, users.username from messages join users on users.account_id = #{get_sent ? "to_account_id" : "from_account_id"} where #{get_sent ? "from_account_id" : "to_account_id"} = ? order by messages.created_at desc limit #{messages_per_page} offset #{page_offset}", account_id) do |rs|
     id = rs.read(Int32)
     from_account_id = rs.read(Int32)
     subject = rs.read(String)

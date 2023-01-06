@@ -21,7 +21,7 @@ CrystalGauntlet.endpoints["/getGJFriendRequests20.php"] = ->(context : HTTP::Ser
 
   requests = [] of String
 
-  DATABASE.query_each("select friend_requests.id, users.account_id, body, friend_requests.created_at, read_at, users.id, users.username, users.icon_type, users.color1, users.color2, users.cube, users.ship, users.ball, users.ufo, users.wave, users.robot, users.spider, users.special from friend_requests join users on users.id = #{get_sent ? "to_account_id" : "from_account_id"} where #{get_sent ? "from_account_id" : "to_account_id"} = ? limit #{requests_per_page} offset #{page_offset}", account_id) do |rs|
+  DATABASE.query_each("select friend_requests.id, users.account_id, body, friend_requests.created_at, read_at, users.id, users.username, users.icon_type, users.color1, users.color2, users.cube, users.ship, users.ball, users.ufo, users.wave, users.robot, users.spider, users.special from friend_requests join users on users.account_id = #{get_sent ? "to_account_id" : "from_account_id"} where #{get_sent ? "from_account_id" : "to_account_id"} = ? limit #{requests_per_page} offset #{page_offset}", account_id) do |rs|
     id = rs.read(Int32)
     from_account_id = rs.read(Int32)
     body = rs.read(String)

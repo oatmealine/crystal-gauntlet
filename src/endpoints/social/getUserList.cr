@@ -14,7 +14,7 @@ CrystalGauntlet.endpoints["/getGJUserList20.php"] = ->(context : HTTP::Server::C
   users = [] of String
 
   # todo: implement blocked users
-  DATABASE.query_all("select account_id_1, account_id_2, read_at_1, read_at_2 from friend_links where account_id_1 = ? or account_id_2 = ? order by created_at", account_id, account_id, as: {Int32, Int32, String?, String?}).each() do |account_id_1, account_id_2, read_at_1, read_at_2|
+  DATABASE.query_all("select account_id_1, account_id_2, read_at_1, read_at_2 from friend_links where account_id_1 = ? or account_id_2 = ? order by created_at desc", account_id, account_id, as: {Int32, Int32, String?, String?}).each() do |account_id_1, account_id_2, read_at_1, read_at_2|
     read_at = account_id_1 == account_id ? read_at_1 : read_at_2
     other_account_id = account_id_1 == account_id ? account_id_2 : account_id_1
 

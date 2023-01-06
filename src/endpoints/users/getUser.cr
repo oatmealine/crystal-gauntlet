@@ -12,7 +12,7 @@ CrystalGauntlet.endpoints["/getGJUserInfo20.php"] = ->(context : HTTP::Server::C
 
   is_friend = Accounts.are_friends(id, account_id || -1)
   begin
-    friend_request_id, friend_request_body, friend_request_created_at, from = DATABASE.query_one("select id, body, created_at, from_account_id from friend_requests where from_account_id = ? or to_account_id = ?", id, id, as: {Int32, String, String, Int32})
+    friend_request_id, friend_request_body, friend_request_created_at, from = DATABASE.query_one("select id, body, created_at, from_account_id from friend_requests where (from_account_id = ? and to_account_id = ?) or (to_account_id = ? and from_account_id = ?)", id, account_id, id, account_id, as: {Int32, String, String, Int32})
   rescue
   end
 
