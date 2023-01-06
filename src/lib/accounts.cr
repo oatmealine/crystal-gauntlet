@@ -71,6 +71,10 @@ module CrystalGauntlet::Accounts
     bcrypt.verify(GJP.decrypt(gjp))
   end
 
+  def is_blocked_by(account_id : Int32, by : Int32)
+    DATABASE.scalar("select count(*) from block_links where (from_account_id = ? and to_account_id = ?)", by, account_id).as(Int64) > 0
+  end
+
   def are_friends(account_id_1 : Int32, account_id_2 : Int32)
     DATABASE.scalar("select count(*) from friend_links where (account_id_1 = ? and account_id_2 = ?) or (account_id_2 = ? and account_id_1 = ?)", account_id_1, account_id_2, account_id_1, account_id_2).as(Int64) > 0
   end

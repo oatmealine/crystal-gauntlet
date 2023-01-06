@@ -11,7 +11,6 @@ CrystalGauntlet.endpoints["/uploadGJMessage20.php"] = ->(context : HTTP::Server:
     return "-1"
   end
 
-  # todo: check for blocks
   if DATABASE.scalar("select count(*) from accounts where id = ?", params["toAccountID"].to_i).as(Int64) == 0
     return "-1"
   end
@@ -25,7 +24,9 @@ CrystalGauntlet.endpoints["/uploadGJMessage20.php"] = ->(context : HTTP::Server:
       return "-1"
     end
   when 2
-    # go ahead
+    if Accounts.is_blocked_by(account_id, params["toAccountID"].to_i)
+      return "-1"
+    end
   end
 
   next_message_id = IDs.get_next_id("messages")

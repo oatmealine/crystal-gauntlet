@@ -13,7 +13,6 @@ CrystalGauntlet.endpoints["/uploadFriendRequest20.php"] = ->(context : HTTP::Ser
 
   target_account_id = params["toAccountID"].to_i
 
-  # todo: check for blocks
   if DATABASE.scalar("select count(*) from accounts where id = ?", target_account_id).as(Int64) == 0
     return "-1"
   end
@@ -25,6 +24,10 @@ CrystalGauntlet.endpoints["/uploadFriendRequest20.php"] = ->(context : HTTP::Ser
 
   if DATABASE.scalar("select friend_requests_enabled from accounts where id = ?", target_account_id).as(Int64) == 0
     # disabled
+    return "-1"
+  end
+
+  if Accounts.is_blocked_by(account_id, params["toAccountID"].to_i)
     return "-1"
   end
 

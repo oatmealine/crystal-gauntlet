@@ -13,8 +13,11 @@ CrystalGauntlet.endpoints["/getGJUserList20.php"] = ->(context : HTTP::Server::C
 
   users = [] of String
 
-  # todo: implement blocked users
-  DATABASE.query_all("select account_id_1, account_id_2, read_at_1, read_at_2 from friend_links where account_id_1 = ? or account_id_2 = ? order by created_at desc", account_id, account_id, as: {Int32, Int32, String?, String?}).each() do |account_id_1, account_id_2, read_at_1, read_at_2|
+  accounts = params["type"]? == "1" ?
+    DATABASE.query_all("select from_account_id, to_account_id, '', '' from block_links where from_account_id = ? order by created_at desc", account_id, as: {Int32, Int32, String?, String?}) :
+    DATABASE.query_all("select account_id_1, account_id_2, read_at_1, read_at_2 from friend_links where account_id_1 = ? or account_id_2 = ? order by created_at desc", account_id, account_id, as: {Int32, Int32, String?, String?})
+
+  accounts.each() do |account_id_1, account_id_2, read_at_1, read_at_2|
     read_at = account_id_1 == account_id ? read_at_1 : read_at_2
     other_account_id = account_id_1 == account_id ? account_id_2 : account_id_1
 
@@ -38,8 +41,10 @@ CrystalGauntlet.endpoints["/getGJUserList20.php"] = ->(context : HTTP::Server::C
     })
   end
 
-  DATABASE.exec("update friend_links set read_at_1 = ? where account_id_1 = ? and read_at_1 is null", Time.utc.to_s(Format::TIME_FORMAT), account_id)
-  DATABASE.exec("update friend_links set read_at_2 = ? where account_id_2 = ? and read_at_2 is null", Time.utc.to_s(Format::TIME_FORMAT), account_id)
+  if params["type"]? != "1"
+    DATABASE.exec("update friend_links set read_at_1 = ? where account_id_1 = ? and read_at_1 is null", Time.utc.to_s(Format::TIME_FORMAT), account_id)
+    DATABASE.exec("update friend_links set read_at_2 = ? where account_id_2 = ? and read_at_2 is null", Time.utc.to_s(Format::TIME_FORMAT), account_id)
+  end
 
   return users.join("|")
 }
