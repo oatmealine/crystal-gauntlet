@@ -70,7 +70,7 @@ CrystalGauntlet.endpoints["/getGJLevelScores211.php"] = ->(context : HTTP::Serve
   scores = [] of String
 
   i = 0
-  DATABASE.query_each "select percent, level_scores.coins, set_at, users.username, users.id, users.icon_type, users.color1, users.color2, users.cube, users.ship, users.ball, users.ufo, users.wave, users.robot, users.spider, users.special, users.account_id from level_scores join users on level_scores.account_id = users.account_id #{joins.join(" ")} where (#{where_query.join(") and (")}) order by percent desc, level_scores.coins desc limit 200", level_id, daily_id do |rs|
+  DATABASE.query_each "select percent, level_scores.coins, set_at, users.username, users.id, users.icon_type, users.color1, users.color2, users.cube, users.ship, users.ball, users.ufo, users.wave, users.robot, users.spider, users.special, users.account_id from level_scores join users on level_scores.account_id = users.account_id #{joins.join(" ")} where (#{where_query.join(") and (")}) order by percent desc, level_scores.coins desc, set_at limit 200", level_id, daily_id do |rs|
     i += 1
     percent = rs.read(Int32)
     coins = rs.read(Int32)
