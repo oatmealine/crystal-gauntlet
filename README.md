@@ -28,9 +28,13 @@ additionally, the lack of configuration compelled me even more to write my own s
 
 `shards install` && `shards build`
 
-## setup
+## configuration
 
 copy `.env.example` to `.env` and fill it out, same for `config.example.toml` -> `config.toml`
+
+by default, the config emulates vanilla GD servers as closely as possible, but you'll likely want to change it - most options have comments detailing what exactly they do
+
+## setup
 
 run `bin/crystal-gauntlet migrate` (or `shards run -- migrate`)
 
