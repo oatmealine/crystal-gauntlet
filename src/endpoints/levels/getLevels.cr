@@ -154,7 +154,17 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
   when "12" # followed
     # todo
   when "13" # friends
-    # todo
+    user_id, account_id = Accounts.auth(params)
+    if !(user_id && account_id)
+      return "-1"
+    end
+
+    joins << "left join friend_links friend_2 on friend_2.account_id_1 = #{account_id}"
+    joins << "left join friend_links friend_1 on friend_1.account_id_2 = #{account_id}"
+    joins << "left join users friend_user_1 on friend_1.account_id_1 = friend_user_1.id"
+    joins << "left join users friend_user_2 on friend_2.account_id_2 = friend_user_2.id"
+
+    queryParams << "levels.user_id = friend_user_1.id or levels.user_id = friend_user_2.id"
   when "21" # daily
     order = "daily_levels.idx desc"
     joins << "join daily_levels on levels.id = daily_levels.level_id"
