@@ -37,7 +37,7 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(context : HTTP::Server::C
 
       special = rs.read(Int32)
 
-      if params["binaryVersion"].to_i32 > 31
+      if Versions.parse(params["gameVersion"]) >= Versions::V2_1
         comments_str << [
           Format.fmt_comment({
             2 => Base64.urlsafe_encode(comment),

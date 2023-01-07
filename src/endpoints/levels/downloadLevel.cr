@@ -80,7 +80,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
       xor_pass = "0"
       if !password
         password = "0"
-      elsif params["gameVersion"].to_i >= 20
+      elsif Versions.parse(params["gameVersion"]) >= Versions::V2_0
         xor_pass = Base64.urlsafe_encode(XorCrypt.encrypt_string(password, "26364"))
       else
         xor_pass = password
@@ -151,7 +151,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
     end
   end
 
-  if level_exists 
+  if level_exists
     DATABASE.exec "update levels set downloads = downloads + 1 where id = ?", level_id
   end
 

@@ -15,7 +15,7 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
   song_id = params["songID"] == "0" ? params["audioTrack"] : params["songID"]
 
   description = params["levelDesc"]
-  if params["gameVersion"].to_i >= 20 # 2.0
+  if Versions.parse(params["gameVersion"]) >= Versions::V2_0
     description = Clean.clean_special(Base64.decode_string description)
   else
     description = Clean.clean_special(description)
@@ -142,4 +142,4 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
   end
 }
 
-CrystalGauntlet.endpoints["/uploadGJLevel20.php"] = CrystalGauntlet.endpoints["/uploadGJLevel21.php"] 
+CrystalGauntlet.endpoints["/uploadGJLevel20.php"] = CrystalGauntlet.endpoints["/uploadGJLevel21.php"]
