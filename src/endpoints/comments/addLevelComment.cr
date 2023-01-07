@@ -30,3 +30,7 @@ CrystalGauntlet.endpoints["/uploadGJComment21.php"] = ->(context : HTTP::Server:
 }
 
 CrystalGauntlet.endpoints["/uploadGJComment20.php"] = CrystalGauntlet.endpoints["/uploadGJComment21.php"]
+
+CrystalGauntlet.endpoints["/uploadGJComment19.php"] = ->(context : HTTP::Server::Context): String {
+  "-1"
+}

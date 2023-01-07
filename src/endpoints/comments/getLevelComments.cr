@@ -37,10 +37,14 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(context : HTTP::Server::C
 
       special = rs.read(Int32)
 
-      if Versions.parse(params["gameVersion"]) >= Versions::V2_1
+      if (params["gameVersion"]? || "19").to_i32 >= 20
+        comment = Base64.urlsafe_encode(comment)
+      end
+
+      if Versions.parse(params["gameVersion"] || "19") >= Versions::V2_1
         comments_str << [
           Format.fmt_comment({
-            2 => Base64.urlsafe_encode(comment),
+            2 => comment,
             3 => user_id,
             4 => likes,
             5 => 0,
@@ -64,7 +68,7 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(context : HTTP::Server::C
         ].join(":")
       else
         comments_str << Format.fmt_comment({
-          2 => Base64.urlsafe_encode(comment),
+          2 => comment,
           3 => user_id,
           4 => likes,
           5 => 0,
@@ -93,3 +97,4 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(context : HTTP::Server::C
 }
 
 CrystalGauntlet.endpoints["/getGJComments20.php"] = CrystalGauntlet.endpoints["/getGJComments21.php"]
+CrystalGauntlet.endpoints["/getGJComments19.php"] = CrystalGauntlet.endpoints["/getGJComments21.php"]

@@ -32,3 +32,10 @@ CrystalGauntlet.endpoints["/updateGJUserScore22.php"] = ->(context : HTTP::Serve
 }
 
 CrystalGauntlet.endpoints["/updateGJUserScore20.php"] = CrystalGauntlet.endpoints["/updateGJUserScore22.php"]
+
+CrystalGauntlet.endpoints["/updateGJUserScore19.php"] = ->(context : HTTP::Server::Context): String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
+  LOG.debug { params.inspect }
+
+  DATABASE.scalar("select id from users where account_id = ?", params["accountID"].to_i).as(Int64).to_s
+}

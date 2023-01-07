@@ -21,3 +21,7 @@ CrystalGauntlet.endpoints["/deleteGJComment20.php"] = ->(context : HTTP::Server:
 
   return "1"
 }
+
+CrystalGauntlet.endpoints["/deleteGJComment19.php"] = ->(context : HTTP::Server::Context): String {
+  "-1"
+}
