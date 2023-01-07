@@ -29,5 +29,7 @@ CrystalGauntlet.endpoints["/accounts/syncGJAccount.php"] = ->(context : HTTP::Se
   end
 }
 
+CrystalGauntlet.endpoints["/accounts/syncGJAccount20.php"] = CrystalGauntlet.endpoints["/accounts/syncGJAccount.php"]
+
 CrystalGauntlet.endpoints["/database/accounts/syncGJAccountNew.php"] = CrystalGauntlet.endpoints["/accounts/syncGJAccount.php"]
 
