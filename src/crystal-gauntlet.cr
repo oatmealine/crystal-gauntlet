@@ -46,6 +46,9 @@ module CrystalGauntlet
     end
     return this
   end
+  def config_get(key : String, default)
+    config_get(key).as?(typeof(default)) || default
+  end
 
   DATABASE = DB.open(ENV["DATABASE_URL"]? || "sqlite3://./crystal-gauntlet.db")
 
@@ -268,7 +271,7 @@ module CrystalGauntlet
         server.bind_unix(listen_on.to_s.sub("unix://",""))
       end
 
-      full_server_path = (config_get("general.hostname").as?(String) || "") + "/" + (config_get("general.append_path").as?(String) || "")
+      full_server_path = config_get("general.hostname", "") + "/" + config_get("general.append_path", "")
       robtop_server_path = "www.boomlings.com/database/"
       if full_server_path.size != robtop_server_path.size
         LOG.warn { "i think you made a mistake? length of full server path and default .exe location do not match" }

@@ -10,9 +10,9 @@ end
 
 private def get_rand(type : String, large = false)
   base = "chests.#{large ? "large" : "small"}.#{type}"
-  min = config_get("#{base}_min").as?(Int64) || 0
-  max = config_get("#{base}_max").as?(Int64) || 0
-  increment = config_get("#{base}_increment").as?(Int64) || 1
+  min = config_get("#{base}_min", 0_i64)
+  max = config_get("#{base}_max", 0_i64)
+  increment = config_get("#{base}_increment", 1_i64)
 
   ((Random.rand(min.to_f .. (max.to_f + 1)) / increment).floor() * increment).to_i
 end
@@ -31,7 +31,7 @@ end
 
 private def claim_chest(account_id : Int32, prev_count : Int32, large = false)
   table = large ? "large_chests" : "small_chests"
-  timer = config_get("chests.#{large ? "large" : "small"}.timer").as?(Int64) || 0
+  timer = config_get("chests.#{large ? "large" : "small"}.timer", 0_i64)
   next_at = (Time.utc + timer.seconds).to_s(Format::TIME_FORMAT)
   if DATABASE.scalar("select count(*) from #{table} where account_id = ?", account_id).as(Int64) > 0
     DATABASE.exec("update #{table} set total_opened = ?, next_at = ? where account_id = ?", prev_count + 1, next_at, account_id)

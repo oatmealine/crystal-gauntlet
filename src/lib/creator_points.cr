@@ -13,7 +13,7 @@ module CrystalGauntlet::CreatorPoints
 
   def calculate_creator_points(user_id : Int32)
     QUERIES
-      .map { |q, c| DATABASE.scalar(q, user_id).as(Int64) * (config_get(c).as?(Int64) || 0) }
+      .map { |q, c| DATABASE.scalar(q, user_id).as(Int64) * config_get(c, 0_i64) }
       .sum()
   end
 

@@ -72,7 +72,7 @@ module CrystalGauntlet::Songs
 
     output = IO::Memory.new
     # todo: ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️ LOOK OUT FOR SHELL INJECTION BULLSHIT!!!!!!!!!!!!!!!!!!
-    Process.run(config_get("songs.sources.ytdlp_binary").as?(String) || "yt-dlp", ["-J", url], output: output)
+    Process.run(config_get("songs.sources.ytdlp_binary", "yt-dlp"), ["-J", url], output: output)
     output.close
 
     metadata = JSON.parse(output.to_s)
@@ -190,7 +190,7 @@ module CrystalGauntlet::Songs
     if (fetch_url || !get_download) && metadata && author_id
       # we're done! woo
       if fetch_url && fetch_url.starts_with?("./")
-        fetch_url = "#{config_get("general.hostname").as?(String) || ""}/#{fetch_url[2..]}"
+        fetch_url = "#{config_get("general.hostname", "")}/#{fetch_url[2..]}"
       end
       return {metadata.name, author_id, metadata.author, metadata.size, fetch_url}
     end
@@ -208,7 +208,7 @@ module CrystalGauntlet::Songs
 
         target_path = get_file_path(song_id)
 
-        Process.run(config_get("songs.sources.ytdlp_binary").as?(String) || "yt-dlp", ["-f", "ba", "-x", "--audio-format", GD_AUDIO_FORMAT, "-o", target_path.to_s, "--ffmpeg-location", config_get("songs.sources.ffmpeg_binary").as?(String) || "ffmpeg", metadata.normalized_url], output: STDOUT, error: STDOUT)
+        Process.run(config_get("songs.sources.ytdlp_binary", "yt-dlp"), ["-f", "ba", "-x", "--audio-format", GD_AUDIO_FORMAT, "-o", target_path.to_s, "--ffmpeg-location", config_get("songs.sources.ffmpeg_binary", "ffmpeg"), metadata.normalized_url], output: STDOUT, error: STDOUT)
 
         new_size = File.size(target_path).to_i
 

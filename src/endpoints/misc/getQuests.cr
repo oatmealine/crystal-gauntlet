@@ -9,7 +9,7 @@ private def get_chk_value(chk_str : String)
 end
 
 private def get_quest_time(account_id : Int32)
-  timer = config_get("quests.timer").as?(Int64) || 0
+  timer = config_get("quests.timer", 0_i64)
 
   begin
     next_str = DATABASE.query_one("select next_at from quest_timer where account_id = ?", account_id, as: {String})
