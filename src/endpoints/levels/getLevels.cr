@@ -276,3 +276,6 @@ CrystalGauntlet.endpoints["/getGJLevels21.php"] = ->(context : HTTP::Server::Con
 
   res
 }
+
+CrystalGauntlet.endpoints["/getGJLevels20.php"] = CrystalGauntlet.endpoints["/getGJLevels21.php"]
+

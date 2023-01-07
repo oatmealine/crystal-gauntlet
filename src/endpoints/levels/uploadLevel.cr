@@ -125,7 +125,7 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
       return "-1"
     end
 
-    DATABASE.exec("update levels set description = ?, password = ?, requested_stars = ?, version = ?, extra_data = ?, level_info = ?, editor_time = ?, editor_time_copies = ?, song_id = ?, length = ?, objects = ?, coins = ?, has_ldm = ?, two_player = ?, modified_at = ? where id = ?", description[..140-1], params["password"] == "0" ? nil : params["password"].to_i, requested_stars, params["levelVersion"].to_i, Clean.clean_special(extraString), Clean.clean_b64(params["levelInfo"]), params["wt"].to_i, params["wt2"].to_i, song_id.to_i, level_length, objects, coins, params["ldm"].to_i == 1, two_player, Time.utc.to_s(Format::TIME_FORMAT), params["levelID"].to_i)
+    DATABASE.exec("update levels set description = ?, password = ?, requested_stars = ?, version = ?, extra_data = ?, level_info = ?, editor_time = ?, editor_time_copies = ?, song_id = ?, length = ?, objects = ?, coins = ?, has_ldm = ?, two_player = ?, modified_at = ? where id = ?", description[..140-1], params["password"] == "0" ? nil : params["password"].to_i, requested_stars, params["levelVersion"].to_i, Clean.clean_special(extraString), Clean.clean_b64(params["levelInfo"]), (params["wt"]? || "0").to_i, (params["wt2"]? || "0").to_i, song_id.to_i, level_length, objects, coins, (params["ldm"]? || "0").to_i == 1, two_player, Time.utc.to_s(Format::TIME_FORMAT), params["levelID"].to_i)
 
     File.write(DATA_FOLDER / "levels" / "#{params["levelID"]}.lvl", Base64.decode(params["levelString"]))
 
@@ -134,10 +134,12 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
     # create new level
     next_id = IDs.get_next_id("levels")
 
-    DATABASE.exec("insert into levels (id, name, user_id, description, original, game_version, binary_version, password, requested_stars, unlisted, version, extra_data, level_info, editor_time, editor_time_copies, song_id, length, objects, coins, has_ldm, two_player) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", next_id, Clean.clean_special(params["levelName"])[..20-1], user_id, description[..140-1], params["original"].to_i, params["gameVersion"].to_i, params["binaryVersion"].to_i, params["password"] == "0" ? nil : params["password"].to_i, requested_stars, params["unlisted"].to_i == 1, params["levelVersion"].to_i, Clean.clean_special(extraString), Clean.clean_b64(params["levelInfo"]), params["wt"].to_i, params["wt2"].to_i, song_id.to_i, level_length, objects, coins, params["ldm"].to_i == 1, two_player)
+    DATABASE.exec("insert into levels (id, name, user_id, description, original, game_version, binary_version, password, requested_stars, unlisted, version, extra_data, level_info, editor_time, editor_time_copies, song_id, length, objects, coins, has_ldm, two_player) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", next_id, Clean.clean_special(params["levelName"])[..20-1], user_id, description[..140-1], params["original"].to_i, params["gameVersion"].to_i, params["binaryVersion"].to_i, params["password"] == "0" ? nil : params["password"].to_i, requested_stars, (params["unlisted"]? || "0").to_i == 1, params["levelVersion"].to_i, Clean.clean_special(extraString), Clean.clean_b64(params["levelInfo"]), (params["wt"]? || "0").to_i, (params["wt2"]? || "0").to_i, song_id.to_i, level_length, objects, coins, (params["ldm"]? || "0").to_i == 1, two_player)
 
     File.write(DATA_FOLDER / "levels" / "#{next_id.to_s}.lvl", Base64.decode(params["levelString"]))
 
     return next_id.to_s
   end
 }
+
+CrystalGauntlet.endpoints["/uploadGJLevel20.php"] = CrystalGauntlet.endpoints["/uploadGJLevel21.php"] 

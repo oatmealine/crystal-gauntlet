@@ -28,3 +28,5 @@ CrystalGauntlet.endpoints["/uploadGJComment21.php"] = ->(context : HTTP::Server:
     return "-1"
   end
 }
+
+CrystalGauntlet.endpoints["/uploadGJComment20.php"] = CrystalGauntlet.endpoints["/uploadGJComment21.php"]

@@ -84,3 +84,5 @@ CrystalGauntlet.endpoints["/rateGJDemon21.php"] = ->(context : HTTP::Server::Con
 
   return level_id.to_s
 }
+
+CrystalGauntlet.endpoints["/rateGJStars20.php"] = CrystalGauntlet.endpoints["/rateGJStars211.php"]

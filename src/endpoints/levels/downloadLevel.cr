@@ -157,3 +157,5 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
 
   response.join("#")
 }
+
+CrystalGauntlet.endpoints["/downloadGJLevel20.php"] = CrystalGauntlet.endpoints["/downloadGJLevel22.php"]

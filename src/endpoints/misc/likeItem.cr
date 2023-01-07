@@ -35,3 +35,5 @@ CrystalGauntlet.endpoints["/likeGJItem211.php"] = ->(context : HTTP::Server::Con
   DATABASE.exec "update #{table} set likes = likes #{sign} 1 where #{column} = ?", item_id
   "1"
 }
+
+CrystalGauntlet.endpoints["/likeGJItem20.php"] = CrystalGauntlet.endpoints["/likeGJItem211.php"]

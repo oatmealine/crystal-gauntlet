@@ -77,3 +77,5 @@ CrystalGauntlet.endpoints["/getGJMapPacks21.php"] = ->(context : HTTP::Server::C
 
   [map_packs.join("|"), "#{total_count}:#{page * mappacks_per_page}:#{mappacks_per_page}", Hashes.gen_pack(hash_data) ].join("#")
 }
+
+CrystalGauntlet.endpoints["/getGJMapPacks20.php"] = CrystalGauntlet.endpoints["/getGJMapPacks21.php"]
