@@ -33,7 +33,7 @@ CrystalGauntlet.endpoints["/rateGJStars211.php"] = ->(context : HTTP::Server::Co
     # todo: cache in some form?
     votes = DATABASE.query_all("select stars from difficulty_votes where level_id = ?", level_id, as: {Int32})
     avg = votes.sum() / votes.size
-    difficulty = stars_to_difficulty(Int32.new(avg.round()))
+    difficulty = stars_to_difficulty(Int32.new(avg.round()).clamp(2..9))
 
     if difficulty
       DATABASE.exec("update levels set community_difficulty = ? where id = ?", difficulty.value, level_id)
