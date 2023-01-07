@@ -25,6 +25,9 @@ CrystalGauntlet.endpoints["/accounts/loginGJAccount.php"] = ->(context : HTTP::S
 
     if bcrypt.verify(password)
       user_id = Accounts.get_user_id(account_id)
+      # update username casing
+      DATABASE.exec("update accounts set username = ? where id = ?", username, account_id)
+      DATABASE.exec("update users set username = ? where id = ?", username, user_id)
       "#{account_id},#{user_id}"
     else
       return "-11"

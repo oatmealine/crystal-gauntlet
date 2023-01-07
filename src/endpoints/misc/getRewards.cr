@@ -60,6 +60,7 @@ CrystalGauntlet.endpoints["/getGJRewards.php"] = ->(context : HTTP::Server::Cont
   large_total, large_next = get_chest(account_id, true)
 
   LOG.debug { "small: #{small_next}s, large: #{large_next}s" }
+  # todo: figure out why opening one chest resets the other visually
 
   case params["rewardType"]
   when "1"

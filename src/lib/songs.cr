@@ -148,6 +148,10 @@ module CrystalGauntlet::Songs
       author_id = song_author_id
       metadata = SongMetadata.new(song_name, song_author_name || "", url.not_nil!, song_source, song_author_url || "", song_duration, song_size)
     else
+      if url == nil
+        # prevent disabling unoccupied IDs
+        return nil
+      end
       begin
         metadata = fetch_song_metadata(url.not_nil!)
       rescue err

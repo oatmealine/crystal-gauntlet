@@ -25,6 +25,11 @@ hostname = "localhost:8080"
 # spots
 date = "relative"
 
+[comments]
+# comments with a like count <= this number
+# will be marked as spam
+spam_thres = -3
+
 [accounts]
 # allow new accounts to be created
 allow_registration = true

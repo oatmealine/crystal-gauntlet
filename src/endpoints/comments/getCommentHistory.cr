@@ -64,7 +64,7 @@ CrystalGauntlet.endpoints["/getGJCommentHistory.php"] = ->(context : HTTP::Serve
           4 => likes,
           5 => 0, # dislikes; unused
           6 => id,
-          7 => likes < -3, # todo: config?
+          7 => likes <= (config_get("comments.spam_thres").as?(Int64) || -3),
           9 => Time.parse(created_at, Format::TIME_FORMAT, Time::Location::UTC),
         }),
         Format.fmt_comment({

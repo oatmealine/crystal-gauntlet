@@ -44,7 +44,7 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(context : HTTP::Server::C
           4 => likes,
           5 => 0,
           6 => id,
-          7 => likes < -3,
+          7 => likes <= (config_get("comments.spam_thres").as?(Int64) || -3),
           8 => account_id,
           9 => Time.parse(created_at, Format::TIME_FORMAT, Time::Location::UTC),
           10 => percent || 0,

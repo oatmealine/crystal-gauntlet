@@ -16,9 +16,9 @@ CREATE TABLE accounts (
   -- 0: disabled, 1: enabled
   friend_requests_enabled  INTEGER  NOT NULL  DEFAULT 1, -- frs enabled
 
-  youtube_url  TEXT,
-  twitter_url  TEXT,
-  twitch_url   TEXT,
+  youtube_url  VARCHAR(30),
+  twitter_url  VARCHAR(20),
+  twitch_url   VARCHAR(20),
 
   created_at   TEXT    NOT NULL  DEFAULT (STRFTIME('%Y-%m-%d %H:%M:%f', 'now'))
 );
