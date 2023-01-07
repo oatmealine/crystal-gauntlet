@@ -26,9 +26,13 @@ require "./lib/creator_points"
 require "./lib/versions"
 require "./lib/ips"
 
+require "./patch-exe.cr"
+
 if File.exists?(".env")
   Dotenv.load
 end
+
+include CrystalGauntlet::PatchExe
 
 module CrystalGauntlet
   VERSION = "0.1.0"
@@ -211,6 +215,8 @@ module CrystalGauntlet
 
     migrate = false
     calc_creator_points = false
+    patch_exe = false
+    patch_exe_location = nil
 
     parser = OptionParser.new do |parser|
       parser.banner = "Usage: crystal-gauntlet [command] [arguments]"
@@ -223,6 +229,13 @@ module CrystalGauntlet
         calc_creator_points = true
         parser.banner = "Usage: crystal-gauntlet calc_creator_points [arguments]"
       end
+      parser.on("patch_exe", "Patch Geometry Dash executables with your server URL (supports #{SUPPORTED_PATCH_PLATFORMS.join(", ")})") do
+        patch_exe = true
+        parser.banner = "Usage: crystal-gauntlet patch_exe <file>"
+        parser.unknown_args do |opt|
+          patch_exe_location = opt[0]?
+        end
+      end
       parser.on("-h", "--help", "Show this help") do
         puts parser
         exit
@@ -231,6 +244,17 @@ module CrystalGauntlet
 
     parser.parse
 
+    if patch_exe
+      if !patch_exe_location
+        puts parser
+        exit 1
+      end
+      check_server_length(true)
+      LOG.info { "Patching #{patch_exe_location}" }
+      patch_exe_file(patch_exe_location.not_nil!)
+      exit
+    end
+
     migrator = Migrate::Migrator.new(
       DATABASE
     )
@@ -238,7 +262,10 @@ module CrystalGauntlet
     if migrate
       LOG.info { "Migrating #{ENV["DATABASE_URL"].colorize(:white)}..." }
       migrator.to_latest
-    elsif calc_creator_points
+      exit
+    end
+
+    if calc_creator_points
       LOG.info { "updating creator points" }
       DATABASE.query_all("select id, username, creator_points from users", as: {Int32, String, Int32}).each() do |id, username, old_count|
         new_count = CreatorPoints.update_creator_points id
@@ -246,50 +273,43 @@ module CrystalGauntlet
           LOG.info { "#{username}: #{old_count} -> #{new_count}" }
         end
       end
-    else
-      if !migrator.latest?
-        LOG.fatal { "Database hasn\'t been migrated!! Please run #{"crystal-gauntlet migrate".colorize(:white)}" }
-        return
-      end
 
-      ["songs", "levels", "saves"].each() { |v|
-        Dir.mkdir_p(DATA_FOLDER / v)
-      }
-
-      server = HTTP::Server.new([
-        HTTP::LogHandler.new,
-        HTTP::StaticFileHandler.new("public/", fallthrough: true, directory_listing: false),
-        HTTP::StaticFileHandler.new((DATA_FOLDER / "songs").to_s, fallthrough: true, directory_listing: false),
-        CrystalGauntlet::GDHandler.new,
-        CrystalGauntlet::TemplateHandler.new
-      ])
-
-      listen_on = URI.parse(ENV["LISTEN_ON"]? || "http://localhost:8080").normalize
-
-      case listen_on.scheme
-      when "http"
-        server.bind_tcp(listen_on.hostname.not_nil!, listen_on.port.not_nil!)
-      when "unix"
-        server.bind_unix(listen_on.to_s.sub("unix://",""))
-      end
-
-      full_server_path = config_get("general.hostname", "") + "/" + config_get("general.append_path", "")
-      robtop_server_path = "www.boomlings.com/database/"
-      if full_server_path.size != robtop_server_path.size
-        LOG.warn { "i think you made a mistake? length of full server path and default .exe location do not match" }
-        LOG.warn { "  #{full_server_path}" }
-        LOG.warn { "  #{robtop_server_path}" }
-        min_length = Math.min(full_server_path.size, robtop_server_path.size)
-        max_length = Math.max(full_server_path.size, robtop_server_path.size)
-        LOG.warn { "  #{" " * min_length}#{"^" * (max_length - min_length)}"}
-      end
-
-      Reupload.init()
-
-      @@up_at = Time.utc
-      LOG.notice { "Listening on #{listen_on.to_s.colorize(:white)}" }
-      server.listen
+      exit
     end
+
+    if !migrator.latest?
+      LOG.fatal { "Database hasn\'t been migrated!! Please run #{"crystal-gauntlet migrate".colorize(:white)}" }
+      exit 1
+    end
+
+    ["songs", "levels", "saves"].each() { |v|
+      Dir.mkdir_p(DATA_FOLDER / v)
+    }
+
+    server = HTTP::Server.new([
+      HTTP::LogHandler.new,
+      HTTP::StaticFileHandler.new("public/", fallthrough: true, directory_listing: false),
+      HTTP::StaticFileHandler.new((DATA_FOLDER / "songs").to_s, fallthrough: true, directory_listing: false),
+      CrystalGauntlet::GDHandler.new,
+      CrystalGauntlet::TemplateHandler.new
+    ])
+
+    listen_on = URI.parse(ENV["LISTEN_ON"]? || "http://localhost:8080").normalize
+
+    case listen_on.scheme
+    when "http"
+      server.bind_tcp(listen_on.hostname.not_nil!, listen_on.port.not_nil!)
+    when "unix"
+      server.bind_unix(listen_on.to_s.sub("unix://",""))
+    end
+
+    check_server_length(false)
+
+    Reupload.init()
+
+    @@up_at = Time.utc
+    LOG.notice { "Listening on #{listen_on.to_s.colorize(:white)}" }
+    server.listen
   end
 end
 
