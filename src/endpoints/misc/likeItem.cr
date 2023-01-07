@@ -32,8 +32,6 @@ CrystalGauntlet.endpoints["/likeGJItem211.php"] = ->(context : HTTP::Server::Con
   is_like = (params["isLike"]? || "1").to_i
   sign = is_like == 1 ? '+' : '-'
 
-  # note: formatting them like this is not a security vulnerability as the only possibilities for table, sign
-  # and column are already known and not controlled directly by user input
   DATABASE.exec "update #{table} set likes = likes #{sign} 1 where #{column} = ?", item_id
   "1"
 }
