@@ -16,6 +16,9 @@ append_path = ""
 # for dev environments, "localhost:8080" will do
 # otherwise, try something like "gdpstest.oat.zone"
 hostname = "localhost:8080"
+# if you're putting the server behind nginx or cloudflare,
+# keep this on to keep ips accurate
+trust_proxy = true
 
 [formatting]
 # whether to format dates as relative or absolute

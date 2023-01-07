@@ -153,7 +153,11 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
   end
 
   if level_exists
-    DATABASE.exec "update levels set downloads = downloads + 1 where id = ?", level_id
+    ip = IPs.get_real_ip(context.request)
+    if DATABASE.scalar("select count(*) from ip_actions where action = ? and value = ? and ip = ? limit 1", "download", level_id, ip).as?(Int64) == 0
+      DATABASE.exec("update levels set downloads = downloads + 1 where id = ?", level_id)
+      DATABASE.exec("insert into ip_actions (action, value, ip) values (?, ?, ?)", "download", level_id, ip)
+    end
   end
 
   response.join("#")

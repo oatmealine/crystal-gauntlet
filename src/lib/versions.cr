@@ -11,7 +11,7 @@ module CrystalGauntlet::Versions
     when 10
       SemanticVersion.new(1, 7, 0)
     else
-      SemanticVersion.new(game_version[0].to_i, game_version[1].to_i, game_version[2..].to_i)
+      SemanticVersion.new(game_version[0].to_i? || 0, game_version[1].to_i? || 0, game_version[2..].to_i? || 0)
     end
   end
 
