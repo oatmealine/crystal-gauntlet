@@ -20,7 +20,7 @@ CrystalGauntlet.endpoints["/getGJScores20.php"] = ->(context : HTTP::Server::Con
     offset = 0
   when "relative"
     sort = "stars desc"
-    
+
     stars = 0
     if params.has_key?("accountID")
       stars = DATABASE.scalar("select stars from users where account_id = ?", params["accountID"].to_i).as(Int64)
@@ -37,13 +37,14 @@ CrystalGauntlet.endpoints["/getGJScores20.php"] = ->(context : HTTP::Server::Con
       return "-1"
     end
 
-    raise "unimplemented: friends"
+    sort = "stars desc"
+    filter = "join friend_links friend on (friend.account_id_1 = #{account_id} or friend.account_id_2 = #{account_id}) where users.account_id = friend.account_id_1 or users.account_id = friend.account_id_2"
   else
     raise "unknown type: #{params["type"]}"
   end
 
   results = [] of String
-  DATABASE.query("select username, id, coins, user_coins, icon_type, cube, ship, ball, ufo, wave, robot, spider, color1, color2, special, udid, account_id, stars, creator_points, demons, diamonds from users #{filter} order by #{sort} limit #{count} offset #{offset}") do |rs|
+  DATABASE.query("select distinct username, id, coins, user_coins, icon_type, cube, ship, ball, ufo, wave, robot, spider, color1, color2, special, udid, account_id, stars, creator_points, demons, diamonds from users #{filter} order by #{sort} limit #{count} offset #{offset}") do |rs|
     rank = offset
     rs.each do
       username = rs.read(String)
