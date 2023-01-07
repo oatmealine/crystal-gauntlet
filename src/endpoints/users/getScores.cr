@@ -27,6 +27,7 @@ CrystalGauntlet.endpoints["/getGJScores20.php"] = ->(context : HTTP::Server::Con
     sort = "stars desc"
     stars = DATABASE.scalar("select stars from users where account_id = ?", account_id).as(Int64)
     offset = DATABASE.scalar("select count(*) from users where stars > ?", stars).as(Int64)
+    offset = Math.max(offset - 10, 0)
   when "friends"
     # todo
     user_id, account_id = Accounts.auth(params)
