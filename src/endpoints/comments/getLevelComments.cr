@@ -41,7 +41,7 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(context : HTTP::Server::C
         comment = Base64.urlsafe_encode(comment)
       end
 
-      if Versions.parse(params["gameVersion"] || "19") >= Versions::V2_1
+      if Versions.parse(params["gameVersion"]? || "19") >= Versions::V2_1
         comments_str << [
           Format.fmt_comment({
             2 => comment,
