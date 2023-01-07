@@ -32,6 +32,8 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
     raise "events?? what the hell"
   end
 
+  level_exists = false
+
   DATABASE.query("select levels.id, levels.name, levels.extra_data, levels.level_info, levels.password, levels.user_id, levels.description, levels.original, levels.game_version, levels.requested_stars, levels.version, levels.song_id, levels.length, levels.objects, levels.coins, levels.has_ldm, levels.two_player, levels.downloads, levels.likes, levels.difficulty, levels.community_difficulty, levels.demon_difficulty, levels.stars, levels.featured, levels.epic, levels.rated_coins, levels.created_at, levels.modified_at, users.username, users.udid, users.account_id, users.registered, editor_time, editor_time_copies from levels join users on levels.user_id = users.id where levels.id = ?", level_id) do |rs|
     if rs.move_next
       id = rs.read(Int32)
@@ -101,7 +103,7 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
         # 0=N/A 10=EASY 20=NORMAL 30=HARD 40=HARDER 50=INSANE 50=AUTO 50=DEMON
         # divided by above value, which is why its multiplied by 10
         9 => (difficulty ? difficulty.to_star_difficulty : 0).not_nil! * 10,
-        10 => downloads,
+        10 => downloads + 1,
         12 => !Songs.is_custom_song(song_id) ? song_id : 0,
         13 => game_version,
         # likes - dislikes
@@ -143,9 +145,15 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
         response << [user_id, user_username, user_account_id].join(":")
       end
 
-      return response.join("#")
+      level_exists = true
     else
-      return "-1"
+      response << "-1"
     end
   end
+
+  if level_exists 
+    DATABASE.exec "update levels set downloads = downloads + 1 where id = ?", level_id
+  end
+
+  response.join("#")
 }
