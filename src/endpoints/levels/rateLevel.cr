@@ -64,7 +64,7 @@ CrystalGauntlet.endpoints["/rateGJDemon21.php"] = ->(context : HTTP::Server::Con
   DATABASE.exec("insert into demon_difficulty_votes (level_id, demon_difficulty) values (?, ?)", level_id, rating)
 
   if config_get("voting.allow_demon_votes").as(Bool | Nil) == false
-    return "1"
+    return level_id.to_s
   end
 
   vote_count = DATABASE.scalar("select count(*) from demon_difficulty_votes where level_id = ?", level_id).as(Int64)
@@ -82,5 +82,5 @@ CrystalGauntlet.endpoints["/rateGJDemon21.php"] = ->(context : HTTP::Server::Con
     end
   end
 
-  return "1"
+  return level_id.to_s
 }
