@@ -23,6 +23,7 @@ require "./lib/dailies"
 require "./lib/templates"
 require "./lib/reupload"
 require "./lib/creator_points"
+require "./lib/versions"
 
 if File.exists?(".env")
   Dotenv.load
