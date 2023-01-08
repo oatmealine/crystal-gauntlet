@@ -45,7 +45,7 @@ allow_registration = true
 # the server)
 allow = true
 
-# how long the session should last for
+# how long the session should last for (in seconds)
 expiry_time = 604800
 
 [reuploads]
