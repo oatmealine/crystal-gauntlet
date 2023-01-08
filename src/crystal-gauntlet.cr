@@ -217,6 +217,7 @@ module CrystalGauntlet
     calc_creator_points = false
     patch_exe = false
     patch_exe_location = nil
+    patch_exe_package = nil
 
     parser = OptionParser.new do |parser|
       parser.banner = "Usage: crystal-gauntlet [command] [arguments]"
@@ -232,6 +233,7 @@ module CrystalGauntlet
       parser.on("patch_exe", "Patch Geometry Dash executables with your server URL (supports #{SUPPORTED_PATCH_PLATFORMS.join(", ")})") do
         patch_exe = true
         parser.banner = "Usage: crystal-gauntlet patch_exe <file>"
+        parser.on("-p NAME", "--package=NAME", "Specify the new package name") { |name| patch_exe_package = name }
         parser.unknown_args do |opt|
           patch_exe_location = opt[0]?
         end
@@ -251,7 +253,7 @@ module CrystalGauntlet
       end
       check_server_length(true)
       LOG.info { "Patching #{patch_exe_location}" }
-      patch_exe_file(patch_exe_location.not_nil!)
+      patch_exe_file(patch_exe_location.not_nil!, patch_exe_package)
       exit
     end
 

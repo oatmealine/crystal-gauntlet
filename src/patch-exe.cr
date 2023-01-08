@@ -1,8 +1,10 @@
+require "file_utils"
+
 module CrystalGauntlet::PatchExe
   extend self
 
-  SUPPORTED_PATCH_PLATFORMS = ["Windows"]
-  SUPPORTED_EXTENSIONS = ["exe"]
+  SUPPORTED_PATCH_PLATFORMS = ["Windows", "Android"]
+  SUPPORTED_EXTENSIONS = ["exe", "apk"]
 
   ROBTOP_SERVER_PATH = "http://www.boomlings.com/database"
 
@@ -15,10 +17,6 @@ module CrystalGauntlet::PatchExe
   end
 
   def replace(from : IO, to : IO, search : Array(UInt8), replace : Array(UInt8))
-    if search.size != replace.size
-      raise "Search and replacement does not match in size"
-    end
-
     size = search.size
 
     buffer = [] of UInt8
@@ -45,38 +43,94 @@ module CrystalGauntlet::PatchExe
     replacements
   end
 
-  def patch_exe_file(location : String)
+  def force_rm(path : Path)
+    Dir.each_child(path) do |file|
+      if File.info(path / file).directory?
+        force_rm(path / file)
+      else
+        FileUtils.rm(path / file)
+      end
+    end
+  end
+
+  def patch_exe_file(location : String, new_package_name : String?)
     file_split = location.split(".")
     extension = file_split.pop
     patched_location = "#{file_split.join(".")}_patched.#{extension}"
-    File.open("#{location}", "r") do |from|
-      File.open(patched_location, "w") do |to|
-        start = Time.monotonic
+    start = Time.monotonic
 
-        amt = 0
+    amt = 0
 
-        case extension
-        when "exe"
-          gd_temp = File.tempfile("GeometryDash")
-          LOG.debug { "  #{robtop_server_path.colorize(:dark_gray)} ->" }
-          LOG.debug { "  #{full_server_path.colorize(:dark_gray)}" }
-          File.open(gd_temp.path, "w") do |tmp|
-            amt += replace(from, tmp, robtop_server_path.bytes, full_server_path.bytes)
-          end
-          LOG.debug { "  #{Base64.strict_encode(robtop_server_path).colorize(:dark_gray)} ->" }
-          LOG.debug { "  #{Base64.strict_encode(full_server_path).colorize(:dark_gray)}" }
-          File.open(gd_temp.path, "r") do |tmp|
-            amt += replace(tmp, to, Base64.strict_encode(robtop_server_path).bytes, Base64.strict_encode(full_server_path).bytes)
-          end
-          gd_temp.delete
-        else
-          LOG.error { "Unsupported extension #{extension.colorize(:white)} (supported: #{SUPPORTED_EXTENSIONS.join(", ")})" }
+    case extension
+    when "exe"
+      gd_temp = File.tempfile("GeometryDash")
+      File.open(location, "r") do |from|
+        LOG.debug { "  #{robtop_server_path.colorize(:dark_gray)} ->" }
+        LOG.debug { "  #{full_server_path.colorize(:dark_gray)}" }
+        File.open(gd_temp.path, "w") do |tmp|
+          amt += replace(from, tmp, robtop_server_path.bytes, full_server_path.bytes)
         end
-
-        LOG.info { "Patched #{location} into #{patched_location} successfully" }
-        LOG.info { "#{amt} replacements done in #{(Time.monotonic - start).total_seconds.humanize(precision: 2, significant: false)}s" }
       end
+      File.open(patched_location, "w") do |to|
+        LOG.debug { "  #{Base64.strict_encode(robtop_server_path).colorize(:dark_gray)} ->" }
+        LOG.debug { "  #{Base64.strict_encode(full_server_path).colorize(:dark_gray)}" }
+        File.open(gd_temp.path, "r") do |tmp|
+          amt += replace(tmp, to, Base64.strict_encode(robtop_server_path).bytes, Base64.strict_encode(full_server_path).bytes)
+        end
+      end
+      gd_temp.delete
+    when "apk"
+      apktool = Process.find_executable("apktool")
+      if !apktool
+        LOG.error { "apktool not found! Please put this somewhere in your path: https://ibotpeaches.github.io/Apktool/" }
+        return
+      end
+      LOG.info { "Using apktool in #{apktool}" }
+
+      tmpdir = Path.new(Dir.tempdir, "#{location.split("/").last}_unpacked")
+      Process.run(apktool, ["d", location, "-o", tmpdir.to_s, "-f"], output: STDOUT, error: STDERR)
+
+      gd_temp = File.tempfile("libcocos2dcpp")
+      File.open(tmpdir / "lib" / "armeabi" / "libcocos2dcpp.so", "r") do |from|
+        LOG.debug { "  #{robtop_server_path.colorize(:dark_gray)} ->" }
+        LOG.debug { "  #{full_server_path.colorize(:dark_gray)}" }
+        File.open(gd_temp.path, "w") do |tmp|
+          amt += replace(from, tmp, robtop_server_path.bytes, full_server_path.bytes)
+        end
+      end
+      File.open(tmpdir / "lib" / "armeabi" / "libcocos2dcpp.so", "w") do |to|
+        LOG.debug { "  #{Base64.strict_encode(robtop_server_path).colorize(:dark_gray)} ->" }
+        LOG.debug { "  #{Base64.strict_encode(full_server_path).colorize(:dark_gray)}" }
+        File.open(gd_temp.path, "r") do |tmp|
+          amt += replace(tmp, to, Base64.strict_encode(robtop_server_path).bytes, Base64.strict_encode(full_server_path).bytes)
+        end
+      end
+      gd_temp.delete
+
+      if new_package_name
+        LOG.info { "Changing package name to #{new_package_name}" }
+        FileUtils.mv(tmpdir / "apktool.yml", tmpdir / "apktool_.yml")
+        File.open(tmpdir / "apktool_.yml", "r") do |from|
+          File.open(tmpdir / "apktool.yml", "w") do |to|
+            replace(from, to, "renameManifestPackage: null".bytes, "renameManifestPackage: #{new_package_name}".bytes)
+          end
+        end
+        FileUtils.rm(tmpdir / "apktool_.yml")
+      else
+        LOG.warn { "No new package name specified - this will not install properly if vanilla GD is installed" }
+      end
+
+      Process.run(apktool, ["b", tmpdir.to_s, "-o", patched_location, "-f"], output: STDOUT, error: STDERR)
+
+      force_rm(tmpdir)
+
+      LOG.notice { "This will not install properly - you need to sign it with jarsigner: https://docs.oracle.com/javase/9/tools/jarsigner.htm" }
+    else
+      LOG.error { "Unsupported extension #{extension.colorize(:white)} (supported: #{SUPPORTED_EXTENSIONS.join(", ")})" }
     end
+
+    LOG.info { "Patched #{location} into #{patched_location} successfully" }
+    LOG.info { "#{amt} replacements done in #{(Time.monotonic - start).total_seconds.humanize(precision: 2, significant: false)}s" }
   end
 
   def check_server_length(exit_if_fail : Bool)
