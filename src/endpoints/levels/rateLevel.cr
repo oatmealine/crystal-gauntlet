@@ -87,9 +87,7 @@ CrystalGauntlet.endpoints["/rateGJDemon21.php"] = ->(context : HTTP::Server::Con
 
 CrystalGauntlet.endpoints["/rateGJStars20.php"] = CrystalGauntlet.endpoints["/rateGJStars211.php"]
 
-CrystalGauntlet.endpoints["/rateGJStars.php"] = ->(context : HTTP::Server::Context): String {
-  "-1"
-}
+CrystalGauntlet.endpoints["/rateGJStars.php"] = CrystalGauntlet.endpoints["/rateGJStars211.php"]
 
 CrystalGauntlet.endpoints["/rateGJLevel.php"] = ->(context : HTTP::Server::Context): String {
   "-1"

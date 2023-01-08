@@ -8,7 +8,10 @@ CrystalGauntlet.endpoints["/uploadGJComment21.php"] = ->(context : HTTP::Server:
 
   user_id, account_id = Accounts.auth(params)
   if !(user_id && account_id)
-    return "-1"
+    user_id, account_id = Accounts.auth_old(context.request, params)
+    if !(user_id && account_id)
+      return "-1"
+    end
   end
 
   comment = params["comment"]?
@@ -20,7 +23,12 @@ CrystalGauntlet.endpoints["/uploadGJComment21.php"] = ->(context : HTTP::Server:
   end
 
   if comment && !comment.blank?
-    comment_value = Base64.decode_string(comment)[..100-1]
+    comment_value = comment
+    if params.has_key?("gameVersion")
+      comment_value = Base64.decode_string(comment_value)[..100-1]
+    else
+      comment_value = comment_value[..100-1]
+    end
     next_id = IDs.get_next_id("comments")
     DATABASE.exec("insert into comments (id, level_id, user_id, comment, percent) values (?, ?, ?, ?, ?)", next_id, level_id, user_id, comment_value, percent)
     return "1"
@@ -31,6 +39,5 @@ CrystalGauntlet.endpoints["/uploadGJComment21.php"] = ->(context : HTTP::Server:
 
 CrystalGauntlet.endpoints["/uploadGJComment20.php"] = CrystalGauntlet.endpoints["/uploadGJComment21.php"]
 
-CrystalGauntlet.endpoints["/uploadGJComment19.php"] = ->(context : HTTP::Server::Context): String {
-  "-1"
-}
+CrystalGauntlet.endpoints["/uploadGJComment19.php"] = CrystalGauntlet.endpoints["/uploadGJComment21.php"]
+

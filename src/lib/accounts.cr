@@ -26,6 +26,7 @@ module CrystalGauntlet::Accounts
 
   # todo: clean this periodically
   AUTH_CACHE = Hash(Tuple(String | Nil, String | Nil, String | Nil), Tuple(Int32, Int32) | Tuple(Nil, Nil)).new
+  SESSIONS = Hash(Tuple(String | Nil, String | Nil), Tuple(Int32, Int32, Int64)).new
 
   # returns userid, accountid
   def auth(params : URI::Params) : (Tuple(Int32, Int32) | Tuple(Nil, Nil))
@@ -50,6 +51,51 @@ module CrystalGauntlet::Accounts
 
     AUTH_CACHE[{gjp, udid, account_id}] = {user_id, ext_id.to_i}
     return user_id, ext_id.to_i
+  end
+
+  def auth_old(req : HTTP::Request, params : URI::Params) : (Tuple(Int32, Int32) | Tuple(Nil, Nil))
+    account_id = params["accountID"]
+    ip = IPs.get_real_ip(req)
+
+    if SESSIONS.has_key?({account_id, ip})
+      LOG.debug {"#{account_id || "???"}: session exists"}
+      user_id, ext_id, expiry_time = SESSIONS[{account_id, ip}]
+      if Time.utc.to_unix > expiry_time
+        LOG.debug {"#{account_id || "???"}: session expired"}
+        SESSIONS.delete({account_id, ip})
+        return nil, nil
+      else
+        LOG.debug {"#{account_id || "???"}: session valid"}
+        return user_id, ext_id
+      end
+    end
+    
+    LOG.debug {"#{account_id || "???"}: session does not exist"}
+    return nil, nil
+  end
+
+  def new_session(req : HTTP::Request, username : String, password : String) : Bool
+    if !config_get("sessions.allow").as(Bool | Nil)
+      return false
+    end
+
+    ip = IPs.get_real_ip(req)
+    result = DATABASE.query_all("select id, password from accounts where username = ?", username, as: {Int32, String})
+    if result.size > 0
+      account_id, hash = result[0]
+      bcrypt = Crypto::Bcrypt::Password.new(hash)
+
+      if bcrypt.verify(password)
+        user_id = Accounts.get_user_id(account_id)
+        expiry_time = Time.utc.to_unix + (config_get("sessions.expiry_time").as(Int64 | Nil) || 604800)
+        SESSIONS[{account_id.to_s, ip}] = { user_id, account_id, expiry_time }
+        return true
+      else
+        return false
+      end
+    else
+      return false
+    end
   end
 
   def get_user_id(ext_id : Int32) : Int32

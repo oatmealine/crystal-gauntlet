@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Session Creation</title>
+  </head>
+  <body style="max-width: 800px; margin: auto; padding-top: 1em;">
+    <%= Templates.dir_header %>
+    <h1>Session Creation</h1>
+
+    <%- if disabled -%>
+      <b>Sessions have been disabled</b><br /> <br />
+    <%- end -%>
+
+    <form action="/tools/create_session" method="post">
+      Username: <input type="text" id="username" name="username" />
+      Password: <input type="password" id="password" name="password" />
+      <input type="submit" value="Submit" <%= disabled ? "disabled" : "" %> />
+    </form>
+
+    <%- if result == false -%>
+      <div>Could not create session</div><br />
+    <%- elsif result == true -%>
+      <div>Session created successfully</div>
+    <%- end -%>
+  </body>
+</html>

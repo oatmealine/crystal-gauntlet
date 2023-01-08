@@ -8,7 +8,10 @@ CrystalGauntlet.endpoints["/deleteGJComment20.php"] = ->(context : HTTP::Server:
 
   user_id, account_id = Accounts.auth(params)
   if !(user_id && account_id)
-    return "-1"
+    user_id, account_id = Accounts.auth_old(context.request, params)
+    if !(user_id && account_id)
+      return "-1"
+    end
   end
 
   comment_user_id, level_user_id = DATABASE.query_one("select comments.user_id, levels.user_id from comments join levels on levels.id = comments.id where comments.id = ?", params["commentID"].to_i, as: {Int32, Int32})
@@ -22,6 +25,4 @@ CrystalGauntlet.endpoints["/deleteGJComment20.php"] = ->(context : HTTP::Server:
   return "1"
 }
 
-CrystalGauntlet.endpoints["/deleteGJComment19.php"] = ->(context : HTTP::Server::Context): String {
-  "-1"
-}
+CrystalGauntlet.endpoints["/deleteGJComment19.php"] = CrystalGauntlet.endpoints["/deleteGJComment20.php"]

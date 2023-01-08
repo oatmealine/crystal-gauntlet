@@ -7,7 +7,10 @@ CrystalGauntlet.endpoints["/deleteGJLevelUser20.php"] = ->(context : HTTP::Serve
 
   user_id, account_id = Accounts.auth(params)
   if !(user_id && account_id)
-    return "-1"
+    user_id, account_id = Accounts.auth_old(context.request, params)
+    if !(user_id && account_id)
+      return "-1"
+    end
   end
 
   level_id = params["levelID"].to_i
@@ -19,3 +22,5 @@ CrystalGauntlet.endpoints["/deleteGJLevelUser20.php"] = ->(context : HTTP::Serve
 
   return "1"
 }
+
+CrystalGauntlet.endpoints["/deleteGJLevelUser19.php"] = CrystalGauntlet.endpoints["/deleteGJLevelUser20.php"]

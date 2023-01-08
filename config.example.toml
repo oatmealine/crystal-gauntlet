@@ -37,6 +37,17 @@ spam_thres = -3
 # allow new accounts to be created
 allow_registration = true
 
+[sessions]
+# allow sessions to be created (for 1.9, as it
+# doesn't send the password for authentication
+# in any shape or form, making relying on ip
+# addresses the only secure way of accessing
+# the server)
+allow = true
+
+# how long the session should last for
+expiry_time = 604800
+
 [reuploads]
 # allow reuploading levels from other servers
 allowed = true
