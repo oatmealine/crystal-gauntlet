@@ -37,6 +37,43 @@ spam_thres = -3
 # allow new accounts to be created
 allow_registration = true
 
+# determine what permissions different ranks of users get
+# ranks (based on `position`) will get all perms of
+# ranks below (<) their own
+# todo: document this fully
+[ranks.everyone]
+position = 0
+[ranks.everyone.permissions]
+upload_levels = true        # todo: unimplemented
+backup_save = true          # todo: unimplemented
+level_comment = true        # todo: unimplemented
+profile_comment = true      # todo: unimplemented
+leaderboard = true          # todo: unimplemented
+level_leaderboard = true    # todo: unimplemented
+send_friend_requests = true # todo: unimplemented
+send_messages = true        # todo: unimplemented
+
+reupload_songs = true       # todo: unimplemented
+reupload_levels = true      # todo: unimplemented
+
+[ranks.mod]
+position = 1
+badge = 1 # todo: unimplemented
+is_mod = true # can request mod access ingame # todo: unimplemented
+text_color = [200, 255, 200]
+[ranks.mod.permissions]
+rate_levels = true       # todo: unimplemented
+rate_levels_demon = true # todo: unimplemented
+
+[ranks.eldermod]
+position = 2
+badge = 2
+is_mod = true
+text_color = [75, 255, 75]
+[ranks.eldermod.permissions]
+delete_level_comments = true # todo: unimplemented
+delete_others_levels = true  # todo: unimplemented
+
 [sessions]
 # allow sessions to be created (for 1.9, as it
 # doesn't send the password for authentication

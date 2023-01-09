@@ -25,6 +25,7 @@ require "./lib/reupload"
 require "./lib/creator_points"
 require "./lib/versions"
 require "./lib/ips"
+require "./lib/ranks"
 
 require "./patch-exe.cr"
 
@@ -308,6 +309,7 @@ module CrystalGauntlet
     check_server_length(false)
 
     Reupload.init()
+    Ranks.init()
 
     @@up_at = Time.utc
     LOG.notice { "Listening on #{listen_on.to_s.colorize(:white)}" }
