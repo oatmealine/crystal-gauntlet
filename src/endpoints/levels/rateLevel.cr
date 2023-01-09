@@ -93,3 +93,21 @@ CrystalGauntlet.endpoints["/rateGJLevel.php"] = ->(context : HTTP::Server::Conte
   "-1"
 }
 
+CrystalGauntlet.endpoints["/suggestGJStars20.php"] = ->(context : HTTP::Server::Context) : String {
+  params = URI::Params.parse(context.request.body.not_nil!.gets_to_end)
+  LOG.debug { params.inspect }
+
+  user_id, account_id = Accounts.auth(params)
+  if !(user_id && account_id)
+    return "-1"
+  end
+
+  rank = Ranks.get_rank(account_id)
+  if !Ranks.has_permission(rank, "rate_levels")
+    return "-2"
+  end
+
+  DATABASE.exec "update levels set stars = ?, featured = ?, difficulty = ? where id = ?", params["stars"].to_i, params["feature"].to_i, (stars_to_difficulty(params["stars"].to_i) || LevelDifficulty::Easy).to_i, params["levelID"].to_i
+  "1"
+}
+
