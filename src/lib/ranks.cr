@@ -25,12 +25,13 @@ module CrystalGauntlet::Ranks
     config_get("ranks").as(Hash(String, TOML::Type)).each() do |key, value_|
       value = value_.as(Hash(String, TOML::Type))
       perms = value["permissions"]?.as?(Hash(String, TOML::Type)) || Hash(String, Bool).new
+      color = value["text_color"]?.as?(Array(TOML::Type))
       @@ranks << Rank.new(
         name: key,
         position: value["position"].as(Int64),
         badge: value["badge"]?.as?(Int64) || 0_i64,
         is_mod: value["is_mod"]?.as?(Bool) || false,
-        text_color: value["text_color"]?.as?(Array(Int64)),
+        text_color: color ? color.map { |v| v.as(Int64) } : nil,
         permissions: perms.transform_values { |v| v.as?(Bool) || false }
       )
     end
