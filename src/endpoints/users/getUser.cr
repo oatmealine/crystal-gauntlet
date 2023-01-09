@@ -54,7 +54,7 @@ CrystalGauntlet.endpoints["/getGJUserInfo20.php"] = ->(context : HTTP::Server::C
     45 => twitch_url || "",
     46 => diamonds,
     48 => explosion,
-    49 => (rank || Ranks::NULL_RANK).position,
+    49 => (rank || Ranks::NULL_RANK).badge,
     50 => 2 - comments_enabled
   })
 }
