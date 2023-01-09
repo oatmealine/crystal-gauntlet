@@ -88,6 +88,10 @@ module CrystalGauntlet
     @@template_endpoints
   end
 
+  def self.is_funny
+    config_get("general.easter_eggs", false)
+  end
+
   def severity_color(severity : Log::Severity) : Colorize::Object
     case severity
     when .trace?

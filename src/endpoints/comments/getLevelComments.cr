@@ -26,8 +26,15 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(context : HTTP::Server::C
     end
 
     user_rank = account_id ? Ranks.get_rank(account_id) : nil
-    LOG.debug { user_rank.not_nil!.name }
-    LOG.debug { user_rank.not_nil!.text_color }
+
+    text_color = ((user_rank ? user_rank.text_color : nil) || [0, 0, 0]).join(",")
+    badge = user_rank ? user_rank.badge : 0
+    if CrystalGauntlet.is_funny && Time.utc.hour == 5 && Time.utc.minute == 55
+      text_color = "#{rand(255)},#{rand(255)},#{rand(255)}"
+      if badge == 0
+        badge = 1
+      end
+    end
 
     if Versions.parse(params["gameVersion"]? || "19") >= Versions::V2_1
       comments_str << [
@@ -41,8 +48,8 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(context : HTTP::Server::C
           8 => account_id,
           9 => Time.parse(created_at, Format::TIME_FORMAT, Time::Location::UTC),
           10 => percent || 0,
-          11 => user_rank ? user_rank.badge : 0,
-          12 => ((user_rank ? user_rank.text_color : nil) || [0, 0, 0]).join(","),
+          11 => badge,
+          12 => text_color,
         }),
         Format.fmt_comment({
           1 => username || "-",
@@ -65,8 +72,8 @@ CrystalGauntlet.endpoints["/getGJComments21.php"] = ->(context : HTTP::Server::C
         8 => account_id,
         9 => Time.parse(created_at, Format::TIME_FORMAT, Time::Location::UTC),
         10 => percent || 0,
-        11 => user_rank ? user_rank.badge : 0,
-        12 => ((user_rank ? user_rank.text_color : nil) || [0, 0, 0]).join(","),
+        11 => badge,
+        12 => text_color,
       })
 
       users_str << [user_id, username || "-", account_id || udid ].join(":")
