@@ -8,7 +8,8 @@ CrystalGauntlet.endpoints["/getGJUserInfo20.php"] = ->(context : HTTP::Server::C
 
   user_id, account_id = Accounts.auth(params)
 
-  id, username, is_admin, messages_enabled, friend_requests_enabled, comments_enabled, youtube_url, twitter_url, twitch_url, created_at, user_id, stars, demons, coins, user_coins, diamonds, orbs, creator_points, icon_type, color1, color2, glow, cube, ship, ball, ufo, wave, robot, spider, explosion = DATABASE.query_one("select accounts.id, accounts.username, is_admin, messages_enabled, friend_requests_enabled, comments_enabled, youtube_url, twitter_url, twitch_url, accounts.created_at, users.id, stars, demons, coins, user_coins, diamonds, orbs, creator_points, icon_type, color1, color2, glow, cube, ship, ball, ufo, wave, robot, spider, explosion from accounts join users on accounts.id = users.account_id where accounts.id = ?", params["targetAccountID"], as: {Int32, String, Int32, Int32, Int32, Int32, String?, String?, String?, String, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32})
+  id, username, rank_name, messages_enabled, friend_requests_enabled, comments_enabled, youtube_url, twitter_url, twitch_url, created_at, user_id, stars, demons, coins, user_coins, diamonds, orbs, creator_points, icon_type, color1, color2, glow, cube, ship, ball, ufo, wave, robot, spider, explosion = DATABASE.query_one("select accounts.id, accounts.username, rank, messages_enabled, friend_requests_enabled, comments_enabled, youtube_url, twitter_url, twitch_url, accounts.created_at, users.id, stars, demons, coins, user_coins, diamonds, orbs, creator_points, icon_type, color1, color2, glow, cube, ship, ball, ufo, wave, robot, spider, explosion from accounts join users on accounts.id = users.account_id where accounts.id = ?", params["targetAccountID"], as: {Int32, String, String | Nil, Int32, Int32, Int32, String?, String?, String?, String, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32})
+  rank = Ranks.get_rank(rank_name || "everyone")
 
   is_friend = Accounts.are_friends(id, account_id || -1)
   begin
@@ -53,8 +54,7 @@ CrystalGauntlet.endpoints["/getGJUserInfo20.php"] = ->(context : HTTP::Server::C
     45 => twitch_url || "",
     46 => diamonds,
     48 => explosion,
-    # badge, todo
-    49 => 0,
+    49 => (rank || Ranks::NULL_RANK).position,
     50 => 2 - comments_enabled
   })
 }
