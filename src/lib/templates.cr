@@ -1,3 +1,5 @@
+require "http-session"
+
 module CrystalGauntlet::Templates
   extend self
 
@@ -12,5 +14,24 @@ module CrystalGauntlet::Templates
         Crystal #{Crystal::VERSION} <pre>#{Crystal::BUILD_COMMIT}</pre> running on <pre>#{System.hostname}</pre> for #{CrystalGauntlet.uptime_s}
       </div>
     )
+  end
+end
+
+module CrystalGauntlet
+  record UserSession, username : String, account_id : Int32, user_id : Int32
+
+  # todo: replace memory storage with sqlite maybe? has to be hand-written but oh well
+  @@session_storage = HTTPSession::Storage::Memory(UserSession).new
+  @@sessions : HTTPSession::Manager(UserSession) = HTTPSession::Manager.new(@@session_storage, HTTP::Cookie.new("surveillance_device", "", secure: false, http_only: true, max_age: 365.days))
+
+  spawn do
+    session_storage.run_gc_loop
+  end
+
+  def self.session_storage
+    @@session_storage
+  end
+  def self.sessions
+    @@sessions
   end
 end

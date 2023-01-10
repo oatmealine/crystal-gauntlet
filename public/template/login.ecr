@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Login</title>
+    <style>
+      body {
+        min-height: 100vh;
+        text-align: center;
+        width: 100%;
+        margin: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+        align-items: center;
+        justify-content: center;
+        max-width: 800px;
+        height: 100%;
+        padding: 1em;
+      }
+      .error {
+        color: #f33;
+      }
+    </style>
+  </head>
+  <body>
+    <form action="/accounts/" method="post">
+      <img src="/favicon.png" width="64" height="auto" class="spinny">
+      <br>
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" minlength="3" maxlength="16" required />
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" minlength="6" required />
+
+      <%- if error -%>
+        <div class="error"><%= error %></div>
+      <%- end -%>
+
+      <input type="submit" value="Login" class="fancy-button" />
+    </form>
+  </body>
+</html>

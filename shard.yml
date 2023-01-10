@@ -21,6 +21,8 @@ dependencies:
   toml:
     github: crystal-community/toml.cr
     branch: master
+  http-session:
+    github: straight-shoota/http-session
 
 crystal: 1.6.2
 

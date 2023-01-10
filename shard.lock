@@ -8,6 +8,10 @@ shards:
     git: https://github.com/gdotdesign/cr-dotenv.git
     version: 1.0.0
 
+  http-session:
+    git: https://github.com/straight-shoota/http-session.git
+    version: 0.2.0+git.commit.7bd278a5567f89cdc348e3d468bd25d561319492
+
   migrate:
     git: https://github.com/oatmealine/migrate.cr.git
     version: 0.5.0+git.commit.a4a24df3d05d0481c76ccd42e45cc48fa3fc1e73

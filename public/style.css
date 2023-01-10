@@ -90,3 +90,22 @@ pre {
 .dir-header a {
   text-decoration: none;
 }
+
+.fancy-button {
+  outline: 0;
+  border: none;
+  background-color: var(--accent-color);
+  color: #000;
+  font-size: 1.2rem;
+  padding: 0.4em 0.8em;
+  margin: 0.5em;
+  border-radius: 16px;
+
+  cursor: pointer;
+
+  transition: 0.1s background-color;
+}
+
+.fancy-button:hover {
+  background-color: var(--accent-color-bri);
+}
