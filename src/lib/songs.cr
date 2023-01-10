@@ -111,6 +111,7 @@ module CrystalGauntlet::Songs
   # name, author id, author name, size, download url
   # returns nil if song should be disabled
   # throws if something failed
+  # todo: why is size sometimes 0.00 despite the song being downloaded?
   def fetch_song(song_id : Int32, get_download = false) : Tuple(String, Int32, String, Int32 | Nil, String | Nil) | Nil
     LOG.debug { "fetching #{song_id}" }
     if !config_get("songs.allow_custom_songs").as?(Bool)

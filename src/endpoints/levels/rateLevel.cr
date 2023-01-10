@@ -13,8 +13,6 @@ CrystalGauntlet.endpoints["/rateGJStars211.php"] = ->(context : HTTP::Server::Co
     return "-1"
   end
 
-  # todo: implement this for mod accounts
-
   if DATABASE.scalar("select count(*) from levels where id = ?", level_id).as(Int64) == 0
     return "-1"
   end

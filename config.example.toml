@@ -64,7 +64,7 @@ badge = 1
 is_mod = true # can request mod access ingame
 text_color = [200, 255, 200]
 [ranks.mod.permissions]
-rate_levels = true       # todo: unimplemented
+rate_levels = true
 rate_levels_demon = true # todo: unimplemented
 
 [ranks.eldermod]
