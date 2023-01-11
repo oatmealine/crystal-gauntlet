@@ -12,14 +12,101 @@
         margin: auto;
         padding: 1em;
       }
+      .greeting ::selection {
+        background-color: #000;
+        color: #fff;
+      }
+      .greeting {
+        background-color: var(--accent-color);
+        color: #000;
+        border-radius: 1.5em;
+        padding: 1em;
+        margin: 1em;
+
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+      }
+      .greeting-l {
+        flex: 0 0 auto;
+        max-width: 100%;
+        width: auto;
+        height: 100%;
+        max-height: 3rem;
+        object-fit: contain;
+        display: block;
+      }
+      .greeting-r {
+        flex: 1 1 0px;
+        min-width: 0;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .greeting-top {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .greeting-top-left {
+        font-size: 1.4rem;
+      }
+      .greeting-stats {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 0.5ex;
+      }
+      .greeting-stats img {
+        width: auto;
+        height: 1em;
+      }
+      .greeting a {
+        color: #000;
+      }
+
+      @media (max-width: 650px) {
+        .greeting-top {
+          flex-direction: column;
+          gap: 0.2em;
+          align-items: start;
+        }
+        .greeting-bottom {
+          text-align: right;
+        }
+        .greeting-r {
+          gap: 0.2em;
+        }
+      }
+
+      .favicon {
+        margin: auto;
+        display: block;
+      }
     </style>
   </head>
   <body>
-    hewwo, <b><%= username %></b>!<br><br>
-    <el>
-      <li>Nothing is implemented right now for account management</li>
-      <li>This is just a test list</li>
-      <li>Did you know your account ID is <%= account_id %>?</li>
-    </el>
+    <a href="/"><img src="/favicon.png" width="64" height="auto" class="spinny favicon"></a><br>
+
+    <div class="greeting">
+      <img src="https://cdn.discordapp.com/attachments/902195395264905217/1062706739969019984/ball_35.png" width="150" height="150" class="greeting-l">
+      <div class="greeting-r">
+        <div class="greeting-top">
+          <div class="greeting-top-left">
+            hewwo, <b><%= username %></b>!
+          </div>
+          <div class="greeting-stats">
+            <%= stars %> <img src="https://gdbrowser.com/assets/star.png"> <%= diamonds %> <img src="https://gdbrowser.com/assets/diamond.png"> <%= coins %> <img src="https://gdbrowser.com/assets/coin.png"> <%= user_coins %> <img src="https://gdbrowser.com/assets/silvercoin.png"> <%= demons %> <img src="https://gdbrowser.com/assets/demon.png">
+          </div>
+        </div>
+        <div class="greeting-bottom">
+          <a href="/accounts/settings">Settings</a> · <a>Log out</a>
+        </div>
+      </div>
+    </div>
+    <br><br>
+    blablabla lorem ipsum whatever. put stuff here later
   </body>
 </html>

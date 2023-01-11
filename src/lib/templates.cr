@@ -4,8 +4,8 @@ module CrystalGauntlet::Templates
   extend self
 
   macro dir_header()
-    path_split = context.request.path.split('/')
-    "<div class='dir-header'>" + path_split.map_with_index { |v, i| "<a href='/#{path_split[1..i].join('/')}'>#{i == 0 ? "crystal-gauntlet" : v}</a>"}.join(" / ") + "</div>"
+    %path_split = context.request.path.split('/')
+    "<div class='dir-header'>" + %path_split.map_with_index { |v, i| "<a href='/#{%path_split[1..i].join('/')}'>#{i == 0 ? "crystal-gauntlet" : v}</a>"}.join(" / ") + "</div>"
   end
 
   def footer()
@@ -14,6 +14,26 @@ module CrystalGauntlet::Templates
         Crystal #{Crystal::VERSION} <pre>#{Crystal::BUILD_COMMIT}</pre> running on <pre>#{System.hostname}</pre> for #{CrystalGauntlet.uptime_s}
       </div>
     )
+  end
+
+  macro auth()
+    if session = CrystalGauntlet.sessions.get(context)
+      logged_in = true
+      account_id = session.account_id
+      user_id = session.user_id
+      username = session.username
+    else
+      logged_in = false
+      account_id = nil
+      user_id = nil
+      username = nil
+    end
+
+    if !logged_in
+      context.response.headers.add("Location", "/login?#{URI::Params.encode({"redir" => context.request.path})}")
+      context.response.status = HTTP::Status::SEE_OTHER
+      return
+    end
   end
 end
 

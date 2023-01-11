@@ -109,3 +109,7 @@ pre {
 .fancy-button:hover {
   background-color: var(--accent-color-bri);
 }
+
+.error {
+  color: #f33;
+}

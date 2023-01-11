@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Account Management</title>
+    <style>
+      body {
+        max-width: 800px;
+        margin: auto;
+        padding: 1em;
+      }
+      form {
+        margin: auto;
+        max-width: 700px;
+        background-color: rgba(150, 150, 150, 0.15);
+        padding: 1em;
+        border-radius: 1em;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <%= Templates.dir_header %><br>
+
+    <%- if error -%>
+      <div class="error"><%= error %></div>
+      <br>
+    <%- elsif result -%>
+      <%= result %>
+      <br><br>
+    <%- end -%>
+
+    <form action="/accounts/settings" method="post">
+      <label for="username">Username</label><br>
+      <input type="text" id="username" name="username" minlength="3" maxlength="16" required value="<%= username %>" /><br>
+      <hr>
+      <input type="submit" value="Update Account" />
+    </form>
+
+    <br>
+
+    <form action="/accounts/settings" method="post">
+      <label for="old_password">Old password</label><br>
+      <input type="password" id="old_password" name="old_password" minlength="3" maxlength="16" required/><br>
+      <label for="new_password">New password</label><br>
+      <input type="password" id="new_password" name="new_password" minlength="3" maxlength="16" required/><br>
+      <label for="repeat_new_password">Repeat new password</label><br>
+      <input type="password" id="repeat_new_password" name="repeat_new_password" minlength="3" maxlength="16" required/><br>
+      <hr>
+      <input type="submit" value="Update Password" />
+    </form>
+  </body>
+</html>
