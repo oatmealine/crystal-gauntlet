@@ -9,6 +9,11 @@
     rev = "v1.0.0";
     sha256 = "00pdawysns1w1iqwh6j3shilpwh41ljz1chsqkacn6dj2yn21n0r";
   };
+  http-session = {
+    url = "https://github.com/straight-shoota/http-session.git";
+    rev = "7bd278a5567f89cdc348e3d468bd25d561319492";
+    sha256 = "0iagh3qj1zglilkv0zxhz5rrqb5pblrs81c772qsplj8qkfkw8dz";
+  };
   migrate = {
     url = "https://github.com/oatmealine/migrate.cr.git";
     rev = "a4a24df3d05d0481c76ccd42e45cc48fa3fc1e73";
