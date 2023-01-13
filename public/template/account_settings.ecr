@@ -36,11 +36,33 @@
     <form action="/accounts/settings" method="post">
       <label for="username">Username</label><br>
       <input type="text" id="username" name="username" minlength="3" maxlength="16" required value="<%= username %>" /><br>
+      <label for="email">Email</label><br>
+      <input type="email" id="email" name="email" value="<%= email %>" /><br>
       <hr>
       <input type="submit" value="Update Account" />
     </form>
 
     <br>
+
+    <!--
+    <form action="/accounts/settings" method="post">
+      Messages<br>
+      <input type="radio" id="messages_disabled" name="messages_status" value="0"><label for="messages_disabled">Disabled</label><br>
+      <input type="radio" id="messages_friends" name="messages_status" value="1"><label for="messages_friends">Friends only</label><br>
+      <input type="radio" id="messages_all" name="messages_status" value="2"><label for="messages_all">Open to all</label><br>
+      Friend Requests<br>
+      <input type="radio" id="fr_disabled" name="fr_status" value="0"><label for="fr_disabled">Disabled</label><br>
+      <input type="radio" id="fr_all" name="fr_status" value="1"><label for="fr_all">Enabled</label><br>
+      Comments <small>(exclusively client-side!)</small><br>
+      <input type="radio" id="comments_disabled" name="comments_status" value="0"><label for="comments_disabled">Disabled</label><br>
+      <input type="radio" id="comments_friends" name="comments_status" value="1"><label for="comments_friends">Friends only</label><br>
+      <input type="radio" id="comments_all" name="comments_status" value="2"><label for="comments_all">Open to all</label><br>
+      <hr>
+      <input type="submit" value="Update Profile" />
+    </form>
+
+    <br>
+    -->
 
     <form action="/accounts/settings" method="post">
       <label for="old_password">Old password</label><br>

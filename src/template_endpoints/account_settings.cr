@@ -11,14 +11,16 @@ CrystalGauntlet.template_endpoints["/accounts/settings"] = ->(context : HTTP::Se
 
   Templates.auth()
 
+  email = DATABASE.query_one("select email from accounts where id = ?", account_id, as: {String})
+
   result = nil
 
   params = context.request.body.try { |b| URI::Params.parse(b.gets_to_end) }
   if params
     begin
-      if params["username"]?
+      if params["username"]? && params["username"] != username
         # todo: dedup this and the gd register endpoint
-        username = params["username"].strip
+        username = Clean.clean_basic(params["username"].strip)
         if username.size < 3
           raise "Username must at least be 3 characters long"
         end
@@ -37,6 +39,16 @@ CrystalGauntlet.template_endpoints["/accounts/settings"] = ->(context : HTTP::Se
         CrystalGauntlet.sessions.set(context, UserSession.new(username, account_id.not_nil!, user_id.not_nil!))
 
         result = "Changed username successfully"
+      end
+
+      if params["email"]?
+        email = params["email"].strip
+
+        if email.size > 254
+          raise "Invalid email (too long)"
+        end
+
+        DATABASE.exec("update accounts set email = ? where id = ?", email, account_id)
       end
 
       if params["old_password"]? && params["new_password"]? && params["repeat_new_password"]?
