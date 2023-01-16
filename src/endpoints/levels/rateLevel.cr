@@ -105,7 +105,19 @@ CrystalGauntlet.endpoints["/suggestGJStars20.php"] = ->(context : HTTP::Server::
     return "-2"
   end
 
-  DATABASE.exec "update levels set stars = ?, featured = ?, difficulty = ? where id = ?", params["stars"].to_i, params["feature"].to_i, (stars_to_difficulty(params["stars"].to_i) || LevelDifficulty::Easy).to_i, params["levelID"].to_i
+  level_id = params["levelID"].to_i
+  stars = params["stars"].to_i
+  difficulty = stars_to_difficulty(params["stars"].to_i) || LevelDifficulty::Easy
+
+  author_account_id = DATABASE.query_one("select users.account_id from levels left join users on users.id = levels.user_id where levels.id = ?", level_id, as: {Int32?})
+  if author_account_id
+    notif_type = params["feature"] == "1" ? "authored_level_featured" : "authored_level_rated"
+
+    Notifications.clear_previous_notifications(author_account_id, notif_type, level_id)
+    Notifications.send_notification(author_account_id, notif_type, level_id, {"stars" => stars.to_i64, "difficulty" => difficulty.to_i64})
+  end
+
+  DATABASE.exec "update levels set stars = ?, featured = ?, difficulty = ? where id = ?", stars, params["feature"].to_i, difficulty.to_i, level_id
   "1"
 }
 

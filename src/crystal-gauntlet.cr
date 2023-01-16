@@ -26,6 +26,7 @@ require "./lib/creator_points"
 require "./lib/versions"
 require "./lib/ips"
 require "./lib/ranks"
+require "./lib/notifications"
 
 require "./patch-exe.cr"
 
