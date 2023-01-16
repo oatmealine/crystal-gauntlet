@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Account Management</title>
+    <style>
+      body {
+        max-width: 800px;
+        margin: auto;
+        padding: 1em;
+      }
+
+      .header {
+        height: 96px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .title {
+        font-size: x-large;
+        display: flex;
+        flex-direction: row;
+        gap: 0.5em;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <a href="/accounts/" title="<%=username%>" class="circle-button">
+        <img src="https://gdicon.oat.zone/icon.png?type=<%=type_str%>&value=<%=icon_value%>&color1=<%=color1%>&color2=<%=color2%><%=glow ? "&glow=1" : ""%>" class="icon">
+      </a>
+      <span class="title">
+        <a href="/"><img src="/favicon.png" width="64" height="auto" class="spinny favicon"></a>
+        Notifications
+      </span>
+      <a href="/accounts/notifications/" title="Notifiations" class="circle-button notifications <%= unread_notifications ? "notifications-unread" : "" %>">
+        <%= # todo: unhardcode public dir location
+        File.read("public/assets/icons/bell.svg") %>
+      </a>
+    </div>
+  </body>
+</html>

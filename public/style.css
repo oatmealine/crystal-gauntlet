@@ -14,14 +14,17 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  background-color: #fff;
-  color: #111;
-
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
   --accent-color: rgb(245, 141, 210);
   --accent-color-bri: rgb(255, 191, 234);
   accent-color: var(--accent-color);
+
+  --text-color: #111;
+  --background-color: #fff;
+
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 ::selection {
@@ -47,8 +50,8 @@ a:hover {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    background-color: #111;
-    color: #fff;
+    --text-color: #fff;
+    --background-color: #111;
   }
 
   .dim {
@@ -112,4 +115,37 @@ pre {
 
 .error {
   color: #f33;
+}
+
+.circle-button {
+  border-radius: 10px;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  transition: 0.1s border-color, 0.1s color;
+  padding: 0.5em;
+  margin: 0.5em;
+  height: 48px;
+  width: 48px;
+}
+.circle-button:hover {
+  border-color: var(--accent-color-bri);
+  color: var(--accent-color-bri);
+}
+.circle-button > svg, .circle-button > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 650px) {
+  /* mobile layout gets bigger buttons */
+  .circle-button {
+    height: 54px;
+    width: 54px;
+  }
+}
+
+.circle-button.notifications-unread > svg {
+  fill: currentColor;
 }

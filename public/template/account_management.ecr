@@ -21,7 +21,6 @@
         color: #000;
         border-radius: 1.5em;
         padding: 1em;
-        margin: 1em;
 
         display: flex;
         flex-direction: row;
@@ -85,26 +84,48 @@
         margin: auto;
         display: block;
       }
+
+      .header {
+        height: 96px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 1em;
+        margin: 1em;
+      }
+      .header > .greeting {
+        flex: 1 1 0px;
+        min-width: 0;
+      }
+      .header > .circle-button {
+        flex: 0 0 auto;
+        max-width: 100%;
+      }
     </style>
   </head>
   <body>
     <a href="/"><img src="/favicon.png" width="64" height="auto" class="spinny favicon"></a><br>
 
-    <div class="greeting">
-      <img src="https://gdicon.oat.zone/icon.png?type=<%=type_str%>&value=<%=icon_value%>&color1=<%=color1%>&color2=<%=color2%><%=glow ? "&glow=1" : ""%>" width="150" height="150" class="greeting-l">
-      <div class="greeting-r">
-        <div class="greeting-top">
-          <div class="greeting-top-left">
-            hewwo, <b><%= username %></b>!
+    <div class="header">
+      <div class="greeting">
+        <img src="https://gdicon.oat.zone/icon.png?type=<%=type_str%>&value=<%=icon_value%>&color1=<%=color1%>&color2=<%=color2%><%=glow ? "&glow=1" : ""%>" width="150" height="150" class="greeting-l">
+        <div class="greeting-r">
+          <div class="greeting-top">
+            <div class="greeting-top-left">
+              hewwo, <b><%= username %></b>!
+            </div>
+            <div class="greeting-stats">
+              <%= stars %> <img src="https://gdbrowser.com/assets/star.png"> <%= diamonds %> <img src="https://gdbrowser.com/assets/diamond.png"> <%= coins %> <img src="https://gdbrowser.com/assets/coin.png"> <%= user_coins %> <img src="https://gdbrowser.com/assets/silvercoin.png"> <%= demons %> <img src="https://gdbrowser.com/assets/demon.png">
+            </div>
           </div>
-          <div class="greeting-stats">
-            <%= stars %> <img src="https://gdbrowser.com/assets/star.png"> <%= diamonds %> <img src="https://gdbrowser.com/assets/diamond.png"> <%= coins %> <img src="https://gdbrowser.com/assets/coin.png"> <%= user_coins %> <img src="https://gdbrowser.com/assets/silvercoin.png"> <%= demons %> <img src="https://gdbrowser.com/assets/demon.png">
+          <div class="greeting-bottom">
+            <a href="/accounts/settings">Settings</a> · <a>Log out</a>
           </div>
-        </div>
-        <div class="greeting-bottom">
-          <a href="/accounts/settings">Settings</a> · <a>Log out</a>
         </div>
       </div>
+      <a href="/accounts/notifications/" title="Notifiations" class="circle-button notifications <%= unread_notifications ? "notifications-unread" : "" %>">
+        <%= File.read("public/assets/icons/bell.svg") %>
+      </a>
     </div>
     <br><br>
     blablabla lorem ipsum whatever. put stuff here later

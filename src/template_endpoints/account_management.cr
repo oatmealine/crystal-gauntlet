@@ -8,6 +8,7 @@ CrystalGauntlet.template_endpoints["/#{config_get("general.append_path").as(Stri
 CrystalGauntlet.template_endpoints["/accounts"] = ->(context : HTTP::Server::Context) {
   context.response.content_type = "text/html"
 
+  account_id = nil
   user_id = nil
   username = nil
   Templates.auth()
@@ -16,6 +17,8 @@ CrystalGauntlet.template_endpoints["/accounts"] = ->(context : HTTP::Server::Con
 
   icon_value = [cube, ship, ball, ufo, wave, robot, spider][icon_type]
   type_str = ["cube", "ship", "ball", "ufo", "wave", "robot", "spider"][icon_type]
+
+  unread_notifications = DATABASE.scalar("select count(*) from notifications where account_id = ? and read_at is null", account_id).as(Int64) > 0
 
   ECR.embed("./public/template/account_management.ecr", context.response)
 }
