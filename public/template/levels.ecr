@@ -11,7 +11,7 @@
       .level {
         width: 100%;
         height: 4em;
-        background-color: rgba(0, 0, 0, 0.2);
+        background-color: var(--background-color-2);
         border-radius: 2em;
         padding: 1em;
         display: flex;
@@ -61,21 +61,12 @@
   </head>
   <body style="display: flex; flex-direction: column; align-items: center; gap: 1em">
     <div class="levels">
-    <%- levels.each do |id, name, username, difficulty_community, difficulty_set, featured, epic| -%>
+    <%- levels.each do |id, name, username, difficulty_community, difficulty_set, demon_difficulty_int, featured, epic| -%>
       <div class="level">
         <%=
-          difficulties = StaticArray[
-            "auto",
-            "easy",
-            "normal",
-            "hard",
-            "harder",
-            "insane",
-            "demon-hard"
-          ]
-          difficulty_int = difficulty_set || difficulty_community
-          difficulty_img = difficulty_int ? difficulties[difficulty_int] : "unrated"
-          "<img src='https://gdbrowser.com/assets/difficulties/#{difficulty_img + (epic ? "-epic" : (featured ? "-featured" : ""))}.png' class='level-img'>"
+          difficulty = (difficulty_set || difficulty_community).try { |n| LevelDifficulty.new(n) }
+          demon_difficulty = demon_difficulty_int.try { |n| DemonDifficulty.new(n) }
+          "<img src='#{Templates.get_difficulty_icon(difficulty, featured, epic, demon_difficulty)}' class='level-img'>"
         %>
         <div class="level-right">
           <span class="line"><span class="name"><%= name %></span><span class="id dim">#<%= id %></span></span>

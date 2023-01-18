@@ -13,8 +13,18 @@ CrystalGauntlet.template_endpoints["/accounts/notifications"] = ->(context : HTT
   icon_value = [cube, ship, ball, ufo, wave, robot, spider][icon_type]
   type_str = ["cube", "ship", "ball", "ufo", "wave", "robot", "spider"][icon_type]
 
-  notification_count = DATABASE.scalar("select count(*) from notifications where account_id = ? and read_at is null", account_id).as(Int64)
-  unread_notifications = notification_count > 0
+  notifications = DATABASE.query_all("select type, target, details, read_at, created_at from notifications where account_id = ? order by created_at desc", account_id, as: {String, Int32?, String, String?, String})
+    .map {|type, target, details, read_at, created_at| {
+      type: type,
+      target: target,
+      details: Notifications::NotificationDetails.from_json(details),
+      read_at: read_at,
+      created_at: created_at
+    } }
+
+  # mark all as read
+  DATABASE.exec("update notifications set read_at = ? where read_at is null and account_id = ?", Time.utc.to_s(Format::TIME_FORMAT), account_id)
+  unread_notifications = false
 
   ECR.embed("./public/template/notifications.ecr", context.response)
 }

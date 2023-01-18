@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/style.css" />
-    <title>Account Management</title>
+    <title>Notifications</title>
     <style>
       body {
         max-width: 800px;
@@ -28,6 +28,53 @@
         gap: 0.5em;
         align-items: center;
       }
+
+      .notification {
+        margin: 0.5em;
+        border-radius: 20px;
+        height: 5em;
+        background-color: var(--background-color-2);
+
+        display: flex;
+        flex-direction: row;
+      }
+      .notification.unread {
+        outline: 1px solid var(--accent-color);
+      }
+      .notification > .notif-left, .notification > .notif-right {
+        padding: 1em;
+      }
+      .notif-left {
+        flex: 0 0 auto;
+        max-width: 100%;
+
+        width: 5em;
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .notif-left > img, .notif-left > svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .notif-right {
+        flex: 1 1 0px;
+        min-width: 0;
+
+        border-left: 3px solid var(--background-color);
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .timestamp {
+        text-align: right;
+        color: var(--text-color-dark)
+      }
     </style>
   </head>
   <body>
@@ -44,5 +91,28 @@
         File.read("public/assets/icons/bell.svg") %>
       </a>
     </div>
+    <%- notifications.each() do |notif| -%>
+      <div class="notification <%= notif[:read_at] == nil ? "unread" : "" %>">
+        <div class="notif-left">
+          <%=
+            case notif[:type]
+            when "authored_level_featured", "authored_level_rated"
+              difficulty = notif[:details]["difficulty"]?.as?(Int64).try { |n| LevelDifficulty.new(n.to_i32) }
+              "<img src='#{Templates.get_difficulty_icon(difficulty, notif[:type] == "authored_level_featured")}' class='notif-icon'>"
+            end
+          %>
+        </div>
+        <div class="notif-right">
+          <div>
+            <%= Notifications.format_notification(notif[:type], notif[:target], notif[:details], html_safe: true) %>
+          </div>
+          <div class="timestamp">
+            <time datetime="<%= notif[:created_at] %>Z">
+              <%= Format.fmt_value(Time.parse(notif[:created_at], Format::TIME_FORMAT, Time::Location::UTC)) %> ago
+            </time>
+          </div>
+        </div>
+      </div>
+    <%- end -%>
   </body>
 </html>

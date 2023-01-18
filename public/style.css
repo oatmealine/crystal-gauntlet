@@ -21,7 +21,10 @@
   accent-color: var(--accent-color);
 
   --text-color: #111;
+  --text-color-dark: #444;
+  --text-color-darker: #555;
   --background-color: #fff;
+  --background-color-2: #eee;
 
   background-color: var(--background-color);
   color: var(--text-color);
@@ -45,17 +48,16 @@ a:hover {
 }
 
 .dim {
-  color: #444;
+  color: var(--text-color-dark);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --text-color: #fff;
+    --text-color-dark: #aaa;
+    --text-color-darker: #888;
     --background-color: #111;
-  }
-
-  .dim {
-    color: #aaa;
+    --background-color-2: #161616;
   }
 }
 
@@ -84,8 +86,8 @@ pre {
 }
 
 .dir-header {
-  background-color: rgba(150, 150, 150, 0.15);
-  color: #999;
+  background-color: var(--background-color-2);
+  color: var(--text-color-dark);
   padding: 0.5em;
   border-radius: 12px;
   line-height: 1.2;

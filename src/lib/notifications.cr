@@ -20,7 +20,7 @@ module CrystalGauntlet::Notifications
     "authored_level_rated" => %(Your level <b>%{level_name}</b> has been rated!)
   }
 
-  def format_notification(type : String, target : Int32, details : NotificationDetails? = nil, html_safe : Bool = false)
+  def format_notification(type : String, target : Int32?, details : NotificationDetails? = nil, html_safe : Bool = false)
     details = details || {} of String => String | Int64 | Bool | Float64 | Nil
     string = NOTIFICATION_STRINGS[type]
 
@@ -30,7 +30,7 @@ module CrystalGauntlet::Notifications
     #end
 
     if html_safe
-      string % details.transform_values ->HTML.escape
+      string % details.transform_values { |v| HTML.escape v.to_s }
     else
       string % details
     end
