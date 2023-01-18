@@ -11,6 +11,13 @@ CrystalGauntlet.template_endpoints["/accounts/settings"] = ->(context : HTTP::Se
 
   Templates.auth()
 
+  stars, demons, coins, user_coins, diamonds, creator_points, icon_type, color1, color2, cube, ship, ball, ufo, wave, robot, spider, glow = DATABASE.query_one("select stars, demons, coins, user_coins, diamonds, creator_points, icon_type, color1, color2, cube, ship, ball, ufo, wave, robot, spider, glow from users where id = ?", user_id, as: {Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32})
+
+  icon_value = [cube, ship, ball, ufo, wave, robot, spider][icon_type]
+  type_str = ["cube", "ship", "ball", "ufo", "wave", "robot", "spider"][icon_type]
+
+  unread_notifications = DATABASE.scalar("select count(*) from notifications where account_id = ? and read_at is null", account_id).as(Int64) > 0
+
   email = DATABASE.query_one("select email from accounts where id = ?", account_id, as: {String})
 
   result = nil

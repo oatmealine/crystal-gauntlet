@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/style.css" />
-    <title>Account Management</title>
+    <title>Settings</title>
     <style>
       body {
         max-width: 800px;
@@ -23,7 +23,19 @@
     </style>
   </head>
   <body>
-    <%= Templates.dir_header %><br>
+    <div class="header">
+      <a href="/accounts/" title="<%=username%>" class="circle-button">
+        <img src="https://gdicon.oat.zone/icon.png?type=<%=type_str%>&value=<%=icon_value%>&color1=<%=color1%>&color2=<%=color2%><%=glow ? "&glow=1" : ""%>" class="icon">
+      </a>
+      <span class="title">
+        <a href="/"><img src="/favicon.png" width="64" height="auto" class="spinny favicon"></a>
+        Account Settings
+      </span>
+      <a href="/accounts/notifications/" title="Notifiations" class="circle-button notifications <%= unread_notifications ? "notifications-unread" : "" %>">
+        <%= # todo: unhardcode public dir location
+        File.read("public/assets/icons/bell.svg") %>
+      </a>
+    </div><br>
 
     <%- if error -%>
       <div class="error"><%= error %></div>

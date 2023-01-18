@@ -151,3 +151,19 @@ pre {
 .circle-button.notifications-unread > svg {
   fill: currentColor;
 }
+
+.header {
+  height: 96px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: x-large;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+  align-items: center;
+}
