@@ -119,7 +119,12 @@
             </div>
           </div>
           <div class="greeting-bottom">
-            <a href="/accounts/settings">Settings</a> &middot; <a>Log out</a>
+            <a href="/accounts/settings">Settings</a> &middot;
+            <form action="/accounts/logout" method="POST" class="inline-post">
+              <button type="submit" class="inline-post-button">
+                Log out
+              </button>
+            </form>
           </div>
         </div>
       </div>

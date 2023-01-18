@@ -39,6 +39,10 @@ body {
   margin: 2rem;
 }
 
+button, input {
+  font-family: inherit;
+}
+
 a {
   color: var(--accent-color);
   transition: 0.1s color;
@@ -166,4 +170,19 @@ pre {
   flex-direction: row;
   gap: 0.5em;
   align-items: center;
+}
+
+.inline-post {
+  display: inline;
+}
+.inline-post-button {
+  display: inline;
+  background: none;
+  outline: none;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-decoration: underline;
+  cursor: pointer;
 }
