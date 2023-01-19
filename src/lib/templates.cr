@@ -56,7 +56,7 @@ module CrystalGauntlet::Templates
   ]
 
   def get_difficulty_icon(difficulty : LevelDifficulty?, featured : Bool = false, epic : Bool = false, demon_difficulty : DemonDifficulty? = DemonDifficulty::Hard)
-    "/assets/difficulties/#{DIFFICULTIES[difficulty.try &.to_i || -1]? || "na"}#{difficulty.try &.demon? ? "-#{DEMON_DIFFICULTIES[demon_difficulty.try &.to_i || -1]? || "hard"}" : ""}#{(featured && !epic) ? "-featured" : ""}#{epic ? "-epic" : ""}.png"
+    "/assets/difficulties/#{difficulty.try { |d| DIFFICULTIES[d.to_i]? } || "na"}#{difficulty.try &.demon? ? "-#{DEMON_DIFFICULTIES[demon_difficulty.try &.to_i || -1]? || "hard"}" : ""}#{(featured && !epic) ? "-featured" : ""}#{epic ? "-epic" : ""}.png"
   end
 end
 
