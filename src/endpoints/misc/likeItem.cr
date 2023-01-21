@@ -38,6 +38,23 @@ CrystalGauntlet.endpoints["/likeGJItem211.php"] = ->(context : HTTP::Server::Con
   if DATABASE.scalar("select count(*) from ip_actions where action = ? and value = ? and ip = ? limit 1", "like_#{type}", item_id, ip).as?(Int64) == 0
     DATABASE.exec("update #{table} set likes = likes #{sign} 1 where #{column} = ?", item_id)
     DATABASE.exec("insert into ip_actions (action, value, ip) values (?, ?, ?)", "like_#{type}", item_id, ip)
+
+    if type == 1 # level
+      likes = DATABASE.scalar("select likes from #{table} where #{column} = ?", item_id).as(Int64)
+      if likes == 100
+        # notify the creator of 100 likes
+
+        account_id, level_name = DATABASE.query_one("select users.account_id, #{table}.name from #{table} left join users on users.id = #{table}.user_id where #{table}.#{column} = ?", item_id, as: {Int32?, String})
+        if account_id
+          if DATABASE.scalar("select count(*) from notifications where type = \"like_milestone\" and target = ? and account_id = ?", item_id, account_id).as(Int64) == 0
+            Notifications.send_notification(account_id, "like_milestone", item_id, {
+              "level_name" => level_name,
+              "amount" => likes
+            })
+          end
+        end
+      end
+    end
   end
 
   "1"

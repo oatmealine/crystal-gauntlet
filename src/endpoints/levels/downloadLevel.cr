@@ -160,6 +160,21 @@ CrystalGauntlet.endpoints["/downloadGJLevel22.php"] = ->(context : HTTP::Server:
     if DATABASE.scalar("select count(*) from ip_actions where action = ? and value = ? and ip = ? limit 1", "download", level_id, ip).as?(Int64) == 0
       DATABASE.exec("update levels set downloads = downloads + 1 where id = ?", level_id)
       DATABASE.exec("insert into ip_actions (action, value, ip) values (?, ?, ?)", "download", level_id, ip)
+
+      downloads = DATABASE.scalar("select downloads from levels where id = ?", level_id).as(Int64)
+      if downloads == 300
+        # notify the creator of 300 downloads
+
+        account_id, level_name = DATABASE.query_one("select users.account_id, levels.name from levels left join users on users.id = levels.user_id where levels.id = ?", level_id, as: {Int32?, String})
+        if account_id
+          if DATABASE.scalar("select count(*) from notifications where type = \"download_milestone\" and target = ? and account_id = ?", level_id, account_id).as(Int64) == 0
+            Notifications.send_notification(account_id, "download_milestone", level_id, {
+              "level_name" => level_name,
+              "amount" => downloads
+            })
+          end
+        end
+      end
     end
   end
 
