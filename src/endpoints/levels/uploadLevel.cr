@@ -66,20 +66,30 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
     if forbidden_obj = level_objects.find do |obj|
       if !obj.has_key?("1")
         false
+      end
+
+      id = obj["1"].to_i
+      if allowed_objects.size > 0
+        if !allowed_objects.includes?(id)
+          true
+        end
       else
-        id = obj["1"].to_i
-        if allowed_objects.size > 0
-          if !allowed_objects.includes?(id)
-            true
-          end
-        else
-          if forbidden_objects.includes?(id)
-            true
-          end
+        if forbidden_objects.includes?(id)
+          true
         end
       end
     end
       LOG.info { "preventing upload of level with forbidden obj #{forbidden_obj["1"]}" }
+      return "-1"
+    end
+
+    if exploit_obj = level_objects.find do |obj|
+      # target color ID
+      (obj.has_key?("23") && obj["23"].to_i < 0 || obj["23"].to_i > 1100) ||
+      # target group ID
+      (obj.has_key?("51") && obj["51"].to_i < 0 || obj["51"].to_i > 1100)
+    end
+      LOG.info { "preventing upload of level attempting to exploit invalid color/group IDs" }
       return "-1"
     end
 
