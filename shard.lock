@@ -1,5 +1,9 @@
 version: 2.0
 shards:
+  athena-routing:
+    git: https://github.com/athena-framework/routing.git
+    version: 0.1.6
+
   db:
     git: https://github.com/crystal-lang/crystal-db.git
     version: 0.11.0

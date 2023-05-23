@@ -1,11 +1,19 @@
 include CrystalGauntlet
 
-CrystalGauntlet.template_endpoints["/#{config_get("general.append_path").as(String | Nil) || ""}accounts/accountManagement.php"] = ->(context : HTTP::Server::Context) {
+CrystalGauntlet.template_endpoints[{
+  name: "account_management_redirect",
+  path: "/#{config_get("general.append_path").as(String | Nil) || ""}accounts/accountManagement.php",
+  methods: ["get"]
+}] = ->(context : HTTP::Server::Context, params : Hash(String, String?)) {
   context.response.headers.add("Location", "/accounts/")
   context.response.status = HTTP::Status::MOVED_PERMANENTLY
 }
 
-CrystalGauntlet.template_endpoints["/accounts"] = ->(context : HTTP::Server::Context) {
+CrystalGauntlet.template_endpoints[{
+  name: "account_management",
+  path: "/accounts",
+  methods: ["get"]
+}] = ->(context : HTTP::Server::Context, params : Hash(String, String?)) {
   context.response.content_type = "text/html"
 
   account_id = nil

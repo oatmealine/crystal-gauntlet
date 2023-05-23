@@ -1,6 +1,10 @@
 include CrystalGauntlet
 
-CrystalGauntlet.template_endpoints["/accounts/notifications"] = ->(context : HTTP::Server::Context) {
+CrystalGauntlet.template_endpoints[{
+  name: "account_notifications",
+  path: "/accounts/notifications",
+  methods: ["get"]
+}] = ->(context : HTTP::Server::Context, params : Hash(String, String?)) {
   context.response.content_type = "text/html"
 
   account_id = nil

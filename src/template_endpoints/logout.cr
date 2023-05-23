@@ -3,12 +3,11 @@ require "http-session"
 
 include CrystalGauntlet
 
-CrystalGauntlet.template_endpoints["/accounts/logout"] = ->(context : HTTP::Server::Context) {
-  if context.request.method != "POST"
-    context.response.respond_with_status 405
-    return
-  end
-
+CrystalGauntlet.template_endpoints[{
+  name: "logout",
+  path: "/accounts/logout",
+  methods: ["post"]
+}] = ->(context : HTTP::Server::Context, params : Hash(String, String?)) {
   CrystalGauntlet.sessions.delete(context)
 
   context.response.headers.add("Location", "/")

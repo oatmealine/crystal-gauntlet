@@ -2,7 +2,11 @@ require "ecr"
 
 include CrystalGauntlet
 
-CrystalGauntlet.template_endpoints["/tools/song_search"] = ->(context : HTTP::Server::Context) {
+CrystalGauntlet.template_endpoints[{
+  name: "song_search",
+  path: "/tools/song_search",
+  methods: ["get", "post"]
+}] = ->(context : HTTP::Server::Context, params : Hash(String, String?)) {
   context.response.content_type = "text/html"
 
   error = nil

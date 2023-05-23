@@ -3,7 +3,11 @@ require "xml"
 
 include CrystalGauntlet
 
-CrystalGauntlet.template_endpoints["/tools/reupload"] = ->(context : HTTP::Server::Context) {
+CrystalGauntlet.template_endpoints[{
+  name: "reupload",
+  path: "/tools/reupload",
+  methods: ["get", "post"]
+}] = ->(context : HTTP::Server::Context, params : Hash(String, String?)) {
   context.response.content_type = "text/html"
 
   disabled = !(config_get("reuploads.allowed").as?(Bool))

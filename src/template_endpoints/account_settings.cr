@@ -2,7 +2,12 @@ require "uri"
 
 include CrystalGauntlet
 
-CrystalGauntlet.template_endpoints["/accounts/settings"] = ->(context : HTTP::Server::Context) {
+
+CrystalGauntlet.template_endpoints[{
+  name: "account_settings",
+  path: "/accounts/settings",
+  methods: ["get", "post"]
+}] = ->(context : HTTP::Server::Context, params : Hash(String, String?)) {
   context.response.content_type = "text/html"
 
   account_id = nil

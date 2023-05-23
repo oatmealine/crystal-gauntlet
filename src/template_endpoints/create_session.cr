@@ -3,7 +3,11 @@ require "compress/gzip"
 
 include CrystalGauntlet
 
-CrystalGauntlet.template_endpoints["/tools/create_session"] = ->(context : HTTP::Server::Context) {
+CrystalGauntlet.template_endpoints[{
+  name: "create_session",
+  path: "/tools/create_session",
+  methods: ["get", "post"]
+}] = ->(context : HTTP::Server::Context, params : Hash(String, String?)) {
   disabled = !config_get("sessions.allow").as(Bool | Nil)
   result = nil
   body = context.request.body

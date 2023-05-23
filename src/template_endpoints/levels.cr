@@ -4,7 +4,11 @@ include CrystalGauntlet
 
 levels_per_page = 10
 
-CrystalGauntlet.template_endpoints["/tools/levels"] = ->(context : HTTP::Server::Context) {
+CrystalGauntlet.template_endpoints[{
+  name: "list_levels",
+  path: "/tools/levels",
+  methods: ["get"]
+}] = ->(context : HTTP::Server::Context, params : Hash(String, String?)) {
   context.response.content_type = "text/html"
   page = (context.request.query_params["page"]? || "0").to_i? || 0
   total_levels = DATABASE.scalar("select count(*) from levels").as(Int64)

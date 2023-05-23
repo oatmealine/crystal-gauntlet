@@ -17,7 +17,11 @@ def get_next_song_id() : Int32
   end
 end
 
-CrystalGauntlet.template_endpoints["/tools/song_upload"] = ->(context : HTTP::Server::Context) {
+CrystalGauntlet.template_endpoints[{
+  name: "song_upload",
+  path: "/tools/song_upload",
+  methods: ["get", "post"]
+}] = ->(context : HTTP::Server::Context, params : Hash(String, String?)) {
   context.response.content_type = "text/html"
 
   disabled = !(config_get("songs.allow_custom_songs").as?(Bool))

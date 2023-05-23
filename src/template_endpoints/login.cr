@@ -3,7 +3,11 @@ require "http-session"
 
 include CrystalGauntlet
 
-CrystalGauntlet.template_endpoints["/login"] = ->(context : HTTP::Server::Context) {
+CrystalGauntlet.template_endpoints[{
+  name: "login",
+  path: "/login",
+  methods: ["get", "post"]
+}] = ->(context : HTTP::Server::Context, params : Hash(String, String?)) {
   if session = CrystalGauntlet.sessions.get(context)
     logged_in = true
     account_id = session.account_id
