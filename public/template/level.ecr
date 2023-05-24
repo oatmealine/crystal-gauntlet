@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <title><%= name %> by <%= username %></title>
+
+    <style>
+      body {
+        max-width: 800px;
+        margin: auto;
+        padding: 1em;
+      }
+
+      .card {
+        background-color: var(--background-color-2);
+
+        border-radius: 1.5em;
+        padding: 1em;
+
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+
+        margin-bottom: 1em;
+      }
+      .card.bright {
+        background-color: var(--accent-color);
+        color: #000;
+      }
+      .card.bright ::selection {
+        background-color: #000;
+        color: #fff;
+      }
+      .card.bright a {
+        color: #000;
+      }
+      .card-l {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5em;
+      }
+      .level-img {
+        display: block;
+        height: 3rem;
+      }
+      .stars {
+        font-size: 1.1em;
+        font-weight: bold;
+      }
+      .stars img {
+        width: auto;
+        height: 1em;
+        vertical-align: middle;
+      }
+      .card-r {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+      }
+      .card-top {
+        display: flex;
+      }
+      .label-left {
+        flex: 1 1 auto;
+        font-size: 1.5em;
+        font-weight: bold;
+      }
+      .label-right {
+        flex: 0 0 auto;
+      }
+      .card-header {
+        font-weight: bold;
+        color: var(--text-color-dark);
+        text-transform: uppercase;
+        font-size: 0.8em;
+        user-select: none;
+      }
+
+      .favicon {
+        margin: auto;
+        display: block;
+      }
+
+      .description {
+        flex-direction: column;
+        gap: 0.5em;
+      }
+
+      .leaderboard {
+        min-width: 100%;
+        overflow: auto;
+        font-size: 0.9em;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+      /* honestly quite horrendous */
+      .leaderboard tr:nth-child(2) td:first-child {
+        border-top-left-radius: 0.5em;
+      }
+      .leaderboard tr:nth-child(2) td:last-child {
+        border-top-right-radius: 0.5em;
+      }
+      .leaderboard tr:last-child td:first-child {
+        border-bottom-left-radius: 0.5em;
+      }
+      .leaderboard tr:last-child td:last-child {
+        border-bottom-right-radius: 0.5em;
+      }
+      .leaderboard tr:not(.leaderboard-header):nth-child(even) td {
+        background-color: var(--background-color-2);
+      }
+      .leaderboard th, .leaderboard td {
+        padding: 0.2em 0.5em;
+        text-align: left;
+      }
+      .leaderboard th {
+        font-size: 0.8em;
+        user-select: none;
+        color: var(--text-color-dark);
+        text-transform: uppercase;
+      }
+      .leaderboard td.rank {
+        width: 30px;
+        font-weight: bold;
+      }
+      .leaderboard td.percent {
+        width: 75px;
+      }
+      .leaderboard td.coins {
+        width: 3em;
+      }
+      .leaderboard td.icon {
+        width: 2.5em;
+        text-align: center;
+      }
+      .leaderboard td.name {
+        width: 180px
+      }
+      .leaderboard td.name a {
+        text-decoration: none;
+      }
+      .leaderboard .player-icon {
+        height: 1.2em;
+        width: auto;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="/"><img src="/favicon.png" width="64" height="auto" class="spinny favicon"></a><br>
+
+    <div class="card bright">
+      <div class="card-l">
+        <%=
+          difficulty = (difficulty_set || difficulty_community).try { |n| LevelDifficulty.new(n) }
+          demon_difficulty = demon_difficulty_int.try { |n| DemonDifficulty.new(n) }
+          "<img src='#{Templates.get_difficulty_icon(difficulty, featured, epic, demon_difficulty)}' class='level-img'>"
+        %>
+        <%- if stars -%>
+          <div class="stars">
+            <%= stars %> <img src="/assets/icons/gd/star.png">
+          </div>
+        <%- end -%>
+      </div>
+      <div class="card-r">
+        <div class="card-top">
+          <div class="label-left">
+            <%= name %>
+          </div>
+          <div class="label-right">
+            <%= downloads %> downloads <%= likes %> likes
+          </div>
+        </div>
+        <div class="card-bottom">
+          by <a href="/user/<%= username %>"><%= username %></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card description">
+      <div class="card-header">DESCRIPTION</div>
+      <div>
+        <%= description != "" ? HTML.escape(description) : "<i>No description provided</i>" %>
+      </div>
+    </div>
+
+    <div class="card description">
+      <div class="card-header">SONG</div>
+      <div>
+        <%- if song_name -%>
+          <!--
+          song_name, song_author, song_url, song_author_url
+          -->
+          <div><a href="<%= song_url %>" target="_blank" rel="noopener"><%= song_name %></a></div>
+          <%- if song_author && song_author != "" -%>
+            <div>by <a href="<%= song_author_url %>" target="_blank" rel="noopener"><%= song_author %></a></div>
+          <%- else -%>
+            <div><i>unknown artist</i></div>
+          <%- end -%>
+        <%- else -%>
+          idk
+        <%- end -%>
+      </div>
+    </div>
+
+    <table class="leaderboard">
+      <tr class="leaderboard-header">
+        <th class="rank">RANK</td>
+        <th class="percent">PERCENT</td>
+        <th class="coins">COINS</td>
+        <th class="icon"></td>
+        <th class="name">PLAYER</td>
+        <th class="date">TIME</td>
+      </tr>
+
+      <% 
+        rank = 0
+        scores.each do |percent, coins, username, icon_type, color1, color2, cube, ship, ball, ufo, wave, robot, spider, special, set_at| 
+          rank = rank + 1 
+
+          icon_value = [cube, ship, ball, ufo, wave, robot, spider][icon_type]
+          type_str = ["cube", "ship", "ball", "ufo", "wave", "robot", "spider"][icon_type]
+
+          set_at_date = Time.parse(set_at, Format::TIME_FORMAT, Time::Location::UTC)
+      %>
+        <tr>
+          <td class="rank">#<%= rank %></td>
+          <td class="percent"><%= percent %>%</td>
+          <td class="coins"></td>
+          <td class="icon">
+            <img src="https://gdicon.oat.zone/icon.png?type=<%=type_str%>&value=<%=icon_value%>&color1=<%=color1%>&color2=<%=color2%><%=special ? "&glow=1" : ""%>" class="player-icon">
+          </td>
+          <td class="name">
+            <a href="/user/<%= username %>"><%= username %></a>
+          </td>
+          <td class="date">
+            <time datetime="<%= Time::Format::RFC_3339.format(set_at_date) %>" title="<%= Time::Format::RFC_2822.format(set_at_date) %>"><%= Format.fmt_timespan(Time.utc - set_at_date) %></time>
+          </td>
+        </tr>
+      <%- end -%>
+      <%- if scores.size == 0 -%>
+        <tr>
+          <td colspan="6" style="text-align: center">
+            <i>No scores</i>
+          </td>
+        </tr>
+      <%- end -%>
+    </table>
+
+    <p>comments go here etc etc</p>
+
+  </body>
+</html>

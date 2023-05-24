@@ -55,7 +55,10 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 1em
+        gap: 1em;
+      }
+      .level a {
+        text-decoration: none;
       }
     </style>
   </head>
@@ -69,8 +72,8 @@
           "<img src='#{Templates.get_difficulty_icon(difficulty, featured, epic, demon_difficulty)}' class='level-img'>"
         %>
         <div class="level-right">
-          <span class="line"><span class="name"><%= name %></span><span class="id dim">#<%= id %></span></span>
-          <small>by <%= username %></small><br>
+          <span class="line"><span class="name"><a href="/levels/<%= id %>"><%= name %></a></span><span class="id dim">#<%= id %></span></span>
+          <small>by <a href="/user/<%= username %>"><%= username %></a></small><br>
         </div>
       </div>
     <%- end -%>
