@@ -73,6 +73,11 @@
       .label-right {
         flex: 0 0 auto;
       }
+      .label-right img {
+        height: 1em;
+        width: auto;
+        vertical-align: middle;
+      }
       .card-header {
         font-weight: bold;
         color: var(--text-color-dark);
@@ -132,7 +137,15 @@
         width: 75px;
       }
       .leaderboard td.coins {
-        width: 3em;
+        width: 4em;
+      }
+      .leaderboard td.coins .coin-container {
+        display: flex;
+        flex-direction: row;
+      }
+      .leaderboard td.coins .coin-container img {
+        width: 1em;
+        height: auto;
       }
       .leaderboard td.icon {
         width: 2.5em;
@@ -148,6 +161,27 @@
         height: 1.2em;
         width: auto;
         vertical-align: middle;
+      }
+
+      .comment {
+        flex-direction: column;
+      }
+      .comment-author {
+        display: flex;
+        flex-direction: row;
+        gap: 1ex;
+        align-items: center;
+      }
+      .comment-author .player-icon {
+        height: 1.5em;
+        width: auto;
+      }
+      .comment-date {
+        color: var(--text-color-dark);
+      }
+      .comment-author-label {
+        font-weight: bold;
+        text-decoration: none;
       }
     </style>
   </head>
@@ -173,7 +207,7 @@
             <%= name %>
           </div>
           <div class="label-right">
-            <%= downloads %> downloads <%= likes %> likes
+            <%= downloads %> <img src="/assets/icons/gd/download.png"> <%= likes %> <img src="/assets/icons/gd/like.png">
           </div>
         </div>
         <div class="card-bottom">
@@ -231,7 +265,13 @@
         <tr>
           <td class="rank">#<%= rank %></td>
           <td class="percent"><%= percent %>%</td>
-          <td class="coins"></td>
+          <td class="coins">
+            <div class="coin-container">
+              <%- coins.times do |i| -%>
+                <img src="/assets/icons/gd/<%= rated_coins ? "silvercoin" : "browncoin" %>.png">
+              <%- end -%>
+            </div>
+          </td>
           <td class="icon">
             <img src="https://gdicon.oat.zone/icon.png?type=<%=type_str%>&value=<%=icon_value%>&color1=<%=color1%>&color2=<%=color2%><%=special ? "&glow=1" : ""%>" class="player-icon">
           </td>
@@ -252,7 +292,25 @@
       <%- end -%>
     </table>
 
-    <p>comments go here etc etc</p>
+    <h3>Comments</h3>
+
+    <%- comments.each do |comment, created_at, username, icon_type, color1, color2, cube, ship, ball, ufo, wave, robot, spider, special|
+      icon_value = [cube, ship, ball, ufo, wave, robot, spider][icon_type]
+      type_str = ["cube", "ship", "ball", "ufo", "wave", "robot", "spider"][icon_type]
+
+      created_at_date = Time.parse(created_at, Format::TIME_FORMAT, Time::Location::UTC)
+      %>
+      <div class="card comment">
+        <div class="comment-author">
+          <img src="https://gdicon.oat.zone/icon.png?type=<%=type_str%>&value=<%=icon_value%>&color1=<%=color1%>&color2=<%=color2%><%=special ? "&glow=1" : ""%>" class="player-icon">
+          <a class="comment-author-label" href="/user/<%= username %>"><%= username %></a>
+          <time class="comment-date" datetime="<%= Time::Format::RFC_3339.format(created_at_date) %>" title="<%= Time::Format::RFC_2822.format(created_at_date) %>"><%= Format.fmt_timespan(Time.utc - created_at_date) %> ago</time>
+        </div>
+        <div>
+          <%= HTML.escape(comment) %>
+        </div>
+      </div>
+    <%- end -%>
 
   </body>
 </html>
