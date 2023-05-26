@@ -223,7 +223,7 @@ module CrystalGauntlet::Songs
     end
 
     if !author_id
-      author_id = get_artist_id(metadata.author, metadata.source, metadata.author_url)
+      author_id = get_artist_id(metadata.author, metadata.author_url, metadata.source)
     end
 
     if config_get("songs.sources.proxy_downloads")
