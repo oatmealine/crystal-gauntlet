@@ -43,8 +43,9 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
 
     LOG.debug { "parsing objects" }
 
-    level_objects = Level.decode(params["levelString"])
-    objects = level_objects.size - 1 # remove 1 to account for start state obj
+    level_raw_objects = Level.decode(params["levelString"])
+    level_objects = Level.to_objectdata(level_raw_objects)
+    objects = level_objects.size
 
     forbidden_objects = config_get("levels.parsing.object_blocklist").as?(Array(TOML::Type))
     if forbidden_objects
@@ -64,38 +65,34 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
     LOG.debug { "allowed objects: #{allowed_objects.inspect}" }
 
     if forbidden_obj = level_objects.find do |obj|
-      if obj.has_key?("1")
-        id = obj["1"].to_i
-        if allowed_objects.size > 0
-          if !allowed_objects.includes?(id)
-            true
-          end
-        else
-          if forbidden_objects.includes?(id)
-            true
-          end
+      if allowed_objects.size > 0
+        if !allowed_objects.includes?(obj.id)
+          true
         end
       end
+      if forbidden_objects.includes?(obj.id)
+        true
+      end
     end
-      LOG.info { "preventing upload of level with forbidden obj #{forbidden_obj["1"]}" }
+      LOG.info { "preventing upload of level with forbidden obj #{forbidden_obj.id}" }
       return "-1"
     end
 
     if exploit_obj = level_objects.find { |obj|
       # target color ID
-      (obj.has_key?("23") && (obj["23"].to_i < 0 || obj["23"].to_i > 1100)) ||
+      (obj.target_color_id.try { |n| n < 0 } || obj.target_color_id.try { |n| n > 1100 } ) ||
       # target group ID
-      (obj.has_key?("51") && (obj["51"].to_i < 0 || obj["51"].to_i > 1100))
+      (obj.target_group_id.try { |n| n < 0 } || obj.target_group_id.try { |n| n > 1100 } )
     }
       LOG.info { "preventing upload of level attempting to exploit invalid color/group IDs" }
       return "-1"
     end
 
-    coins = level_objects.count { |obj| obj["1"]? == "1329" } # user coin id
+    coins = level_objects.count { |obj| obj.id == 1329 } # user coin id
 
     # todo: check if dual portals even exist?
     two_player = false
-    level_objects.each do |obj|
+    level_raw_objects.each do |obj|
       if !obj.has_key?("1") && obj["kA10"]? == "1"
         two_player = true
       end
@@ -109,9 +106,11 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
   level_length = params["levelLength"].to_i.clamp(0..4)
 
   if coins < 0 || coins > 3
+    LOG.info { "preventing upload of level with #{coins} coins" }
     return "-1"
   end
   if objects <= 0
+    LOG.info { "preventing upload of 0-object level" }
     return "-1"
   end
 

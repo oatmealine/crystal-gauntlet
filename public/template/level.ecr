@@ -227,9 +227,6 @@
       <div class="card-header">SONG</div>
       <div>
         <%- if song_name -%>
-          <!--
-          song_name, song_author, song_url, song_author_url
-          -->
           <div><a href="<%= song_url %>" target="_blank" rel="noopener"><%= song_name %></a></div>
           <%- if song_author && song_author != "" -%>
             <div>by <a href="<%= song_author_url %>" target="_blank" rel="noopener"><%= song_author %></a></div>
