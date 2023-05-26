@@ -21,11 +21,11 @@ module CrystalGauntlet::Level
     end
     # the X position of the object
     def x
-      @raw["2"].to_i
+      @raw["2"].to_f
     end
     # the Y position of the object
     def y
-      @raw["3"].to_i
+      @raw["3"].to_f
     end
 
     # strings
@@ -292,5 +292,105 @@ module CrystalGauntlet::Level
 
   def gmd_parse(gmd_file : String)
     Level.array_to_hash(XML.parse(gmd_file).first_element_child.not_nil!.children.reject { |node| node.type == XML::Node::Type::TEXT_NODE }.map { |node| node.children.to_s})
+  end
+
+  # heavily references https://github.com/TeamHaxGD/GDDocs/blob/master/algorithms/level_length.c
+  enum PortalSpeed
+    # 0.5x
+    Slow
+    # 1x
+    Normal
+    # 2x
+    Medium
+    # 3x
+    Fast
+    # 4x
+    VeryFast
+
+    def portal_speed
+      case self
+      when .slow?
+        251.16
+      when .normal?
+        311.58
+      when .medium?
+        387.42
+      when .fast?
+        478.0
+      when .very_fast?
+        576.0
+      else
+        0.0
+      end
+    end
+  end
+
+  def id_to_portal_speed(id : Int32)
+    case id
+    when 200
+      PortalSpeed::Slow
+    when 201
+      PortalSpeed::Normal
+    when 202
+      PortalSpeed::Medium
+    when 203
+      PortalSpeed::Fast
+    when 1334
+      PortalSpeed::VeryFast
+    end
+  end
+
+  def get_seconds_from_xpos(pos : Float64, start_speed : PortalSpeed, portals : Array(ObjectData))
+    speed = 0.0
+    last_obj_pos = 0.0
+    last_segment = 0.0
+    segments = 0.0
+
+    speed = start_speed.portal_speed
+
+    if portals.empty?
+      return pos / speed
+    end
+
+    portals.each do |portal|
+      s = portal.x - last_obj_pos
+
+      if pos < s
+        s /= speed
+        last_segment = s
+        segments += s
+
+        speed = id_to_portal_speed(portal.id).not_nil!.portal_speed
+
+        last_obj_pos = portal.x
+      end
+    end
+
+    return ((pos - last_segment) / speed) + segments;
+  end
+
+  def measure_length(objects : Array(ObjectData), ka4 : Int32)
+    start_speed = case ka4
+      when 0
+        PortalSpeed::Normal
+      when 1
+        PortalSpeed::Slow
+      when 2
+        PortalSpeed::Medium
+      when 3
+        PortalSpeed::Fast
+      when 4
+        PortalSpeed::VeryFast
+      else
+        PortalSpeed::Normal
+      end
+
+    max_x_pos = objects.reduce 0.0 { |a, b| Math.max(a, b.x) }
+
+    portals = objects
+      .select { |obj| id_to_portal_speed(obj.id) && obj.checked }
+      .sort { |a, b| a.x <=> b.x }
+
+    get_seconds_from_xpos(max_x_pos, start_speed, portals)
   end
 end

@@ -45,6 +45,7 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
 
     level_raw_objects = Level.decode(params["levelString"])
     level_objects = Level.to_objectdata(level_raw_objects)
+    inner_level_string = level_raw_objects.find! { |obj| !obj.has_key?("1") && obj["kA9"]? == "0" }
     objects = level_objects.size
 
     forbidden_objects = config_get("levels.parsing.object_blocklist").as?(Array(TOML::Type))
@@ -91,12 +92,11 @@ CrystalGauntlet.endpoints["/uploadGJLevel21.php"] = ->(context : HTTP::Server::C
     coins = level_objects.count { |obj| obj.id == 1329 } # user coin id
 
     # todo: check if dual portals even exist?
-    two_player = false
-    level_raw_objects.each do |obj|
-      if !obj.has_key?("1") && obj["kA10"]? == "1"
-        two_player = true
-      end
-    end
+    two_player = inner_level_string["kA10"]? == "1"
+
+    # todo: currently brokey
+    #level_length_secs = Level.measure_length(level_objects, inner_level_string["kA4"]?.try &.to_i? || 0)
+    #LOG.debug { "level is #{level_length_secs}s long" }
   else
     objects = params["objects"].to_i
     coins = params["coins"].to_i
