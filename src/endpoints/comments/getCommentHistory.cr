@@ -38,6 +38,10 @@ CrystalGauntlet.endpoints["/getGJCommentHistory.php"] = ->(context : HTTP::Serve
 
   amount = DATABASE.scalar("select count(*) from comments where user_id = ?", params["userID"].to_i).as(Int64)
 
+  if amount == 0
+    return "-2"
+  end
+
   comments_str = [] of String
 
   DATABASE.query("select comments.id, comment, comments.created_at, likes, level_id, users.username, users.icon_type, users.color1, users.color2, users.cube, users.ship, users.ball, users.ufo, users.wave, users.robot, users.spider, users.special from comments join users on users.id = user_id where user_id = ? order by comments.created_at desc limit #{comments_per_page} offset #{comment_offset}", params["userID"]) do |rs|
