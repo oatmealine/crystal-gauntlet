@@ -7,6 +7,8 @@ module CrystalGauntlet::Server
     def call(context : HTTP::Server::Context)
       # expunge trailing slashes
       path = context.request.path.chomp("/")
+      # remove slashes at the beginning of the path, if there are more than one
+      path = path.sub(/^\/*(?!\/)/, "/")
 
       path = path.sub(config_get("general.append_path").as(String | Nil) || "", "")
 
@@ -29,7 +31,7 @@ module CrystalGauntlet::Server
             end
           end
           context.response.content_type = "text/plain"
-          context.response.respond_with_status(500, "-1")
+          context.response.respond_with_status(500, "uh oh!!! server did a fucky wucky")
         else
           max_size = 2048
 
