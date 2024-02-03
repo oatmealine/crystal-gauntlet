@@ -59,7 +59,7 @@ module CrystalGauntlet
     config_get(key).as?(typeof(default)) || default
   end
 
-  DATABASE = DB.open(ENV["DATABASE_URL"]? || "sqlite3://./crystal-gauntlet.db")
+  DATABASE = DB.open(ENV["DATABASE_URL"]? || "sqlite3://./data/crystal-gauntlet.db")
 
   # todo: unhardcore
   DATA_FOLDER = Path.new("data")
