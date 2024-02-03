@@ -21,6 +21,7 @@ dependencies:
   toml:
     github: crystal-community/toml.cr
     branch: master
+    commit: 299f81a
   http-session:
     github: straight-shoota/http-session
   athena-routing:

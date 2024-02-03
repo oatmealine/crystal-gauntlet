@@ -8,7 +8,9 @@ CrystalGauntlet.endpoints["/updateGJUserScore22.php"] = ->(context : HTTP::Serve
 
   user_id, account_id = Accounts.auth(params)
   if !(user_id && account_id)
-    return "-1"
+    # we assume this is an unregistered user
+    # since the client expects the returned value to be ...its own user id? we just return 0
+    return "0"
   end
 
   # todo: keep track of stat changes to look out for leaderboard cheating & whatnot

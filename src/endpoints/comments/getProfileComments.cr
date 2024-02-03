@@ -14,6 +14,10 @@ CrystalGauntlet.endpoints["/getGJAccountComments20.php"] = ->(context : HTTP::Se
 
   amount = DATABASE.scalar("select count(*) from account_comments where account_id = ?", account_id)
 
+  if amount == 0
+    return "-2"
+  end
+
   users_str = [] of String
 
   DATABASE.query("select id, comment, created_at, likes from account_comments where account_id = ? order by created_at desc limit #{comments_per_page} offset #{comment_offset}", account_id) do |rs|
